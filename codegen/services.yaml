@@ -1,0 +1,8 @@
+---
+users:
+  output_dir: backend/users/pkg/api
+  input: inputs/users.txt
+  input_dirs: [codegen]
+  custom_mappings:
+    proto_path: github.com/Posrabi/flashy/users
+    service_name: Users

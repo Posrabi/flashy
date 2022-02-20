@@ -1,0 +1,25 @@
+package api
+
+import (
+	"context"
+
+	"github.com/go-kit/kit/log"
+	proto "%proto_path"
+)
+
+type loggingService struct {
+	logging log.Logger
+	Service
+}
+
+// NewLoggingService definition
+func NewLoggingService(logger log.Logger, s Service) Service {
+	return &loggingService{logger, s}
+}
+
+[[
+func (s *loggingService) %s(ctx context.Context, r *v1.%sRequest) (*v1.%sResponse, error) {
+	return s.Service.%s(ctx, r)
+}
+
+]]

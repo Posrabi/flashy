@@ -1,0 +1,5 @@
+CreateUser
+GetUser
+UpdateUser
+DeleteUser
+Authenticate

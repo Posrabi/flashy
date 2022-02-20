@@ -1,0 +1,13 @@
+package api
+
+import (
+    "context"
+
+    proto "%proto_path"
+)
+
+type Service interface {
+[[
+    %s(ctx context.Context, r *proto.%sRequest) (*proto.%sResponse, error)
+]]
+}

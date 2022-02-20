@@ -1,0 +1,58 @@
+package api
+
+import (
+	"context"
+
+	grpctransport "github.com/go-kit/kit/transport/grpc"
+  "github.com/go-kit/kit/auth/jwt"
+  kitlog "github.com/go-kit/kit/log"
+
+	v1 "%proto_path"
+)
+
+type grpcServer struct {
+	v1.Unimplemented%service_nameBackendAPIServer
+[[
+	%sEP grpctransport.Handler
+]]
+}
+
+// NewGrpcTransport definition
+func NewGrpcTransport(ep *Endpoints, logger kitlog.Logger) v1.%service_nameBackendAPIServer {
+	options := []grpctransport.ServerOption{
+		//grpctransport.ServerErrorLogger(logger),
+        grpctransport.ServerBefore(jwt.GRPCToContext()),
+	}
+
+	return &grpcServer{
+[[
+		%sEP: grpctransport.NewServer(
+			ep.%sEP,
+			decode%sRequest,
+			encode%sResponse,
+			options...,
+		),
+]]
+	}
+}
+
+[[
+func (s *grpcServer) %s(ctx context.Context, req *proto.%sRequest) (*proto.%sResponse, error) {
+	_, rep, err := s.%sEP.ServeGRPC(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return rep.(*v1.%sResponse), nil
+}
+
+func decode%sRequest(ctx context.Context, r interface{}) (interface{}, error) {
+	req := r.(*v1.%sRequest)
+	return %lRequest{Request: req}, nil
+}
+
+func encode%sResponse(ctx context.Context, r interface{}) (interface{}, error) {
+	resp := r.(%lResponse)
+	return resp.Response, nil
+}
+
+]]

@@ -1,0 +1,64 @@
+package api
+
+import (
+	"context"
+
+	"github.com/go-kit/kit/endpoint"
+	"github.com/go-kit/kit/log"
+  "github.com/go-kit/kit/transport"
+
+	proto "%proto_path"
+	logging "github.com/Posrabi/backend/middleware"
+	commonservice "github.com/Posrabi/backend/common/pkg/service"
+)
+
+// Endpoints struct
+type Endpoints struct {
+[[
+	%sEP endpoint.Endpoint
+]]
+}
+
+// CreateEndpoints creates endpoints
+func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
+    handler := commonservice.NewLogErrorHandler(logger)
+
+[[
+	var %sEP endpoint.Endpoint
+	{
+		%sEP = make%sEndpoint(s, handler)
+    %sEP = commonservice.AddRequestToContext("%s")(%sEP)
+    %sEP = logging.LoggingMiddleware(log.With(logger, "action", %sEP))(%sEP)
+	}
+]]
+	return &Endpoints{
+[[
+	    %sEP: %sEP,
+]]
+	}
+}
+
+[[
+type %lRequest struct {
+	Request *proto.%sRequest
+}
+
+type %lResponse struct {
+	Response *proto.%sResponse
+}
+
+]]
+
+[[
+func make%sEndpoint(s Service, handler transport.ErrorHandler) endpoint.Endpoint {
+	return func(ctx context.Context, r interface{}) (interface{}, error) {
+		req := r.(%lRequest)
+		resp, err := s.%s(ctx, req.Request)
+    if err != nil {
+      handler.Handle(ctx, err)
+    }
+		return %lResponse{Response: resp}, err
+	}
+}
+
+]]
