@@ -18,7 +18,7 @@ func NewLoggingService(logger log.Logger, s Service) Service {
 }
 
 [[
-func (s *loggingService) %s(ctx context.Context, r *v1.%sRequest) (*v1.%sResponse, error) {
+func (s *loggingService) %s(ctx context.Context, r *proto.%sRequest) (*proto.%sResponse, error) {
 	return s.Service.%s(ctx, r)
 }
 

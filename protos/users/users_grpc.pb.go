@@ -39,7 +39,7 @@ func NewUsersAPIClient(cc grpc.ClientConnInterface) UsersAPIClient {
 
 func (c *usersAPIClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
 	out := new(CreateUserResponse)
-	err := c.cc.Invoke(ctx, "/users.UsersAPI/CreateUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/users.proto.UsersAPI/CreateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (c *usersAPIClient) CreateUser(ctx context.Context, in *CreateUserRequest, 
 
 func (c *usersAPIClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
 	out := new(GetUserResponse)
-	err := c.cc.Invoke(ctx, "/users.UsersAPI/GetUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/users.proto.UsersAPI/GetUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *usersAPIClient) GetUser(ctx context.Context, in *GetUserRequest, opts .
 
 func (c *usersAPIClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
 	out := new(UpdateUserResponse)
-	err := c.cc.Invoke(ctx, "/users.UsersAPI/UpdateUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/users.proto.UsersAPI/UpdateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (c *usersAPIClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, 
 
 func (c *usersAPIClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error) {
 	out := new(DeleteUserResponse)
-	err := c.cc.Invoke(ctx, "/users.UsersAPI/DeleteUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/users.proto.UsersAPI/DeleteUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (c *usersAPIClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, 
 
 func (c *usersAPIClient) Authenticate(ctx context.Context, in *AuthenticateRequest, opts ...grpc.CallOption) (*AuthenticateResponse, error) {
 	out := new(AuthenticateResponse)
-	err := c.cc.Invoke(ctx, "/users.UsersAPI/Authenticate", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/users.proto.UsersAPI/Authenticate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func _UsersAPI_CreateUser_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/users.UsersAPI/CreateUser",
+		FullMethod: "/users.proto.UsersAPI/CreateUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UsersAPIServer).CreateUser(ctx, req.(*CreateUserRequest))
@@ -154,7 +154,7 @@ func _UsersAPI_GetUser_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/users.UsersAPI/GetUser",
+		FullMethod: "/users.proto.UsersAPI/GetUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UsersAPIServer).GetUser(ctx, req.(*GetUserRequest))
@@ -172,7 +172,7 @@ func _UsersAPI_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/users.UsersAPI/UpdateUser",
+		FullMethod: "/users.proto.UsersAPI/UpdateUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UsersAPIServer).UpdateUser(ctx, req.(*UpdateUserRequest))
@@ -190,7 +190,7 @@ func _UsersAPI_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/users.UsersAPI/DeleteUser",
+		FullMethod: "/users.proto.UsersAPI/DeleteUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UsersAPIServer).DeleteUser(ctx, req.(*DeleteUserRequest))
@@ -208,7 +208,7 @@ func _UsersAPI_Authenticate_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/users.UsersAPI/Authenticate",
+		FullMethod: "/users.proto.UsersAPI/Authenticate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UsersAPIServer).Authenticate(ctx, req.(*AuthenticateRequest))
@@ -220,7 +220,7 @@ func _UsersAPI_Authenticate_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UsersAPI_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "users.UsersAPI",
+	ServiceName: "users.proto.UsersAPI",
 	HandlerType: (*UsersAPIServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

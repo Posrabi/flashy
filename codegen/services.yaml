@@ -4,5 +4,5 @@ users:
   input: inputs/users.txt
   input_dirs: [codegen]
   custom_mappings:
-    proto_path: github.com/Posrabi/flashy/users
+    proto_path: github.com/Posrabi/flashy/protos/users
     service_name: Users

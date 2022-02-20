@@ -8,7 +8,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	log "github.com/sirupsen/logrus"
 
-	commonerr "github.com/Posrabi/flashy/backend/common/error"
+	commonerr "github.com/Posrabi/flashy/backend/common/pkg/error"
 )
 
 type ErrorHandlerFunc func(w http.ResponseWriter, r *http.Request) error

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/go-kit/kit/endpoint"
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 )
 
 type label string
@@ -28,7 +28,7 @@ func AddRequestToContext(name string) endpoint.Middleware {
 	}
 }
 
-func NewErrorLogHandler(logger log.Logger) *ErrorLogHandler {
+func NewLogErrorHandler(logger log.Logger) *ErrorLogHandler {
 	return &ErrorLogHandler{
 		logger: logger,
 	}

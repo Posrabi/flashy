@@ -7,18 +7,18 @@ import (
   "github.com/go-kit/kit/auth/jwt"
   kitlog "github.com/go-kit/kit/log"
 
-	v1 "%proto_path"
+	proto "%proto_path"
 )
 
 type grpcServer struct {
-	v1.Unimplemented%service_nameBackendAPIServer
+	proto.Unimplemented%service_nameAPIServer
 [[
 	%sEP grpctransport.Handler
 ]]
 }
 
 // NewGrpcTransport definition
-func NewGrpcTransport(ep *Endpoints, logger kitlog.Logger) v1.%service_nameBackendAPIServer {
+func NewGrpcTransport(ep *Endpoints, logger kitlog.Logger) proto.%service_nameAPIServer {
 	options := []grpctransport.ServerOption{
 		//grpctransport.ServerErrorLogger(logger),
         grpctransport.ServerBefore(jwt.GRPCToContext()),
@@ -42,11 +42,11 @@ func (s *grpcServer) %s(ctx context.Context, req *proto.%sRequest) (*proto.%sRes
 	if err != nil {
 		return nil, err
 	}
-	return rep.(*v1.%sResponse), nil
+	return rep.(*proto.%sResponse), nil
 }
 
 func decode%sRequest(ctx context.Context, r interface{}) (interface{}, error) {
-	req := r.(*v1.%sRequest)
+	req := r.(*proto.%sRequest)
 	return %lRequest{Request: req}, nil
 }
 

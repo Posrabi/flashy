@@ -8,8 +8,8 @@ import (
   "github.com/go-kit/kit/transport"
 
 	proto "%proto_path"
-	logging "github.com/Posrabi/backend/middleware"
-	commonservice "github.com/Posrabi/backend/common/pkg/service"
+	logging "github.com/Posrabi/flashy/backend/middleware"
+	commonservice "github.com/Posrabi/flashy/backend/common/pkg/service"
 )
 
 // Endpoints struct

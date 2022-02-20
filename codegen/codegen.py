@@ -1,7 +1,5 @@
 import glob
 import os
-from matplotlib.pyplot import close
-from pandas import array
 import yaml
 
 # returns abs path of the parent
@@ -23,7 +21,7 @@ ServiceFile = os.path.join(curDir, 'services.yaml')
 
 def parseServices(serviceFile):
     with open(serviceFile) as file:
-        services = yaml.load(file, loader=yaml.FullLoader)
+        services = yaml.load(file, Loader=yaml.FullLoader)
 
         for svc in services.values():
             generate(printOuput="to_file", outputDir=svc["output_dir"],
@@ -52,7 +50,7 @@ def generate(printOuput="store_true", outputDir=defaultOutputDir, inputFile=defa
                 outputFile = os.path.join(
                     rootDir, outputDir, inputBase.replace('.template', ''))
 
-                with open(inputDir) as i:
+                with open(inputFile) as i:
                     outputLines = []
                     replaceLines = []
                     replace = False
