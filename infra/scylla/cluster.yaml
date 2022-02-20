@@ -1,0 +1,42 @@
+# Namespace where the Scylla Cluster will be created
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: scylla
+
+---
+# Simple Scylla Cluster
+apiVersion: scylla.scylladb.com/v1
+kind: ScyllaCluster
+metadata:
+  labels:
+    controller-tools.k8s.io: '1.0'
+  name: simple-cluster
+  namespace: scylla
+spec:
+  version: 4.5.1
+  agentVersion: 2.5.2
+  developerMode: true
+  datacenter:
+    name: us-east-1
+    racks:
+      - name: us-east-1a
+        scyllaConfig: 'scylla-config'
+        scyllaAgentConfig: 'scylla-agent-config'
+        members: 3
+        storage:
+          capacity: 5Gi
+        resources:
+          requests:
+            cpu: 1
+            memory: 1Gi
+          limits:
+            cpu: 1
+            memory: 1Gi
+        volumes:
+          - name: coredumpfs
+            hostPath:
+              path: /tmp/coredumps
+        volumeMounts:
+          - mountPath: /tmp/coredumps
+            name: coredumpfs

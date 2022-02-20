@@ -1,0 +1,418 @@
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-stress-0
+  namespace: default
+  labels:
+    app: cassandra-stress
+spec:
+  template:
+    spec:
+      containers:
+      - name: cassandra-stress
+        image: scylladb/scylla:4.0.0
+        command:
+          - "/bin/bash"
+          - "-c"
+          - 'cassandra-stress write no-warmup n=50000000 cl=ONE -mode native cql3 connectionsPerHost=6 -col n=FIXED\(5\) size=FIXED\(64\)  -pop seq=1..50000000 -node "scylla-cluster-client.scylla.svc" -rate threads=300 throttle=30000/s -log file=/cassandra-stress.load.data -schema "replication(factor=1)" -errors ignore; cat /cassandra-stress.load.data'
+        resources:
+          limits:
+            cpu: 6
+            memory: 20G
+      restartPolicy: Never
+      nodeSelector:
+        
+      tolerations:
+        - key: role
+          operator: Equal
+          value: cassandra-stress
+          effect: NoSchedule
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: cassandra-stress
+       
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-stress-1
+  namespace: default
+  labels:
+    app: cassandra-stress
+spec:
+  template:
+    spec:
+      containers:
+      - name: cassandra-stress
+        image: scylladb/scylla:4.0.0
+        command:
+          - "/bin/bash"
+          - "-c"
+          - 'cassandra-stress write no-warmup n=50000000 cl=ONE -mode native cql3 connectionsPerHost=6 -col n=FIXED\(5\) size=FIXED\(64\)  -pop seq=50000001..100000000 -node "scylla-cluster-client.scylla.svc" -rate threads=300 throttle=30000/s -log file=/cassandra-stress.load.data -schema "replication(factor=1)" -errors ignore; cat /cassandra-stress.load.data'
+        resources:
+          limits:
+            cpu: 6
+            memory: 20G
+      restartPolicy: Never
+      nodeSelector:
+        
+      tolerations:
+        - key: role
+          operator: Equal
+          value: cassandra-stress
+          effect: NoSchedule
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: cassandra-stress
+       
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-stress-2
+  namespace: default
+  labels:
+    app: cassandra-stress
+spec:
+  template:
+    spec:
+      containers:
+      - name: cassandra-stress
+        image: scylladb/scylla:4.0.0
+        command:
+          - "/bin/bash"
+          - "-c"
+          - 'cassandra-stress write no-warmup n=50000000 cl=ONE -mode native cql3 connectionsPerHost=6 -col n=FIXED\(5\) size=FIXED\(64\)  -pop seq=100000001..150000000 -node "scylla-cluster-client.scylla.svc" -rate threads=300 throttle=30000/s -log file=/cassandra-stress.load.data -schema "replication(factor=1)" -errors ignore; cat /cassandra-stress.load.data'
+        resources:
+          limits:
+            cpu: 6
+            memory: 20G
+      restartPolicy: Never
+      nodeSelector:
+        
+      tolerations:
+        - key: role
+          operator: Equal
+          value: cassandra-stress
+          effect: NoSchedule
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: cassandra-stress
+       
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-stress-3
+  namespace: default
+  labels:
+    app: cassandra-stress
+spec:
+  template:
+    spec:
+      containers:
+      - name: cassandra-stress
+        image: scylladb/scylla:4.0.0
+        command:
+          - "/bin/bash"
+          - "-c"
+          - 'cassandra-stress write no-warmup n=50000000 cl=ONE -mode native cql3 connectionsPerHost=6 -col n=FIXED\(5\) size=FIXED\(64\)  -pop seq=150000001..200000000 -node "scylla-cluster-client.scylla.svc" -rate threads=300 throttle=30000/s -log file=/cassandra-stress.load.data -schema "replication(factor=1)" -errors ignore; cat /cassandra-stress.load.data'
+        resources:
+          limits:
+            cpu: 6
+            memory: 20G
+      restartPolicy: Never
+      nodeSelector:
+        
+      tolerations:
+        - key: role
+          operator: Equal
+          value: cassandra-stress
+          effect: NoSchedule
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: cassandra-stress
+       
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-stress-4
+  namespace: default
+  labels:
+    app: cassandra-stress
+spec:
+  template:
+    spec:
+      containers:
+      - name: cassandra-stress
+        image: scylladb/scylla:4.0.0
+        command:
+          - "/bin/bash"
+          - "-c"
+          - 'cassandra-stress write no-warmup n=50000000 cl=ONE -mode native cql3 connectionsPerHost=6 -col n=FIXED\(5\) size=FIXED\(64\)  -pop seq=200000001..250000000 -node "scylla-cluster-client.scylla.svc" -rate threads=300 throttle=30000/s -log file=/cassandra-stress.load.data -schema "replication(factor=1)" -errors ignore; cat /cassandra-stress.load.data'
+        resources:
+          limits:
+            cpu: 6
+            memory: 20G
+      restartPolicy: Never
+      nodeSelector:
+        
+      tolerations:
+        - key: role
+          operator: Equal
+          value: cassandra-stress
+          effect: NoSchedule
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: cassandra-stress
+       
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-stress-5
+  namespace: default
+  labels:
+    app: cassandra-stress
+spec:
+  template:
+    spec:
+      containers:
+      - name: cassandra-stress
+        image: scylladb/scylla:4.0.0
+        command:
+          - "/bin/bash"
+          - "-c"
+          - 'cassandra-stress write no-warmup n=50000000 cl=ONE -mode native cql3 connectionsPerHost=6 -col n=FIXED\(5\) size=FIXED\(64\)  -pop seq=250000001..300000000 -node "scylla-cluster-client.scylla.svc" -rate threads=300 throttle=30000/s -log file=/cassandra-stress.load.data -schema "replication(factor=1)" -errors ignore; cat /cassandra-stress.load.data'
+        resources:
+          limits:
+            cpu: 6
+            memory: 20G
+      restartPolicy: Never
+      nodeSelector:
+        
+      tolerations:
+        - key: role
+          operator: Equal
+          value: cassandra-stress
+          effect: NoSchedule
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: cassandra-stress
+       
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-stress-6
+  namespace: default
+  labels:
+    app: cassandra-stress
+spec:
+  template:
+    spec:
+      containers:
+      - name: cassandra-stress
+        image: scylladb/scylla:4.0.0
+        command:
+          - "/bin/bash"
+          - "-c"
+          - 'cassandra-stress write no-warmup n=50000000 cl=ONE -mode native cql3 connectionsPerHost=6 -col n=FIXED\(5\) size=FIXED\(64\)  -pop seq=300000001..350000000 -node "scylla-cluster-client.scylla.svc" -rate threads=300 throttle=30000/s -log file=/cassandra-stress.load.data -schema "replication(factor=1)" -errors ignore; cat /cassandra-stress.load.data'
+        resources:
+          limits:
+            cpu: 6
+            memory: 20G
+      restartPolicy: Never
+      nodeSelector:
+        
+      tolerations:
+        - key: role
+          operator: Equal
+          value: cassandra-stress
+          effect: NoSchedule
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: cassandra-stress
+       
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-stress-7
+  namespace: default
+  labels:
+    app: cassandra-stress
+spec:
+  template:
+    spec:
+      containers:
+      - name: cassandra-stress
+        image: scylladb/scylla:4.0.0
+        command:
+          - "/bin/bash"
+          - "-c"
+          - 'cassandra-stress write no-warmup n=50000000 cl=ONE -mode native cql3 connectionsPerHost=6 -col n=FIXED\(5\) size=FIXED\(64\)  -pop seq=350000001..400000000 -node "scylla-cluster-client.scylla.svc" -rate threads=300 throttle=30000/s -log file=/cassandra-stress.load.data -schema "replication(factor=1)" -errors ignore; cat /cassandra-stress.load.data'
+        resources:
+          limits:
+            cpu: 6
+            memory: 20G
+      restartPolicy: Never
+      nodeSelector:
+        
+      tolerations:
+        - key: role
+          operator: Equal
+          value: cassandra-stress
+          effect: NoSchedule
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: cassandra-stress
+       
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-stress-8
+  namespace: default
+  labels:
+    app: cassandra-stress
+spec:
+  template:
+    spec:
+      containers:
+      - name: cassandra-stress
+        image: scylladb/scylla:4.0.0
+        command:
+          - "/bin/bash"
+          - "-c"
+          - 'cassandra-stress write no-warmup n=50000000 cl=ONE -mode native cql3 connectionsPerHost=6 -col n=FIXED\(5\) size=FIXED\(64\)  -pop seq=400000001..450000000 -node "scylla-cluster-client.scylla.svc" -rate threads=300 throttle=30000/s -log file=/cassandra-stress.load.data -schema "replication(factor=1)" -errors ignore; cat /cassandra-stress.load.data'
+        resources:
+          limits:
+            cpu: 6
+            memory: 20G
+      restartPolicy: Never
+      nodeSelector:
+        
+      tolerations:
+        - key: role
+          operator: Equal
+          value: cassandra-stress
+          effect: NoSchedule
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: cassandra-stress
+       
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cassandra-stress-9
+  namespace: default
+  labels:
+    app: cassandra-stress
+spec:
+  template:
+    spec:
+      containers:
+      - name: cassandra-stress
+        image: scylladb/scylla:4.0.0
+        command:
+          - "/bin/bash"
+          - "-c"
+          - 'cassandra-stress write no-warmup n=50000000 cl=ONE -mode native cql3 connectionsPerHost=6 -col n=FIXED\(5\) size=FIXED\(64\)  -pop seq=450000001..500000000 -node "scylla-cluster-client.scylla.svc" -rate threads=300 throttle=30000/s -log file=/cassandra-stress.load.data -schema "replication(factor=1)" -errors ignore; cat /cassandra-stress.load.data'
+        resources:
+          limits:
+            cpu: 6
+            memory: 20G
+      restartPolicy: Never
+      nodeSelector:
+        
+      tolerations:
+        - key: role
+          operator: Equal
+          value: cassandra-stress
+          effect: NoSchedule
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: cassandra-stress
+       
