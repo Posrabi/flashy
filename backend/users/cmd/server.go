@@ -68,7 +68,7 @@ func grpcServe() error {
 
 	var svcUsers api.Service
 
-	sess, err := api.GetAccessToDB(api.ReadAndWrite)
+	sess, err := api.GetAccessToDB(api.ReadAndWrite, api.UsersSpace)
 	if err != nil {
 		return err
 	}
