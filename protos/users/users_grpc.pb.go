@@ -26,7 +26,8 @@ type UsersAPIClient interface {
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
-	Authenticate(ctx context.Context, in *AuthenticateRequest, opts ...grpc.CallOption) (*AuthenticateResponse, error)
+	LogIn(ctx context.Context, in *LogInRequest, opts ...grpc.CallOption) (*LogInResponse, error)
+	LogOut(ctx context.Context, in *LogOutRequest, opts ...grpc.CallOption) (*LogOutResponse, error)
 }
 
 type usersAPIClient struct {
@@ -73,9 +74,18 @@ func (c *usersAPIClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, 
 	return out, nil
 }
 
-func (c *usersAPIClient) Authenticate(ctx context.Context, in *AuthenticateRequest, opts ...grpc.CallOption) (*AuthenticateResponse, error) {
-	out := new(AuthenticateResponse)
-	err := c.cc.Invoke(ctx, "/users.proto.UsersAPI/Authenticate", in, out, opts...)
+func (c *usersAPIClient) LogIn(ctx context.Context, in *LogInRequest, opts ...grpc.CallOption) (*LogInResponse, error) {
+	out := new(LogInResponse)
+	err := c.cc.Invoke(ctx, "/users.proto.UsersAPI/LogIn", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usersAPIClient) LogOut(ctx context.Context, in *LogOutRequest, opts ...grpc.CallOption) (*LogOutResponse, error) {
+	out := new(LogOutResponse)
+	err := c.cc.Invoke(ctx, "/users.proto.UsersAPI/LogOut", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +100,8 @@ type UsersAPIServer interface {
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
-	Authenticate(context.Context, *AuthenticateRequest) (*AuthenticateResponse, error)
+	LogIn(context.Context, *LogInRequest) (*LogInResponse, error)
+	LogOut(context.Context, *LogOutRequest) (*LogOutResponse, error)
 	mustEmbedUnimplementedUsersAPIServer()
 }
 
@@ -110,8 +121,11 @@ func (UnimplementedUsersAPIServer) UpdateUser(context.Context, *UpdateUserReques
 func (UnimplementedUsersAPIServer) DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
-func (UnimplementedUsersAPIServer) Authenticate(context.Context, *AuthenticateRequest) (*AuthenticateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Authenticate not implemented")
+func (UnimplementedUsersAPIServer) LogIn(context.Context, *LogInRequest) (*LogInResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LogIn not implemented")
+}
+func (UnimplementedUsersAPIServer) LogOut(context.Context, *LogOutRequest) (*LogOutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LogOut not implemented")
 }
 func (UnimplementedUsersAPIServer) mustEmbedUnimplementedUsersAPIServer() {}
 
@@ -198,20 +212,38 @@ func _UsersAPI_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UsersAPI_Authenticate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AuthenticateRequest)
+func _UsersAPI_LogIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogInRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UsersAPIServer).Authenticate(ctx, in)
+		return srv.(UsersAPIServer).LogIn(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/users.proto.UsersAPI/Authenticate",
+		FullMethod: "/users.proto.UsersAPI/LogIn",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersAPIServer).Authenticate(ctx, req.(*AuthenticateRequest))
+		return srv.(UsersAPIServer).LogIn(ctx, req.(*LogInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UsersAPI_LogOut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogOutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersAPIServer).LogOut(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/users.proto.UsersAPI/LogOut",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersAPIServer).LogOut(ctx, req.(*LogOutRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -240,8 +272,12 @@ var UsersAPI_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UsersAPI_DeleteUser_Handler,
 		},
 		{
-			MethodName: "Authenticate",
-			Handler:    _UsersAPI_Authenticate_Handler,
+			MethodName: "LogIn",
+			Handler:    _UsersAPI_LogIn_Handler,
+		},
+		{
+			MethodName: "LogOut",
+			Handler:    _UsersAPI_LogOut_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

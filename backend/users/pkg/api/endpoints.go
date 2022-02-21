@@ -22,7 +22,8 @@ type Endpoints struct {
 	GetUserEP endpoint.Endpoint
 	UpdateUserEP endpoint.Endpoint
 	DeleteUserEP endpoint.Endpoint
-	AuthenticateEP endpoint.Endpoint
+	LogInEP endpoint.Endpoint
+	LogOutEP endpoint.Endpoint
 }
 
 // CreateEndpoints creates endpoints
@@ -53,18 +54,25 @@ func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
     DeleteUserEP = commonservice.AddRequestToContext("DeleteUser")(DeleteUserEP)
     DeleteUserEP = logging.LoggingMiddleware(log.With(logger, "action", DeleteUserEP))(DeleteUserEP)
 	}
-	var AuthenticateEP endpoint.Endpoint
+	var LogInEP endpoint.Endpoint
 	{
-		AuthenticateEP = makeAuthenticateEndpoint(s, handler)
-    AuthenticateEP = commonservice.AddRequestToContext("Authenticate")(AuthenticateEP)
-    AuthenticateEP = logging.LoggingMiddleware(log.With(logger, "action", AuthenticateEP))(AuthenticateEP)
+		LogInEP = makeLogInEndpoint(s, handler)
+    LogInEP = commonservice.AddRequestToContext("LogIn")(LogInEP)
+    LogInEP = logging.LoggingMiddleware(log.With(logger, "action", LogInEP))(LogInEP)
+	}
+	var LogOutEP endpoint.Endpoint
+	{
+		LogOutEP = makeLogOutEndpoint(s, handler)
+    LogOutEP = commonservice.AddRequestToContext("LogOut")(LogOutEP)
+    LogOutEP = logging.LoggingMiddleware(log.With(logger, "action", LogOutEP))(LogOutEP)
 	}
 	return &Endpoints{
 	    CreateUserEP: CreateUserEP,
 	    GetUserEP: GetUserEP,
 	    UpdateUserEP: UpdateUserEP,
 	    DeleteUserEP: DeleteUserEP,
-	    AuthenticateEP: AuthenticateEP,
+	    LogInEP: LogInEP,
+	    LogOutEP: LogOutEP,
 	}
 }
 
@@ -100,12 +108,20 @@ type deleteUserResponse struct {
 	Response *proto.DeleteUserResponse
 }
 
-type authenticateRequest struct {
-	Request *proto.AuthenticateRequest
+type logInRequest struct {
+	Request *proto.LogInRequest
 }
 
-type authenticateResponse struct {
-	Response *proto.AuthenticateResponse
+type logInResponse struct {
+	Response *proto.LogInResponse
+}
+
+type logOutRequest struct {
+	Request *proto.LogOutRequest
+}
+
+type logOutResponse struct {
+	Response *proto.LogOutResponse
 }
 
 
@@ -153,13 +169,24 @@ func makeDeleteUserEndpoint(s Service, handler transport.ErrorHandler) endpoint.
 	}
 }
 
-func makeAuthenticateEndpoint(s Service, handler transport.ErrorHandler) endpoint.Endpoint {
+func makeLogInEndpoint(s Service, handler transport.ErrorHandler) endpoint.Endpoint {
 	return func(ctx context.Context, r interface{}) (interface{}, error) {
-		req := r.(authenticateRequest)
-		resp, err := s.Authenticate(ctx, req.Request)
+		req := r.(logInRequest)
+		resp, err := s.LogIn(ctx, req.Request)
     if err != nil {
       handler.Handle(ctx, err)
     }
-		return authenticateResponse{Response: resp}, err
+		return logInResponse{Response: resp}, err
+	}
+}
+
+func makeLogOutEndpoint(s Service, handler transport.ErrorHandler) endpoint.Endpoint {
+	return func(ctx context.Context, r interface{}) (interface{}, error) {
+		req := r.(logOutRequest)
+		resp, err := s.LogOut(ctx, req.Request)
+    if err != nil {
+      handler.Handle(ctx, err)
+    }
+		return logOutResponse{Response: resp}, err
 	}
 }

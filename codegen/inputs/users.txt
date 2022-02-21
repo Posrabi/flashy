@@ -2,4 +2,5 @@ CreateUser
 GetUser
 UpdateUser
 DeleteUser
-Authenticate
+LogIn
+LogOut

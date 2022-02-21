@@ -35,9 +35,16 @@ service UsersAPI {
     };
   }
 
-  rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse) {
+  rpc LogIn(LogInRequest) returns (LogInResponse) {
     option (google.api.http) = {
-      post: "/user/auth",
+      post: "/user/login",
+      body: "*"
+    };
+  }
+
+  rpc LogOut(LogOutRequest) returns (LogOutResponse) {
+    option (google.api.http) = {
+      post: "/users/logout",
       body: "*"
     };
   }
@@ -63,7 +70,8 @@ message CreateUserResponse {
 }
 
 message GetUserRequest {
-  string user_name = 1;
+  string user_id = 1;
+  string auth_token = 2;
 }
 
 message GetUserResponse {
@@ -87,11 +95,21 @@ message DeleteUserResponse {
   string response = 1;
 }
 
-message AuthenticateRequest {
+message LogInRequest {
   string user_name = 1;
   string hash_password = 2;
 }
 
-message AuthenticateResponse {
+message LogInResponse {
   string auth_token = 1;
+  string user_id = 2;
+}
+
+message LogOutRequest {
+  string auth_token = 1;
+  string user_id = 2;
+}
+
+message LogOutResponse {
+  string reponse = 1;
 }

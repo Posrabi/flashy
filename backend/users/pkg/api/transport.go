@@ -20,7 +20,8 @@ type grpcServer struct {
 	GetUserEP grpctransport.Handler
 	UpdateUserEP grpctransport.Handler
 	DeleteUserEP grpctransport.Handler
-	AuthenticateEP grpctransport.Handler
+	LogInEP grpctransport.Handler
+	LogOutEP grpctransport.Handler
 }
 
 // NewGrpcTransport definition
@@ -55,10 +56,16 @@ func NewGrpcTransport(ep *Endpoints, logger kitlog.Logger) proto.UsersAPIServer 
 			encodeDeleteUserResponse,
 			options...,
 		),
-		AuthenticateEP: grpctransport.NewServer(
-			ep.AuthenticateEP,
-			decodeAuthenticateRequest,
-			encodeAuthenticateResponse,
+		LogInEP: grpctransport.NewServer(
+			ep.LogInEP,
+			decodeLogInRequest,
+			encodeLogInResponse,
+			options...,
+		),
+		LogOutEP: grpctransport.NewServer(
+			ep.LogOutEP,
+			decodeLogOutRequest,
+			encodeLogOutResponse,
 			options...,
 		),
 	}
@@ -136,20 +143,38 @@ func encodeDeleteUserResponse(ctx context.Context, r interface{}) (interface{}, 
 	return resp.Response, nil
 }
 
-func (s *grpcServer) Authenticate(ctx context.Context, req *proto.AuthenticateRequest) (*proto.AuthenticateResponse, error) {
-	_, rep, err := s.AuthenticateEP.ServeGRPC(ctx, req)
+func (s *grpcServer) LogIn(ctx context.Context, req *proto.LogInRequest) (*proto.LogInResponse, error) {
+	_, rep, err := s.LogInEP.ServeGRPC(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-	return rep.(*proto.AuthenticateResponse), nil
+	return rep.(*proto.LogInResponse), nil
 }
 
-func decodeAuthenticateRequest(ctx context.Context, r interface{}) (interface{}, error) {
-	req := r.(*proto.AuthenticateRequest)
-	return authenticateRequest{Request: req}, nil
+func decodeLogInRequest(ctx context.Context, r interface{}) (interface{}, error) {
+	req := r.(*proto.LogInRequest)
+	return logInRequest{Request: req}, nil
 }
 
-func encodeAuthenticateResponse(ctx context.Context, r interface{}) (interface{}, error) {
-	resp := r.(authenticateResponse)
+func encodeLogInResponse(ctx context.Context, r interface{}) (interface{}, error) {
+	resp := r.(logInResponse)
+	return resp.Response, nil
+}
+
+func (s *grpcServer) LogOut(ctx context.Context, req *proto.LogOutRequest) (*proto.LogOutResponse, error) {
+	_, rep, err := s.LogOutEP.ServeGRPC(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return rep.(*proto.LogOutResponse), nil
+}
+
+func decodeLogOutRequest(ctx context.Context, r interface{}) (interface{}, error) {
+	req := r.(*proto.LogOutRequest)
+	return logOutRequest{Request: req}, nil
+}
+
+func encodeLogOutResponse(ctx context.Context, r interface{}) (interface{}, error) {
+	resp := r.(logOutResponse)
 	return resp.Response, nil
 }

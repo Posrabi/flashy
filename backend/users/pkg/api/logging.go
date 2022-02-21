@@ -37,6 +37,10 @@ func (s *loggingService) DeleteUser(ctx context.Context, r *proto.DeleteUserRequ
 	return s.Service.DeleteUser(ctx, r)
 }
 
-func (s *loggingService) Authenticate(ctx context.Context, r *proto.AuthenticateRequest) (*proto.AuthenticateResponse, error) {
-	return s.Service.Authenticate(ctx, r)
+func (s *loggingService) LogIn(ctx context.Context, r *proto.LogInRequest) (*proto.LogInResponse, error) {
+	return s.Service.LogIn(ctx, r)
+}
+
+func (s *loggingService) LogOut(ctx context.Context, r *proto.LogOutRequest) (*proto.LogOutResponse, error) {
+	return s.Service.LogOut(ctx, r)
 }

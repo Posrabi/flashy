@@ -15,5 +15,6 @@ type Service interface {
     GetUser(ctx context.Context, r *proto.GetUserRequest) (*proto.GetUserResponse, error)
     UpdateUser(ctx context.Context, r *proto.UpdateUserRequest) (*proto.UpdateUserResponse, error)
     DeleteUser(ctx context.Context, r *proto.DeleteUserRequest) (*proto.DeleteUserResponse, error)
-    Authenticate(ctx context.Context, r *proto.AuthenticateRequest) (*proto.AuthenticateResponse, error)
+    LogIn(ctx context.Context, r *proto.LogInRequest) (*proto.LogInResponse, error)
+    LogOut(ctx context.Context, r *proto.LogOutRequest) (*proto.LogOutResponse, error)
 }
