@@ -59,8 +59,6 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 
 func grpcServe() error {
 	// env := os.Getenv("ENV")
-	//TODO: setup db
-	//TODO: setup main api conn
 
 	var logger kitlog.Logger
 	logger = kitlog.NewJSONLogger(kitlog.NewSyncWriter(os.Stderr))
@@ -70,12 +68,18 @@ func grpcServe() error {
 
 	var svcUsers api.Service
 
-	//svcUsers = api.NewService(api.NewMasterRepository(...), svcLogger)
-	svcUsers = api.NewLoggingService(kitlog.With(svcLogger, "service", "producer"), svcUsers)
+	sess, err := api.GetAccessToDB(api.ReadAndWrite)
+	if err != nil {
+		return err
+	}
+	defer sess.Close()
+
+	svcUsers = api.NewService(api.NewMasterRepository(sess), svcLogger)
+	svcUsers = api.NewLoggingService(kitlog.With(svcLogger, "service", "logger"), svcUsers)
 
 	var (
 		epsLogger   = kitlog.With(logger, "component", "endpoint")
-		epsSvcUsers = api.CreateEndpoints(svcUsers, kitlog.With(epsLogger, "service", "test"))
+		epsSvcUsers = api.CreateEndpoints(svcUsers, kitlog.With(epsLogger, "service", "users"))
 
 		grpcLogger   = kitlog.With(logger, "component", "grpc")
 		grpcSvcUsers = api.NewGrpcTransport(epsSvcUsers, grpcLogger)

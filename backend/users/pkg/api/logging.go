@@ -7,7 +7,7 @@ package api
 import (
 	"context"
 
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 	proto "github.com/Posrabi/flashy/protos/users"
 )
 
