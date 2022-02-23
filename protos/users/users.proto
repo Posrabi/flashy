@@ -58,6 +58,7 @@ message User {
   string email = 4;
   string phone_number = 5;
   string auth_token = 6;
+  string user_id = 7;
 }
 
 message CreateUserRequest {
@@ -83,12 +84,11 @@ message UpdateUserRequest {
 }
 
 message UpdateUserResponse {
-  User user = 1;
+  string response = 1;
 }
 
 message DeleteUserRequest {
-  string auth_token = 1;
-  string user_name = 2;
+  User user = 1;
 }
 
 message DeleteUserResponse {
@@ -106,7 +106,6 @@ message LogInResponse {
 }
 
 message LogOutRequest {
-  string auth_token = 1;
   string user_id = 2;
 }
 

@@ -1,0 +1,3 @@
+
+DROP TABLE IF EXISTS users.info;
+DROP KEYSPACE IF EXISTS users;

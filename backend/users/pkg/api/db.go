@@ -2,6 +2,7 @@ package api
 
 import (
 	"os"
+	"time"
 
 	"github.com/gocql/gocql"
 	"github.com/scylladb/gocqlx/v2"
@@ -22,9 +23,11 @@ const (
 
 const (
 	// TODO: find a way to proxy these addresses.
-	node1 string = "10.101.109.2"
-	node2 string = "10.98.165.168"
-	node3 string = "10.99.215.125"
+	node1      string = "10.101.109.2"
+	node2      string = "10.98.165.168"
+	node3      string = "10.99.215.125"
+	retries           = 5
+	maxRetries        = 10 * time.Second
 )
 
 func GetAccessToDB(level AccessType, space Keyspace) (gocqlx.Session, error) {
@@ -32,7 +35,13 @@ func GetAccessToDB(level AccessType, space Keyspace) (gocqlx.Session, error) {
 	cluster.Keyspace = string(space)
 	cluster.Consistency = gocql.Quorum
 	cluster.SerialConsistency = gocql.Serial
+	cluster.ProtoVersion = 4
 	cluster.PoolConfig.HostSelectionPolicy = gocql.TokenAwareHostPolicy(gocql.RoundRobinHostPolicy())
+	cluster.RetryPolicy = &gocql.ExponentialBackoffRetryPolicy{
+		Min:        time.Second,
+		Max:        maxRetries,
+		NumRetries: retries,
+	}
 
 	switch level {
 	case ReadOnly:

@@ -5,10 +5,10 @@ CREATE KEYSPACE IF NOT EXISTS users
 CREATE TABLE IF NOT EXISTS users.info (
   user_id uuid,
   user_name text,
-  hash_password text,
   name text,
   email text,
   phone_number text,
+  hash_password text,
   auth_token text,
   PRIMARY KEY ((user_id), user_name, name)
-) WITH CLUSTERING ORDER BY (name ASC)
+) WITH CLUSTERING ORDER BY (name DESC);
