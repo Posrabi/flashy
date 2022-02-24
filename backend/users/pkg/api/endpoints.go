@@ -14,6 +14,7 @@ import (
 	proto "github.com/Posrabi/flashy/protos/users"
 	logging "github.com/Posrabi/flashy/backend/middleware"
 	commonservice "github.com/Posrabi/flashy/backend/common/pkg/service"
+	commonauth "github.com/Posrabi/flashy/backend/common/pkg/auth"
 )
 
 // Endpoints struct
@@ -34,37 +35,49 @@ func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
 	{
 		CreateUserEP = makeCreateUserEndpoint(s, handler)
     CreateUserEP = commonservice.AddRequestToContext("CreateUser")(CreateUserEP)
+		CreateUserEP = commonauth.NewJWTParser()(CreateUserEP)
     CreateUserEP = logging.LoggingMiddleware(log.With(logger, "action", CreateUserEP))(CreateUserEP)
+
 	}
 	var GetUserEP endpoint.Endpoint
 	{
 		GetUserEP = makeGetUserEndpoint(s, handler)
     GetUserEP = commonservice.AddRequestToContext("GetUser")(GetUserEP)
+		GetUserEP = commonauth.NewJWTParser()(GetUserEP)
     GetUserEP = logging.LoggingMiddleware(log.With(logger, "action", GetUserEP))(GetUserEP)
+
 	}
 	var UpdateUserEP endpoint.Endpoint
 	{
 		UpdateUserEP = makeUpdateUserEndpoint(s, handler)
     UpdateUserEP = commonservice.AddRequestToContext("UpdateUser")(UpdateUserEP)
+		UpdateUserEP = commonauth.NewJWTParser()(UpdateUserEP)
     UpdateUserEP = logging.LoggingMiddleware(log.With(logger, "action", UpdateUserEP))(UpdateUserEP)
+
 	}
 	var DeleteUserEP endpoint.Endpoint
 	{
 		DeleteUserEP = makeDeleteUserEndpoint(s, handler)
     DeleteUserEP = commonservice.AddRequestToContext("DeleteUser")(DeleteUserEP)
+		DeleteUserEP = commonauth.NewJWTParser()(DeleteUserEP)
     DeleteUserEP = logging.LoggingMiddleware(log.With(logger, "action", DeleteUserEP))(DeleteUserEP)
+
 	}
 	var LogInEP endpoint.Endpoint
 	{
 		LogInEP = makeLogInEndpoint(s, handler)
     LogInEP = commonservice.AddRequestToContext("LogIn")(LogInEP)
+		LogInEP = commonauth.NewJWTParser()(LogInEP)
     LogInEP = logging.LoggingMiddleware(log.With(logger, "action", LogInEP))(LogInEP)
+
 	}
 	var LogOutEP endpoint.Endpoint
 	{
 		LogOutEP = makeLogOutEndpoint(s, handler)
     LogOutEP = commonservice.AddRequestToContext("LogOut")(LogOutEP)
+		LogOutEP = commonauth.NewJWTParser()(LogOutEP)
     LogOutEP = logging.LoggingMiddleware(log.With(logger, "action", LogOutEP))(LogOutEP)
+
 	}
 	return &Endpoints{
 	    CreateUserEP: CreateUserEP,
