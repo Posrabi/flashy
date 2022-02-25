@@ -1,14 +1,18 @@
 package api
 
 import (
-	"github.com/scylladb/gocqlx/v2"
+	"github.com/gocql/gocql"
 
 	"github.com/Posrabi/flashy/backend/users/pkg/repository"
+	sc "github.com/Posrabi/flashy/backend/users/pkg/scylla"
 )
 
 type masterRepository struct {
+	user repository.User
 }
 
-func NewMasterRepository(gocqlx.Session) repository.Master {
-	return &masterRepository{}
+func NewMasterRepository(sess *gocql.Session) repository.Master {
+	return &masterRepository{
+		user: sc.NewUserRepository(sess),
+	}
 }

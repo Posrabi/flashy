@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gocql/gocql"
-	"github.com/scylladb/gocqlx/v2"
 )
 
 type AccessType int
@@ -30,7 +29,7 @@ const (
 	maxRetries        = 10 * time.Second
 )
 
-func GetAccessToDB(level AccessType, space Keyspace) (gocqlx.Session, error) {
+func GetAccessToDB(level AccessType, space Keyspace) (*gocql.Session, error) {
 	cluster := gocql.NewCluster(node1, node2, node3)
 	cluster.Keyspace = string(space)
 	cluster.Consistency = gocql.Quorum
@@ -60,5 +59,5 @@ func GetAccessToDB(level AccessType, space Keyspace) (gocqlx.Session, error) {
 			Password: os.Getenv("READWRITE_PASS"),
 		}
 	}
-	return gocqlx.WrapSession(cluster.CreateSession())
+	return cluster.CreateSession()
 }

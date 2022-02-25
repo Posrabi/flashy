@@ -37,6 +37,10 @@ func (s *service) DeleteUser(ctx context.Context, r *proto.DeleteUserRequest) (*
 	return nil, nil
 }
 
-func (s *service) Authenticate(ctx context.Context, r *proto.AuthenticateRequest) (*proto.AuthenticateResponse, error) {
+func (s *service) LogIn(ctx context.Context, r *proto.LogInRequest) (*proto.LogInResponse, error) {
+	return nil, nil
+}
+
+func (s *service) LogOut(ctx context.Context, r *proto.LogOutRequest) (*proto.LogOutResponse, error) {
 	return nil, nil
 }

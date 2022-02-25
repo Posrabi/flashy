@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -64,4 +65,12 @@ func NewJWTParser() endpoint.Middleware {
 			return next(context.WithValue(ctx, kitjwt.JWTClaimsContextKey, token.Claims), req)
 		}
 	}
+}
+
+func GetUserIDFromCtx(ctx context.Context) (gocql.UUID, error) {
+	claims, ok := ctx.Value(kitjwt.JWTClaimsContextKey).(*IDClaims)
+	if !ok {
+		return gocql.UUID{}, errors.New("invalid or missing claims")
+	}
+	return claims.ID, nil
 }
