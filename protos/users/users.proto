@@ -66,13 +66,11 @@ message CreateUserRequest {
 }
 
 message CreateUserResponse {
-  string auth_token = 1;
-  string user_id = 2;
+  User user = 1;
 }
 
 message GetUserRequest {
-  string user_id = 1;
-  string auth_token = 2;
+  
 }
 
 message GetUserResponse {
@@ -88,7 +86,8 @@ message UpdateUserResponse {
 }
 
 message DeleteUserRequest {
-  User user = 1;
+  string user_id = 1;
+  string hash_password = 2;
 }
 
 message DeleteUserResponse {
@@ -101,8 +100,7 @@ message LogInRequest {
 }
 
 message LogInResponse {
-  string auth_token = 1;
-  string user_id = 2;
+  User user = 1;
 }
 
 message LogOutRequest {
@@ -110,5 +108,5 @@ message LogOutRequest {
 }
 
 message LogOutResponse {
-  string reponse = 1;
+  string response = 1;
 }

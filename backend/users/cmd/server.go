@@ -58,8 +58,6 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 }
 
 func grpcServe() error {
-	// env := os.Getenv("ENV")
-
 	var logger kitlog.Logger
 	logger = kitlog.NewJSONLogger(kitlog.NewSyncWriter(os.Stderr))
 	logger = kitlog.With(logger, "timestamp", kitlog.DefaultTimestampUTC)

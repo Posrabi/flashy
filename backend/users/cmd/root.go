@@ -16,8 +16,8 @@ func New() *cobra.Command {
 		Short: "users backend service",
 	}
 
-	app.AddCommand(newClientCmd())
 	app.AddCommand(newServerCmd())
+	app.AddCommand(newClientCmd())
 
 	return app
 }

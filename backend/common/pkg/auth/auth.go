@@ -67,10 +67,13 @@ func NewJWTParser() endpoint.Middleware {
 	}
 }
 
-func GetUserIDFromCtx(ctx context.Context) (gocql.UUID, error) {
+func ValidateUser(ctx context.Context, userID string) error {
 	claims, ok := ctx.Value(kitjwt.JWTClaimsContextKey).(*IDClaims)
 	if !ok {
-		return gocql.UUID{}, errors.New("invalid or missing claims")
+		return errors.New("missing claims")
 	}
-	return claims.ID, nil
+	if claims.ID.String() != userID {
+		return errors.New("authentication error")
+	}
+	return nil
 }

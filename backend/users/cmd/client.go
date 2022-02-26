@@ -16,14 +16,14 @@ import (
 
 func newClientCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "users",
-		Short: "users services",
+		Use:   "client",
+		Short: "client services",
 		Run:   runClientCmd,
 	}
 	return cmd
 }
 
-const address = "localhost:8080"
+const address = "localhost:8081" // main svc
 
 func runClientCmd(cmd *cobra.Command, args []string) {
 	err := godotenv.Load()
