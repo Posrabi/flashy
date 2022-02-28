@@ -23,6 +23,7 @@ var (
 	grpcAddr string
 )
 
+// TODO: break up all of these functions.
 func newServerCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "server",
@@ -72,7 +73,7 @@ func grpcServe() error {
 
 	var svcUsers api.Service
 
-	sess, err := api.GetAccessToDB(api.ReadAndWrite, api.DevDB)
+	sess, err := api.SetupDB(api.ReadAndWrite, api.DevDB)
 	if err != nil {
 		return err
 	}

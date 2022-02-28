@@ -36,7 +36,7 @@ func setupEnv() {
 }
 
 func setupDB() {
-	sess, err := api.GetAccessToDB(api.ReadAndWrite, api.DevDB)
+	sess, err := api.SetupDB(api.ReadAndWrite, api.DevDB)
 	if err != nil {
 		panic(err)
 	}

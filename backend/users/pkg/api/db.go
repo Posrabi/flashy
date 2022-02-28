@@ -36,15 +36,8 @@ const (
 	devNode    string = ""
 )
 
-func GetAccessToDB(level AccessType, dbType DBType) (*gocql.Session, error) {
-	var cluster *gocql.ClusterConfig
-	switch dbType {
-	case ProdDB:
-		cluster = gocql.NewCluster(node1, node2, node3)
-	case DevDB:
-		cluster = gocql.NewCluster(devNode)
-	}
-
+func SetupDB(level AccessType, dbType DBType) (*gocql.Session, error) {
+	cluster := createClusterConfig(dbType)
 	cluster.Keyspace = string(UsersSpace)
 	cluster.Consistency = gocql.Quorum
 	cluster.SerialConsistency = gocql.Serial
@@ -56,6 +49,21 @@ func GetAccessToDB(level AccessType, dbType DBType) (*gocql.Session, error) {
 		NumRetries: retries,
 	}
 
+	return setClusterCreds(cluster, level).CreateSession()
+}
+
+func createClusterConfig(dbType DBType) *gocql.ClusterConfig {
+	switch dbType {
+	case ProdDB:
+		return gocql.NewCluster(node1, node2, node3)
+	case DevDB:
+		return gocql.NewCluster(devNode)
+	default:
+		return nil
+	}
+}
+
+func setClusterCreds(cluster *gocql.ClusterConfig, level AccessType) *gocql.ClusterConfig {
 	switch level {
 	case ReadOnly:
 		cluster.Authenticator = gocql.PasswordAuthenticator{
@@ -73,5 +81,5 @@ func GetAccessToDB(level AccessType, dbType DBType) (*gocql.Session, error) {
 			Password: os.Getenv("READWRITE_PASS"),
 		}
 	}
-	return cluster.CreateSession()
+	return cluster
 }
