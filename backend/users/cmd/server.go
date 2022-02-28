@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	grpcAddr = "localhost:8080"
+	grpcAddr string
 )
 
 func newServerCmd() *cobra.Command {
@@ -36,6 +36,12 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 	err := godotenv.Load()
 	if err != nil && utils.FileExists(".env") {
 		log.Print("Error loading .env file")
+	}
+
+	var ok bool
+	grpcAddr, ok = os.LookupEnv("USER_ENDPOINT")
+	if !ok {
+		grpcAddr = "localhost:8080"
 	}
 
 	_, cancel := context.WithCancel(context.Background())
@@ -66,7 +72,7 @@ func grpcServe() error {
 
 	var svcUsers api.Service
 
-	sess, err := api.GetAccessToDB(api.ReadAndWrite, api.UsersSpace)
+	sess, err := api.GetAccessToDB(api.ReadAndWrite, api.DevDB)
 	if err != nil {
 		return err
 	}

@@ -9,11 +9,17 @@ import (
 
 type AccessType int
 type Keyspace string
+type DBType string
 
 const (
 	ReadOnly AccessType = iota + 1
 	WriteOnly
 	ReadAndWrite
+)
+
+const (
+	ProdDB DBType = "prod"
+	DevDB  DBType = "dev"
 )
 
 const (
@@ -27,11 +33,19 @@ const (
 	node3      string = "10.99.215.125"
 	retries           = 5
 	maxRetries        = 10 * time.Second
+	devNode    string = ""
 )
 
-func GetAccessToDB(level AccessType, space Keyspace) (*gocql.Session, error) {
-	cluster := gocql.NewCluster(node1, node2, node3)
-	cluster.Keyspace = string(space)
+func GetAccessToDB(level AccessType, dbType DBType) (*gocql.Session, error) {
+	var cluster *gocql.ClusterConfig
+	switch dbType {
+	case ProdDB:
+		cluster = gocql.NewCluster(node1, node2, node3)
+	case DevDB:
+		cluster = gocql.NewCluster(devNode)
+	}
+
+	cluster.Keyspace = string(UsersSpace)
 	cluster.Consistency = gocql.Quorum
 	cluster.SerialConsistency = gocql.Serial
 	cluster.ProtoVersion = 4
