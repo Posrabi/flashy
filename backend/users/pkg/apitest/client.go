@@ -5,7 +5,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	proto "github.com/Posrabi/flashy/protos/users"
+	proto "github.com/Posrabi/flashy/protos/users/proto"
 )
 
 var (

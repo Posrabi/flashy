@@ -32,8 +32,8 @@ num_tokens: 256
 # workdir: /var/lib/scylla
 
 # Directory where Scylla should store data on disk.
-# data_file_directories:
-#    - /var/lib/scylla/data
+data_file_directories:
+  - /var/lib/scylla/data
 
 # commit log.  when running on magnetic HDD, this should be a
 # separate spindle than the data directories.
@@ -85,7 +85,7 @@ seed_provider:
 # You _must_ change this if you want multiple nodes to be able to communicate!
 #
 # Setting listen_address to 0.0.0.0 is always wrong.
-listen_address: '192.168.1.201'
+listen_address: 192.168.1.201
 
 # Address to broadcast to other Scylla nodes
 # Leaving this blank will set it to the same value as listen_address
@@ -201,7 +201,7 @@ endpoint_snitch: GossipingPropertyFileSnitch
 # you can specify which should be chosen using rpc_interface_prefer_ipv6. If false the first ipv4
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
-rpc_address: '192.168.1.201'
+rpc_address: 192.168.1.201
 # rpc_interface: eth1
 # rpc_interface_prefer_ipv6: false
 

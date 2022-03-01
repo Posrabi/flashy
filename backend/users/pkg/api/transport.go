@@ -11,7 +11,7 @@ import (
   "github.com/go-kit/kit/auth/jwt"
   kitlog "github.com/go-kit/kit/log"
 
-	proto "github.com/Posrabi/flashy/protos/users"
+	proto "github.com/Posrabi/flashy/protos/users/proto"
 )
 
 type grpcServer struct {

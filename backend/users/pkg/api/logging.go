@@ -8,7 +8,7 @@ import (
 	"context"
 
 	"github.com/go-kit/log"
-	proto "github.com/Posrabi/flashy/protos/users"
+	proto "github.com/Posrabi/flashy/protos/users/proto"
 )
 
 type loggingService struct {

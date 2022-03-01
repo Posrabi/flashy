@@ -11,7 +11,7 @@ import (
 	"github.com/go-kit/kit/log"
   "github.com/go-kit/kit/transport"
 
-	proto "github.com/Posrabi/flashy/protos/users"
+	proto "github.com/Posrabi/flashy/protos/users/proto"
 	logging "github.com/Posrabi/flashy/backend/middleware"
 	commonservice "github.com/Posrabi/flashy/backend/common/pkg/service"
 	commonauth "github.com/Posrabi/flashy/backend/common/pkg/auth"

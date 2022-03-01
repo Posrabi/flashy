@@ -4,7 +4,7 @@ import (
 	"github.com/gocql/gocql"
 
 	"github.com/Posrabi/flashy/backend/users/pkg/entity"
-	proto "github.com/Posrabi/flashy/protos/users"
+	proto "github.com/Posrabi/flashy/protos/users/proto"
 )
 
 func ConvertToUserEntity(user *proto.User) *entity.User {

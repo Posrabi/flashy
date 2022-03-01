@@ -16,7 +16,7 @@ import (
 
 	"github.com/Posrabi/flashy/backend/common/pkg/utils"
 	"github.com/Posrabi/flashy/backend/users/pkg/api"
-	proto "github.com/Posrabi/flashy/protos/users"
+	proto "github.com/Posrabi/flashy/protos/users/proto"
 )
 
 var (

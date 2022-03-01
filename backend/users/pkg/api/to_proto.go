@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/Posrabi/flashy/backend/users/pkg/entity"
-	proto "github.com/Posrabi/flashy/protos/users"
+	proto "github.com/Posrabi/flashy/protos/users/proto"
 )
 
 func ConvertToUserProto(user *entity.User) *proto.User {

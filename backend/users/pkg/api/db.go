@@ -28,9 +28,9 @@ const (
 
 const (
 	// TODO: find a way to proxy these addresses.
-	node1      string = "10.101.109.2"
-	node2      string = "10.98.165.168"
-	node3      string = "10.99.215.125"
+	node1      string = "localhost:9042"
+	node2      string = "localhost:9043"
+	node3      string = "localhost:9044"
 	retries           = 5
 	maxRetries        = 10 * time.Second
 	devNode    string = ""

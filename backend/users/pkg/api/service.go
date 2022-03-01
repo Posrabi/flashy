@@ -6,7 +6,7 @@ import (
 	"github.com/go-kit/log"
 
 	"github.com/Posrabi/flashy/backend/users/pkg/repository"
-	proto "github.com/Posrabi/flashy/protos/users"
+	proto "github.com/Posrabi/flashy/protos/users/proto"
 )
 
 type service struct {

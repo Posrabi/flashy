@@ -7,7 +7,7 @@ package api
 import (
     "context"
 
-    proto "github.com/Posrabi/flashy/protos/users"
+    proto "github.com/Posrabi/flashy/protos/users/proto"
 )
 
 type Service interface {
