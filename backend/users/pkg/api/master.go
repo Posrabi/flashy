@@ -32,8 +32,8 @@ func (m *masterRepository) UpdateUser(ctx context.Context, user *entity.User) er
 	return m.user.UpdateUser(ctx, user)
 }
 
-func (m *masterRepository) DeleteUser(ctx context.Context, userID, hashPassword string) error {
-	return m.user.DeleteUser(ctx, userID, hashPassword)
+func (m *masterRepository) DeleteUser(ctx context.Context, userID string) error {
+	return m.user.DeleteUser(ctx, userID)
 }
 
 func (m *masterRepository) LogIn(ctx context.Context, username, hashPassword string) (*entity.User, error) {

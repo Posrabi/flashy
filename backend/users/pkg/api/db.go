@@ -33,7 +33,6 @@ const (
 	node3      string = "localhost:9044"
 	retries           = 5
 	maxRetries        = 10 * time.Second
-	devNode    string = ""
 )
 
 func SetupDB(level AccessType, dbType DBType) (*gocql.Session, error) {
@@ -57,7 +56,7 @@ func createClusterConfig(dbType DBType) *gocql.ClusterConfig {
 	case ProdDB:
 		return gocql.NewCluster(node1, node2, node3)
 	case DevDB:
-		return gocql.NewCluster(devNode)
+		return gocql.NewCluster(node1, node2, node3)
 	default:
 		return nil
 	}

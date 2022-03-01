@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-	"fmt"
 	"os"
 	"time"
 
@@ -18,28 +17,19 @@ type IDClaims struct {
 	jwt.RegisteredClaims
 }
 
-var IDSigningMethod jwt.SigningMethodHMAC
-
 const (
 	flashy   = "Flashy"
 	twoWeeks = 14
 )
 
-func (c *IDClaims) Valid() error {
-	if c.ID.String() == "" {
-		return fmt.Errorf("invalid token")
-	}
-	return nil
-}
-
 func GenerateToken(id gocql.UUID) (string, error) {
 	token := jwt.NewWithClaims(
-		&IDSigningMethod, &IDClaims{
+		jwt.SigningMethodHS256, IDClaims{
 			ID:               id,
 			RegisteredClaims: newRegisteredClaims(),
 		},
 	)
-	return token.SignedString(os.Getenv("ID_TOKEN"))
+	return token.SignedString([]byte(os.Getenv("ID_TOKEN")))
 }
 
 func newRegisteredClaims() jwt.RegisteredClaims {

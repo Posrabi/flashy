@@ -12,7 +12,7 @@ type Master interface {
 	CreateUser(ctx context.Context, user *entity.User) (*entity.User, error)
 	GetUser(ctx context.Context) (*entity.User, error)
 	UpdateUser(ctx context.Context, user *entity.User) error
-	DeleteUser(ctx context.Context, user_id, hash_password string) error
+	DeleteUser(ctx context.Context, userID string) error
 	LogIn(ctx context.Context, username, hashPassword string) (*entity.User, error)
 	LogOut(ctx context.Context, userID string) error
 }
