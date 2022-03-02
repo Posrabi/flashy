@@ -9,7 +9,7 @@ cur_dir=$PWD
 
 echo "Building DB"
 
-cd infra/scylla/dev && docker-compose build && docker-compose up -d &
+cd infra/scylla/dev && docker-compose down --volumes && docker-compose build && docker-compose up -d &
 pids+=( $! )
 
 for pid in ${pids[*]}; do
@@ -17,6 +17,9 @@ for pid in ${pids[*]}; do
 done
 
 unset pids
+
+ip=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' scylla-node1)
+echo $ip
 
 echo "Waiting for scylla to start, retrying every 30 seconds"
 while ! cqlsh -u cassandra -p cassandra -e "select rpc_address from system.local" ; do
@@ -37,14 +40,6 @@ for pid in ${pids[*]}; do
 done
 
 cd $cur_dir/backend/users/pkg/scylla && go test -v
-
-echo "Cleaning up"
-
-cd $cur_dir/infra/scylla/dev && docker-compose down --volumes & pids+=( $! )
-
-for pid in ${pids[*]}; do
-  wait $pid
-done
 
 end=`date +%s`
 

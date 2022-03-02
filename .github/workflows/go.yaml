@@ -27,7 +27,6 @@ jobs:
 
       - name: Install cqlsh
         run: |
-          sudo apt install python3-pip
           pip3 install cqlsh
           cqlsh --version
 
