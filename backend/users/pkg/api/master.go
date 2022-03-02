@@ -24,8 +24,8 @@ func (m *masterRepository) CreateUser(ctx context.Context, user *entity.User) (*
 	return m.user.CreateUser(ctx, user)
 }
 
-func (m *masterRepository) GetUser(ctx context.Context) (*entity.User, error) {
-	return m.user.GetUser(ctx)
+func (m *masterRepository) GetUser(ctx context.Context, userID string) (*entity.User, error) {
+	return m.user.GetUser(ctx, userID)
 }
 
 func (m *masterRepository) UpdateUser(ctx context.Context, user *entity.User) error {

@@ -13,7 +13,7 @@ var EndTime = time.Now().Add(10 * time.Minute).UTC() // nolint
 
 var TestUsers = []*entity.User{
 	{
-		UserID:       gocql.UUIDFromTime(time.Now()),
+		UserID:       gocql.UUID{},
 		Username:     "test_user",
 		Name:         "Test 1 2 3",
 		Email:        "test@example.com",
@@ -22,7 +22,7 @@ var TestUsers = []*entity.User{
 		AuthToken:    "supersecrettoken",
 	},
 	{
-		UserID:       gocql.UUIDFromTime(time.Now()),
+		UserID:       gocql.UUID{},
 		Username:     "test_user_2",
 		Name:         "1 2 3 Test",
 		Email:        "test2@example.com",

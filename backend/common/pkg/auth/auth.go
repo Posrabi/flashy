@@ -26,13 +26,13 @@ func GenerateToken(id gocql.UUID) (string, error) {
 	token := jwt.NewWithClaims(
 		jwt.SigningMethodHS256, IDClaims{
 			ID:               id,
-			RegisteredClaims: newRegisteredClaims(),
+			RegisteredClaims: NewRegisteredClaims(),
 		},
 	)
 	return token.SignedString([]byte(os.Getenv("ID_TOKEN")))
 }
 
-func newRegisteredClaims() jwt.RegisteredClaims {
+func NewRegisteredClaims() jwt.RegisteredClaims {
 	return jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().AddDate(0, 0, twoWeeks)),
 		Issuer:    flashy,
@@ -57,13 +57,45 @@ func NewJWTParser() endpoint.Middleware {
 	}
 }
 
-func ValidateUser(ctx context.Context, userID string) error {
+func ValidateUserFromClaims(ctx context.Context, userID string) error {
 	claims, ok := ctx.Value(kitjwt.JWTClaimsContextKey).(*IDClaims)
 	if !ok {
 		return errors.New("missing claims")
 	}
+
 	if claims.ID.String() != userID {
 		return errors.New("authentication error")
 	}
 	return nil
+}
+
+func ValidateUserFromToken(ctx context.Context, userID string) error {
+	token, err := parseTokenFromContext(ctx)
+	if err != nil {
+		return err
+	}
+	return validateUser(token, userID)
+}
+
+func validateUser(token *jwt.Token, userID string) error {
+	claims, ok := token.Claims.(*IDClaims)
+	if !ok {
+		return errors.New("missing claims")
+	}
+
+	if claims.ID.String() != userID {
+		return errors.New("authentication error")
+	}
+
+	return nil
+}
+func parseTokenFromContext(ctx context.Context) (*jwt.Token, error) {
+	tokenString, ok := ctx.Value(kitjwt.JWTContextKey).(string)
+	if !ok {
+		return nil, jwt.ErrTokenMalformed
+	}
+
+	return jwt.ParseWithClaims(tokenString, &IDClaims{}, func(t *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("ID_TOKEN")), nil
+	})
 }

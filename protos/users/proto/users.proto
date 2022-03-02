@@ -18,6 +18,7 @@ service UsersAPI {
   rpc GetUser(GetUserRequest) returns (GetUserResponse) {
     option (google.api.http) = {
       get: "/user/get/{user_name}"
+      body: "*"
     };
   }
 
@@ -70,7 +71,7 @@ message CreateUserResponse {
 }
 
 message GetUserRequest {
-  
+  string user_id = 1;
 }
 
 message GetUserResponse {
@@ -79,6 +80,8 @@ message GetUserResponse {
 
 message UpdateUserRequest {
   User user = 1;
+  string user_name = 2;
+  string hash_password = 3;
 }
 
 message UpdateUserResponse {

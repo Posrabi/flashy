@@ -1,5 +1,5 @@
 CREATE KEYSPACE IF NOT EXISTS users
-  WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 3}
+  WITH replication = {'class': 'NetworkTopologyStategy', 'replication_factor': 3}
   AND durable_writes = true;;
 
 CREATE TABLE IF NOT EXISTS users.info (
@@ -10,5 +10,9 @@ CREATE TABLE IF NOT EXISTS users.info (
   phone_number text,
   hash_password text,
   auth_token text,
-  PRIMARY KEY ((user_id), user_name, name)
-) WITH CLUSTERING ORDER BY (name DESC);
+  PRIMARY KEY (user_id)
+);
+
+CREATE INDEX user_name ON users.info (user_name);
+
+CREATE INDEX auth_token ON users.info ((user_id), auth_token);

@@ -2,10 +2,12 @@ package scylla
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/go-kit/kit/auth/jwt"
 	"github.com/gocql/gocql"
+	guuid "github.com/google/uuid"
 
 	"github.com/Posrabi/flashy/backend/common/pkg/auth"
 	"github.com/Posrabi/flashy/backend/users/pkg/entity"
@@ -24,38 +26,47 @@ func NewUserRepository(sess *gocql.Session) repository.User {
 
 // Consistency is Quorum by default.
 const (
-	tableName  = "users.info"
+	info       = "users.info"
 	allColumns = "user_id, user_name, name, email, phone_number, hash_password, auth_token"
 )
 
 // Create a brand new user, takes in a user without user_id and auth_token, returns a user with all values.
 func (u *userRepo) CreateUser(ctx context.Context, user *entity.User) (*entity.User, error) {
-	q := `INSERT INTO %s VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	userID, err := gocql.RandomUUID()
+	q := `INSERT INTO %s (%s) VALUES (?, ?, ?, ?, ?, ?, ?) IF NOT EXISTS`
+
+	var err error
+	user.UserID, err = gocql.RandomUUID()
 	if err != nil {
 		return nil, err
 	}
-	authToken, err := auth.GenerateToken(user.UserID)
+	user.AuthToken, err = auth.GenerateToken(user.UserID)
 	if err != nil {
 		return nil, err
 	}
-	if err := u.sess.Query(fmt.Sprintf(q, tableName), userID, user.Username, user.Name, user.Email,
-		user.PhoneNumber, user.HashPassword, authToken).WithContext(ctx).Exec(); err != nil {
+	args := []interface{}{user.UserID, user.Username, user.Name, user.Email,
+		user.PhoneNumber, user.HashPassword, user.AuthToken}
+
+	if err := u.sess.Query(fmt.Sprintf(q, info, allColumns), args...).Idempotent(true).WithContext(ctx).Exec(); err != nil {
 		return nil, err
 	}
-	user.UserID = userID
-	user.AuthToken = authToken
+
 	return user, nil
 }
 
-// GetUser to log in without user name and password. TODO: make this more secure.
-func (u *userRepo) GetUser(ctx context.Context) (*entity.User, error) {
-	q := `SELECT %s FROM %s WHERE auth_token = $1`
+// TODO: make this more secure.
+func (u *userRepo) GetUser(ctx context.Context, userID string) (*entity.User, error) {
+	q := `SELECT %s FROM %s WHERE user_id = ? AND auth_token = ?`
+
 	var user entity.User
-	if err := u.sess.Query(fmt.Sprintf(q, allColumns, tableName), ctx.Value(jwt.JWTContextKey)).WithContext(ctx).Idempotent(true).Scan(&user); err != nil {
-		return nil, err
-	}
-	if err := auth.ValidateUser(ctx, user.UserID.String()); err != nil {
+	if err := u.sess.Query(fmt.Sprintf(q, allColumns, info), userID, ctx.Value(jwt.JWTContextKey)).WithContext(ctx).Idempotent(true).Scan(
+		&user.UserID,
+		&user.Username,
+		&user.Name,
+		&user.Email,
+		&user.PhoneNumber,
+		&user.HashPassword,
+		&user.AuthToken,
+	); err != nil {
 		return nil, err
 	}
 
@@ -63,29 +74,56 @@ func (u *userRepo) GetUser(ctx context.Context) (*entity.User, error) {
 }
 
 func (u *userRepo) UpdateUser(ctx context.Context, user *entity.User) error {
-	q := `UPDATE %s SET (user_name = $1, name = $2, email = $3, phone_number = $4, hash_password = $5) 
-	WHERE user_id = $6`
-	return u.sess.Query(fmt.Sprintf(q, tableName), user.Username, user.Name, user.Email, user.PhoneNumber, user.HashPassword, user.UserID).
-		WithContext(ctx).Consistency(gocql.All).Idempotent(true).Exec()
+	q := `UPDATE %s SET user_name = ?, name = ?, email = ?, phone_number = ?, hash_password = ? WHERE user_id = ?`
+
+	if err := auth.ValidateUserFromToken(ctx, user.UserID.String()); err != nil {
+		return err
+	}
+
+	return u.sess.Query(fmt.Sprintf(q, info), user.Username, user.Name, user.Email,
+		user.PhoneNumber, user.HashPassword, user.UserID).Idempotent(true).WithContext(ctx).Exec()
 }
 
-func (u *userRepo) DeleteUser(ctx context.Context, userID, hashPassword string) error {
-	q := `DELETE FROM %s WHERE user_id = $1 AND hash_password = $2`
-	return u.sess.Query(fmt.Sprintf(q, allColumns), userID, hashPassword).WithContext(ctx).Consistency(gocql.One).Exec()
+func (u *userRepo) DeleteUser(ctx context.Context, userID string) error {
+	q := `DELETE FROM %s WHERE user_id = ?`
+
+	uuid, err := gocql.ParseUUID(userID)
+	if err != nil {
+		return err
+	}
+
+	return u.sess.Query(fmt.Sprintf(q, info), uuid).Exec()
 }
 
-// LogIn with username and password.
 func (u *userRepo) LogIn(ctx context.Context, username, hashPassword string) (*entity.User, error) {
-	q := `SELECT %s FROM %s WHERE user_name = $1 AND hash_password = $2`
+	q := `SELECT %s FROM %s WHERE user_name = ?`
+
 	var user entity.User
-	if err := u.sess.Query(fmt.Sprintf(q, allColumns, tableName), username, hashPassword).Consistency(gocql.One).Scan(&user); err != nil {
+	if err := u.sess.Query(fmt.Sprintf(q, allColumns, info), username).Consistency(gocql.All).WithContext(ctx).Scan(
+		&user.UserID,
+		&user.Username,
+		&user.Name,
+		&user.Email,
+		&user.PhoneNumber,
+		&user.HashPassword,
+		&user.AuthToken,
+	); err != nil {
 		return nil, err
 	}
+	if user.HashPassword != hashPassword {
+		return nil, errors.New("invalid password")
+	}
+
 	return &user, nil
 }
 
-// LogOut delete the auth token which is used to auto log in.
 func (u *userRepo) LogOut(ctx context.Context, userID string) error {
-	q := `DELETE auth_token FROM %s WHERE user_id = $1`
-	return u.sess.Query(fmt.Sprintf(q, tableName), userID).Consistency(gocql.All).Exec()
+	q := `UPDATE %s SET auth_token = ? WHERE user_id = ?`
+
+	uuid, err := gocql.ParseUUID(userID)
+	if err != nil {
+		return err
+	}
+
+	return u.sess.Query(fmt.Sprintf(q, info), guuid.New().String(), uuid).Consistency(gocql.All).WithContext(ctx).Exec()
 }

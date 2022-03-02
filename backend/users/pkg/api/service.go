@@ -32,7 +32,7 @@ func (s *service) CreateUser(ctx context.Context, r *proto.CreateUserRequest) (*
 }
 
 func (s *service) GetUser(ctx context.Context, r *proto.GetUserRequest) (*proto.GetUserResponse, error) {
-	user, err := s.repo.GetUser(ctx)
+	user, err := s.repo.GetUser(ctx, r.GetUserId())
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (s *service) UpdateUser(ctx context.Context, r *proto.UpdateUserRequest) (*
 }
 
 func (s *service) DeleteUser(ctx context.Context, r *proto.DeleteUserRequest) (*proto.DeleteUserResponse, error) {
-	if err := s.repo.DeleteUser(ctx, r.GetUserId(), r.GetHashPassword()); err != nil {
+	if err := s.repo.DeleteUser(ctx, r.GetUserId()); err != nil {
 		return nil, err
 	}
 	return &proto.DeleteUserResponse{
