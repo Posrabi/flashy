@@ -1,6 +1,6 @@
 name: Go build
 
-on: [push]
+on: push
 
 jobs:
   build:
@@ -14,9 +14,7 @@ jobs:
           go-version: 1.17
 
       - name: Build
-        uses: ./
         run: make
 
       - name: Test
-        uses: ./
         run: bash test.sh
