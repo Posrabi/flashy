@@ -58,7 +58,7 @@ func (u *userRepo) GetUser(ctx context.Context, userID string) (*entity.User, er
 	q := `SELECT %s FROM %s WHERE user_id = ? AND auth_token = ?`
 
 	var user entity.User
-	if err := u.sess.Query(fmt.Sprintf(q, allColumns, info), userID, ctx.Value(jwt.JWTContextKey)).WithContext(ctx).Idempotent(true).Scan(
+	if err := u.sess.Query(fmt.Sprintf(q, allColumns, info), userID, ctx.Value(jwt.JWTContextKey)).WithContext(ctx).Consistency(gocql.One).Idempotent(true).Scan(
 		&user.UserID,
 		&user.Username,
 		&user.Name,
@@ -99,7 +99,7 @@ func (u *userRepo) LogIn(ctx context.Context, username, hashPassword string) (*e
 	q := `SELECT %s FROM %s WHERE user_name = ?`
 
 	var user entity.User
-	if err := u.sess.Query(fmt.Sprintf(q, allColumns, info), username).Consistency(gocql.All).WithContext(ctx).Scan(
+	if err := u.sess.Query(fmt.Sprintf(q, allColumns, info), username).Consistency(gocql.One).WithContext(ctx).Scan(
 		&user.UserID,
 		&user.Username,
 		&user.Name,

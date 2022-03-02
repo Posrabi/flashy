@@ -1,6 +1,6 @@
 CREATE KEYSPACE IF NOT EXISTS users
-  WITH replication = {'class': 'NetworkTopologyStategy', 'replication_factor': 3}
-  AND durable_writes = true;;
+  WITH replication = {'class': 'NetworkTopologyStrategy', 'replication_factor': 3}
+  AND durable_writes = true;
 
 CREATE TABLE IF NOT EXISTS users.info (
   user_id uuid,
