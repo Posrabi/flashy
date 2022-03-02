@@ -79,13 +79,13 @@ seed_provider:
     parameters:
       # seeds is actually a comma-delimited list of addresses.
       # Ex: "<ip1>,<ip2>,<ip3>"
-      - seeds: '192.168.1.201'
+      - seeds: '172.10.1.201'
 
 # Address or interface to bind to and tell other Scylla nodes to connect to.
 # You _must_ change this if you want multiple nodes to be able to communicate!
 #
 # Setting listen_address to 0.0.0.0 is always wrong.
-listen_address: 192.168.1.201
+listen_address: 172.10.1.201
 
 # Address to broadcast to other Scylla nodes
 # Leaving this blank will set it to the same value as listen_address
@@ -201,7 +201,7 @@ endpoint_snitch: GossipingPropertyFileSnitch
 # you can specify which should be chosen using rpc_interface_prefer_ipv6. If false the first ipv4
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
-rpc_address: 192.168.1.201
+rpc_address: 172.10.1.201
 # rpc_interface: eth1
 # rpc_interface_prefer_ipv6: false
 
