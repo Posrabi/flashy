@@ -18,11 +18,8 @@ done
 
 unset pids
 
-ip=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' scylla-node1)
-echo $ip
-
 echo "Waiting for scylla to start, retrying every 30 seconds"
-while ! cqlsh $ip -u cassandra -p cassandra -e "select rpc_address from system.local" ; do
+while ! cqlsh -u cassandra -p cassandra -e "select rpc_address from system.local" ; do
     sleep 30
 done
 echo "Connected successfully"
@@ -31,7 +28,7 @@ cd db/migrations
 
 for i in *.up.cql; do
   echo "Running migration $i"
-  cqlsh $ip -u cassandra -p cassandra -f "$i" & 
+  cqlsh -u cassandra -p cassandra -f "$i" & 
   pids+=( $! )
 done
 
