@@ -28,6 +28,7 @@ const (
 
 const (
 	// TODO: find a way to proxy these addresses.
+	// TODO: clean up.
 	node1      string = "localhost:9042"
 	node2      string = "localhost:9043"
 	node3      string = "localhost:9044"

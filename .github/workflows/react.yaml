@@ -1,0 +1,16 @@
+name: React build
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install modules
+        run: cd frontend/Flashy && yarn
+
+      - name: Build
+        run: cd frontend/Flashy && yarn build

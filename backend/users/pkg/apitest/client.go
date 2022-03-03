@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	closeConn = make(chan int, 1)
-	UserAPI   proto.UsersAPIClient
+	sessCloseConn = make(chan bool, 1)
+	closeConn     = make(chan int, 1)
+	UserAPI       proto.UsersAPIClient
 )
 
 func SetupAPIConnection(t *testing.T) {

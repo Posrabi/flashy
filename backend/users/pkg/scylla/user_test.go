@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Posrabi/flashy/backend/users/pkg/api"
 	"github.com/Posrabi/flashy/backend/users/pkg/apitest"
 	"github.com/Posrabi/flashy/backend/users/pkg/entity"
 	"github.com/Posrabi/flashy/backend/users/pkg/repository"
@@ -43,19 +42,7 @@ func TestUserRepository(t *testing.T) {
 }
 
 func userSetup(t *testing.T) {
-	apitest.SetupEnv()
-
-	sess, err := api.SetupDB(api.ReadAndWrite, api.DevDB)
-	if err != nil {
-		panic(err)
-	}
-
-	closeSession := make(chan bool, 1)
-	go func() {
-		<-closeSession
-		sess.Close()
-		fmt.Println("session closed")
-	}()
+	sess := apitest.Setup(t)
 
 	apitest.UserRepo = scylla.NewUserRepository(sess)
 
@@ -63,7 +50,6 @@ func userSetup(t *testing.T) {
 		for _, user := range apitest.TestUsers {
 			require.NoError(t, apitest.UserRepo.DeleteUser(context.Background(), user.UserID.String()))
 		}
-		closeSession <- true
 	})
 
 }
