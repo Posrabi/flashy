@@ -76,7 +76,7 @@ func (u *userRepo) GetUser(ctx context.Context, userID string) (*entity.User, er
 func (u *userRepo) UpdateUser(ctx context.Context, user *entity.User) error {
 	q := `UPDATE %s SET user_name = ?, name = ?, email = ?, phone_number = ?, hash_password = ? WHERE user_id = ?`
 
-	if err := auth.ValidateUserFromToken(ctx, user.UserID.String()); err != nil {
+	if err := auth.ValidateUserFromClaims(ctx, user.UserID.String()); err != nil {
 		return err
 	}
 

@@ -8,9 +8,7 @@ import (
   "github.com/go-kit/kit/transport"
 
 	proto "%proto_path"
-	logging "github.com/Posrabi/flashy/backend/middleware"
 	"github.com/Posrabi/flashy/backend/middleware"
-	commonauth "github.com/Posrabi/flashy/backend/common/pkg/auth"
 )
 
 // Endpoints struct
@@ -28,10 +26,11 @@ func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
 	var %sEP endpoint.Endpoint
 	{
 		%sEP = make%sEndpoint(s, handler)
-    %sEP = middleware.AddRequestToContext("%s")(%sEP)
-		%sEP = commonauth.NewJWTParser()(%sEP)
-    %sEP = logging.LoggingMiddleware(log.With(logger, "action", %sEP))(%sEP)
-		
+    %sEP = middleware.LoggingMiddleware(log.With(logger, "action", %sEP))(%sEP)
+		%sEP = middleware.AddRequestToContext("%s")(%sEP)
+		if middleware.EndpointAuthMap["%s"] > middleware.AuthLevel_NONE {
+			%sEP = middleware.NewJWTParser()(%sEP)
+		}
 	}
 ]]
 	return &Endpoints{
