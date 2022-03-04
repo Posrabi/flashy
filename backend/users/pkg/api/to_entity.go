@@ -8,9 +8,9 @@ import (
 )
 
 func ConvertToUserEntity(user *proto.User) *entity.User {
-	uuid, err := gocql.ParseUUID(user.UserId)
+	uuid, err := gocql.ParseUUID(user.GetUserId())
 	if err != nil {
-		return nil
+		uuid = gocql.UUID{}
 	}
 	return &entity.User{
 		UserID:       uuid,
