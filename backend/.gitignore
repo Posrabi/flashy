@@ -1,0 +1,4 @@
+**/endpoints.go
+**/logging.go
+**/service_interface.go
+**/transport.go

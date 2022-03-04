@@ -9,6 +9,7 @@ option go_package = "github.com/Posrabi/flashy/protos/users";
 service UsersAPI {
 
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    // might need this if REST is required, for now, it does not provide any benefits.
     option (google.api.http) = {
       post: "/user/create",
       body: "*"
