@@ -74,7 +74,6 @@ func grpcServe() error {
 	defer sess.Close()
 
 	svcUsers = api.NewService(api.NewMasterRepository(sess), svcLogger)
-	svcUsers = api.NewLoggingService(kitlog.With(svcLogger, "service", "logger"), svcUsers)
 
 	var (
 		epsLogger   = kitlog.With(logger, "component", "endpoint")

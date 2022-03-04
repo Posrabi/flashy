@@ -3,7 +3,6 @@ package middleware
 import (
 	"context"
 
-	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/log"
 )
 
@@ -16,16 +15,6 @@ const (
 
 type ErrorLogHandler struct {
 	logger log.Logger
-}
-
-func AddRequestToContext(name string) endpoint.Middleware {
-	return func(next endpoint.Endpoint) endpoint.Endpoint {
-		return func(ctx context.Context, request interface{}) (interface{}, error) {
-			ctx = context.WithValue(ctx, endpointNameLabel, name)
-			ctx = context.WithValue(ctx, requestLabel, request)
-			return next(ctx, request)
-		}
-	}
 }
 
 func NewLogErrorHandler(logger log.Logger) *ErrorLogHandler {

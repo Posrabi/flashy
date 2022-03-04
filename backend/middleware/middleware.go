@@ -19,3 +19,13 @@ func LoggingMiddleware(logger log.Logger) endpoint.Middleware {
 		}
 	}
 }
+
+func AddRequestToContext(name string) endpoint.Middleware {
+	return func(next endpoint.Endpoint) endpoint.Endpoint {
+		return func(ctx context.Context, request interface{}) (interface{}, error) {
+			ctx = context.WithValue(ctx, endpointNameLabel, name)
+			ctx = context.WithValue(ctx, requestLabel, request)
+			return next(ctx, request)
+		}
+	}
+}
