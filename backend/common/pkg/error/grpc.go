@@ -70,10 +70,8 @@ func (e *GRPCError) GetGRPCCode() codes.Code { //nolint:gocyclo
 }
 
 func GetGRPCCode(err error) codes.Code {
-	if grpcErr, ok := err.(*GRPCError); ok { // nolint: errorlint
+	if grpcErr, ok := err.(*GRPCError); ok {
 		return grpcErr.GetGRPCCode()
 	}
 	return codes.Internal
 }
-
-// TODO: a lot more error handling and this is not right

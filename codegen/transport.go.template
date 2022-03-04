@@ -5,7 +5,7 @@ import (
 
 	grpctransport "github.com/go-kit/kit/transport/grpc"
   "github.com/go-kit/kit/auth/jwt"
-  kitlog "github.com/go-kit/log"
+  "github.com/go-kit/log"
 
 	proto "%proto_path"
 )
@@ -18,9 +18,9 @@ type grpcServer struct {
 }
 
 // NewGrpcTransport definition
-func NewGrpcTransport(ep *Endpoints, logger kitlog.Logger) proto.%service_nameAPIServer {
+func NewGrpcTransport(ep *Endpoints, logger log.Logger) proto.%service_nameAPIServer {
 	options := []grpctransport.ServerOption{
-		//grpctransport.ServerErrorHandler(logger),
+		//grpctransport.ServerErrorHandler(transport.NewLogErrorHandler(logger)),
     grpctransport.ServerBefore(jwt.GRPCToContext()),
 	}
 

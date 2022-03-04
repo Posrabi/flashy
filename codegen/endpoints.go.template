@@ -29,7 +29,7 @@ func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
     %sEP = middleware.LoggingMiddleware(log.With(logger, "action", %sEP))(%sEP)
 		%sEP = middleware.AddRequestToContext("%s")(%sEP)
 		if middleware.EndpointAuthMap["%s"] > middleware.AuthLevel_NONE {
-			%sEP = middleware.NewJWTParser()(%sEP)
+			%sEP = middleware.NewJWTParser(logger)(%sEP)
 		}
 	}
 ]]
