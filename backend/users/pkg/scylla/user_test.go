@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/Posrabi/flashy/backend/users/pkg/apitest"
+	"github.com/Posrabi/flashy/backend/apitest"
 	"github.com/Posrabi/flashy/backend/users/pkg/entity"
 	"github.com/Posrabi/flashy/backend/users/pkg/repository"
 	"github.com/Posrabi/flashy/backend/users/pkg/scylla"
