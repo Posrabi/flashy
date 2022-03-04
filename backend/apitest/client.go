@@ -15,11 +15,11 @@ var (
 )
 
 func SetupAPIConnection(t *testing.T) {
-	conn := setupAPI(t)
+	conn := setupAPIConn(t)
 	cleanUpAfterTest(t, conn)
 }
 
-func setupAPI(t *testing.T) *grpc.ClientConn {
+func setupAPIConn(t *testing.T) *grpc.ClientConn {
 	conn, err := grpc.Dial(UserEndpoint, grpc.WithInsecure())
 	if err != nil {
 		t.Logf("this test requires a live gRPC connection to the api - error: %s", err.Error())
