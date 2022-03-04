@@ -9,7 +9,7 @@ import (
 
 	proto "%proto_path"
 	logging "github.com/Posrabi/flashy/backend/middleware"
-	commonservice "github.com/Posrabi/flashy/backend/common/pkg/service"
+	"github.com/Posrabi/flashy/backend/middleware"
 	commonauth "github.com/Posrabi/flashy/backend/common/pkg/auth"
 )
 
@@ -22,13 +22,13 @@ type Endpoints struct {
 
 // CreateEndpoints creates endpoints
 func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
-    handler := commonservice.NewLogErrorHandler(logger)
+    handler := middleware.NewLogErrorHandler(logger)
 
 [[
 	var %sEP endpoint.Endpoint
 	{
 		%sEP = make%sEndpoint(s, handler)
-    %sEP = commonservice.AddRequestToContext("%s")(%sEP)
+    %sEP = middleware.AddRequestToContext("%s")(%sEP)
 		%sEP = commonauth.NewJWTParser()(%sEP)
     %sEP = logging.LoggingMiddleware(log.With(logger, "action", %sEP))(%sEP)
 		

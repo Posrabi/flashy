@@ -13,7 +13,7 @@ import (
 
 	proto "github.com/Posrabi/flashy/protos/users/proto"
 	logging "github.com/Posrabi/flashy/backend/middleware"
-	commonservice "github.com/Posrabi/flashy/backend/common/pkg/service"
+	"github.com/Posrabi/flashy/backend/middleware"
 	commonauth "github.com/Posrabi/flashy/backend/common/pkg/auth"
 )
 
@@ -29,12 +29,12 @@ type Endpoints struct {
 
 // CreateEndpoints creates endpoints
 func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
-    handler := commonservice.NewLogErrorHandler(logger)
+    handler := middleware.NewLogErrorHandler(logger)
 
 	var CreateUserEP endpoint.Endpoint
 	{
 		CreateUserEP = makeCreateUserEndpoint(s, handler)
-    CreateUserEP = commonservice.AddRequestToContext("CreateUser")(CreateUserEP)
+    CreateUserEP = middleware.AddRequestToContext("CreateUser")(CreateUserEP)
 		CreateUserEP = commonauth.NewJWTParser()(CreateUserEP)
     CreateUserEP = logging.LoggingMiddleware(log.With(logger, "action", CreateUserEP))(CreateUserEP)
 
@@ -42,7 +42,7 @@ func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
 	var GetUserEP endpoint.Endpoint
 	{
 		GetUserEP = makeGetUserEndpoint(s, handler)
-    GetUserEP = commonservice.AddRequestToContext("GetUser")(GetUserEP)
+    GetUserEP = middleware.AddRequestToContext("GetUser")(GetUserEP)
 		GetUserEP = commonauth.NewJWTParser()(GetUserEP)
     GetUserEP = logging.LoggingMiddleware(log.With(logger, "action", GetUserEP))(GetUserEP)
 
@@ -50,7 +50,7 @@ func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
 	var UpdateUserEP endpoint.Endpoint
 	{
 		UpdateUserEP = makeUpdateUserEndpoint(s, handler)
-    UpdateUserEP = commonservice.AddRequestToContext("UpdateUser")(UpdateUserEP)
+    UpdateUserEP = middleware.AddRequestToContext("UpdateUser")(UpdateUserEP)
 		UpdateUserEP = commonauth.NewJWTParser()(UpdateUserEP)
     UpdateUserEP = logging.LoggingMiddleware(log.With(logger, "action", UpdateUserEP))(UpdateUserEP)
 
@@ -58,7 +58,7 @@ func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
 	var DeleteUserEP endpoint.Endpoint
 	{
 		DeleteUserEP = makeDeleteUserEndpoint(s, handler)
-    DeleteUserEP = commonservice.AddRequestToContext("DeleteUser")(DeleteUserEP)
+    DeleteUserEP = middleware.AddRequestToContext("DeleteUser")(DeleteUserEP)
 		DeleteUserEP = commonauth.NewJWTParser()(DeleteUserEP)
     DeleteUserEP = logging.LoggingMiddleware(log.With(logger, "action", DeleteUserEP))(DeleteUserEP)
 
@@ -66,7 +66,7 @@ func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
 	var LogInEP endpoint.Endpoint
 	{
 		LogInEP = makeLogInEndpoint(s, handler)
-    LogInEP = commonservice.AddRequestToContext("LogIn")(LogInEP)
+    LogInEP = middleware.AddRequestToContext("LogIn")(LogInEP)
 		LogInEP = commonauth.NewJWTParser()(LogInEP)
     LogInEP = logging.LoggingMiddleware(log.With(logger, "action", LogInEP))(LogInEP)
 
@@ -74,7 +74,7 @@ func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
 	var LogOutEP endpoint.Endpoint
 	{
 		LogOutEP = makeLogOutEndpoint(s, handler)
-    LogOutEP = commonservice.AddRequestToContext("LogOut")(LogOutEP)
+    LogOutEP = middleware.AddRequestToContext("LogOut")(LogOutEP)
 		LogOutEP = commonauth.NewJWTParser()(LogOutEP)
     LogOutEP = logging.LoggingMiddleware(log.With(logger, "action", LogOutEP))(LogOutEP)
 
