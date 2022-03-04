@@ -81,8 +81,6 @@ message GetUserResponse {
 
 message UpdateUserRequest {
   User user = 1;
-  string user_name = 2;
-  string hash_password = 3;
 }
 
 message UpdateUserResponse {
