@@ -76,4 +76,4 @@ func GetGRPCCode(err error) codes.Code {
 	return codes.Internal
 }
 
-// TODO: a lot more error handling
+// TODO: a lot more error handling and this is not right

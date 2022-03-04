@@ -9,7 +9,7 @@ import (
 
 	grpctransport "github.com/go-kit/kit/transport/grpc"
   "github.com/go-kit/kit/auth/jwt"
-  kitlog "github.com/go-kit/kit/log"
+  kitlog "github.com/go-kit/log"
 
 	proto "github.com/Posrabi/flashy/protos/users/proto"
 )
@@ -27,8 +27,8 @@ type grpcServer struct {
 // NewGrpcTransport definition
 func NewGrpcTransport(ep *Endpoints, logger kitlog.Logger) proto.UsersAPIServer {
 	options := []grpctransport.ServerOption{
-		//grpctransport.ServerErrorLogger(logger),
-        grpctransport.ServerBefore(jwt.GRPCToContext()),
+		//grpctransport.ServerErrorHandler(logger),
+    grpctransport.ServerBefore(jwt.GRPCToContext()),
 	}
 
 	return &grpcServer{
