@@ -13,15 +13,15 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
+	port "github.com/Posrabi/flashy/backend/common/pkg/ports"
 	"github.com/Posrabi/flashy/backend/common/pkg/utils"
 	"github.com/Posrabi/flashy/backend/users/pkg/api"
 	proto "github.com/Posrabi/flashy/protos/users/proto"
 )
 
-var (
-	grpcAddr string
-)
+var addr = utils.GetNodeIPAddress() + port.USERS
 
 // TODO: break up all of these functions.
 func newServerCmd() *cobra.Command {
@@ -39,12 +39,6 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 		log.Print("Error loading .env file")
 	}
 
-	var ok bool
-	grpcAddr, ok = os.LookupEnv("USER_ENDPOINT")
-	if !ok {
-		grpcAddr = "localhost:8080"
-	}
-
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -54,11 +48,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 	go func() {
 		sig := <-sigs
 		cancel()
-		fmt.Println("Exiting server on ", sig)
+		fmt.Println(" Exiting server on ", sig)
 		os.Exit(0)
 	}()
 
-	fmt.Println("Starting gRPC server on", grpcAddr)
+	fmt.Println("Starting gRPC server on", addr)
 	if err := grpcServe(); err != nil {
 		log.Panic(err)
 	}
@@ -75,7 +69,7 @@ func grpcServe() error {
 
 	sess, err := api.SetupDB(api.ReadAndWrite, api.DevDB)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to set up DB %w", err)
 	}
 	defer sess.Close()
 
@@ -90,19 +84,21 @@ func grpcServe() error {
 		grpcSvcUsers = api.NewGrpcTransport(epsSvcUsers, grpcLogger)
 	)
 
-	listener, err := net.Listen("tcp", grpcAddr)
+	listener, err := net.Listen("tcp", addr)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to listen %w", err)
 	}
 
 	defer func() {
 		if err := listener.Close(); err != nil {
-			fmt.Printf("Failed to close %s: %v\n", grpcAddr, err)
+			fmt.Printf("Failed to close %s: %v\n", addr, err)
 		}
 	}()
 
 	grpcServer := grpc.NewServer()
 	proto.RegisterUsersAPIServer(grpcServer, grpcSvcUsers)
+
+	reflection.Register(grpcServer)
 
 	return grpcServer.Serve(listener)
 }
