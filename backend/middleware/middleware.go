@@ -6,6 +6,8 @@ import (
 
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/log"
+
+	gerr "github.com/Posrabi/flashy/backend/common/pkg/error"
 )
 
 type label string
@@ -13,7 +15,7 @@ type label string
 const (
 	endpointNameLabel label = "endpoint"
 	requestLabel      label = "request"
-	errLabel          label = "error"
+	errLabel          label = "err"
 )
 
 func LoggingMiddleware(logger log.Logger) endpoint.Middleware {
@@ -21,7 +23,7 @@ func LoggingMiddleware(logger log.Logger) endpoint.Middleware {
 		return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 			defer func(begin time.Time) {
 				request := ctx.Value(requestLabel)
-				_ = logger.Log("error", err, "took", time.Since(begin), "request", request)
+				_ = logger.Log(errLabel, gerr.LogErr(err), "took", time.Since(begin), "request", request)
 			}(time.Now())
 			return next(ctx, request)
 		}
