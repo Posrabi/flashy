@@ -1,6 +1,7 @@
 package gerr
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 	"strings"
@@ -9,7 +10,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const traceLimit = 64
+const (
+	traceStart = 4
+	traceEnd   = 64 // let's hope that it will never reach this lol.
+)
 
 var separator = ":\n\t"
 
@@ -17,18 +21,20 @@ type Error struct {
 	err        error
 	grpcCodes  codes.Code
 	stack      []uintptr
-	stackPrint string
+	stackPrint string // probably put this to err
+	query      string
+	args       []interface{}
 }
 
 func (e *Error) Error() string {
 	sb := new(strings.Builder)
 	e.writeTraceToSb(sb)
-	pad(sb, ": ")
-	sb.WriteString(e.err.Error())
+	pad(sb, ": ", e.err.Error())
 	if sb.Len() == 0 {
 		return "no error"
 	}
 	e.stackPrint = sb.String()
+	fmt.Println(e.stackPrint) // TODO: log this in middleware.
 	return e.err.Error()
 }
 
@@ -36,15 +42,28 @@ func (e *Error) GRPCStatus() *status.Status {
 	return status.New(e.grpcCodes, e.err.Error())
 }
 
+func LogErr(err error) string {
+	var customErr *Error
+	if ok := errors.As(err, &customErr); !ok {
+		return err.Error()
+	}
+
+	if customErr.query == "" {
+		return customErr.Error()
+	}
+
+	return fmt.Errorf("query %s failed with args %v, err: %w", customErr.query, customErr.args, customErr.err).Error()
+}
+
 // callers returns a list of ptr to the functions that called it.
 func callers() []uintptr {
-	pc := make([]uintptr, traceLimit)
+	pc := make([]uintptr, traceEnd)
 
-	n := runtime.Callers(0, pc)
+	n := runtime.Callers(traceStart, pc)
 	return pc[:n]
 }
 
-// frame returns the nth frame.
+// frame returns the nth frame, with frame 0 as the initial function call.
 func frame(callers []uintptr, n int) *runtime.Frame {
 	frames := runtime.CallersFrames(callers)
 	var f runtime.Frame
@@ -113,9 +132,11 @@ func (e *Error) writeTraceToSb(sb *strings.Builder) {
 	}
 }
 
-func pad(sb *strings.Builder, str string) {
+func pad(sb *strings.Builder, strs ...string) {
 	if sb.Len() == 0 {
 		return
 	}
-	sb.WriteString(str)
+	for _, str := range strs {
+		sb.WriteString(str)
+	}
 }

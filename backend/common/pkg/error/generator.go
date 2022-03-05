@@ -1,8 +1,6 @@
 package gerr
 
 import (
-	"fmt"
-
 	"google.golang.org/grpc/codes"
 )
 
@@ -16,8 +14,10 @@ func NewError(err error, errType codes.Code) error {
 
 func NewScError(err error, errType codes.Code, query string, args []interface{}) error {
 	return &Error{
-		err:       fmt.Errorf("query %s failed with args %v, error: %w", query, args, err),
+		err:       err,
 		grpcCodes: errType,
 		stack:     populateStack(),
+		query:     query,
+		args:      args,
 	}
 }
