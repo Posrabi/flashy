@@ -5,7 +5,6 @@ import (
 
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/log"
-  "github.com/go-kit/kit/transport"
 
 	proto "%proto_path"
 	"github.com/Posrabi/flashy/backend/middleware"
@@ -20,17 +19,15 @@ type Endpoints struct {
 
 // CreateEndpoints creates endpoints
 func CreateEndpoints(s Service, logger log.Logger) *Endpoints {
-    handler := middleware.NewLogErrorHandler(logger)
-
 [[
 	var %sEP endpoint.Endpoint
 	{
-		%sEP = make%sEndpoint(s, handler)
+		%sEP = make%sEndpoint(s)
 		if middleware.EndpointAuthMap["%s"] > middleware.AuthLevel_NONE {
 			%sEP = middleware.NewJWTParser(logger)(%sEP)
 		}
+		%sEP = middleware.LoggingMiddleware(log.With(logger, "action", "%s"))(%sEP)
 		%sEP = middleware.AddRequestToContext("%s")(%sEP)
-		%sEP = middleware.LoggingMiddleware(log.With(logger, "action", %sEP))(%sEP)
 	}
 ]]
 	return &Endpoints{
@@ -52,13 +49,10 @@ type %lResponse struct {
 ]]
 
 [[
-func make%sEndpoint(s Service, handler transport.ErrorHandler) endpoint.Endpoint {
+func make%sEndpoint(s Service) endpoint.Endpoint {
 	return func(ctx context.Context, r interface{}) (interface{}, error) {
 		req := r.(%lRequest)
 		resp, err := s.%s(ctx, req.Request)
-    if err != nil {
-      handler.Handle(ctx, err)
-    }
 		return %lResponse{Response: resp}, err
 	}
 }

@@ -8,13 +8,21 @@ import (
 	"github.com/go-kit/log"
 )
 
+type label string
+
+const (
+	endpointNameLabel label = "endpoint"
+	requestLabel      label = "request"
+	errLabel          label = "error"
+)
+
 func LoggingMiddleware(logger log.Logger) endpoint.Middleware {
 	return func(next endpoint.Endpoint) endpoint.Endpoint {
 		return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 			defer func(begin time.Time) {
-				_ = logger.Log("error", err, "took", time.Since(begin))
+				request := ctx.Value(requestLabel)
+				_ = logger.Log("error", err, "took", time.Since(begin), "request", request)
 			}(time.Now())
-
 			return next(ctx, request)
 		}
 	}
