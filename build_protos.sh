@@ -3,6 +3,10 @@ buf ls-files
 
 buf lint
 
-echo "[STARTING] - Generating go types"
+echo "-- installing ts-proto --"
+yarn
+
+echo "[STARTING] - Generating go and ts types"
 buf generate -o protos --template buf.gen.yaml
-echo "[FINISHED] - Generating go types"
+cp protos/users/proto/users.ts frontend/Flashy/src/types/flashy.ts
+echo "[FINISHED] - Generating go and ts types"
