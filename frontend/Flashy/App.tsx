@@ -18,7 +18,6 @@ import {
     useColorScheme,
     View,
 } from 'react-native';
-import { RecoilRoot } from 'recoil';
 
 import {
     Colors,
@@ -56,7 +55,7 @@ const Section: React.FC<{
     );
 };
 
-const App = () => {
+const App = (): JSX.Element => {
     const isDarkMode = useColorScheme() === 'dark';
 
     const backgroundStyle = {

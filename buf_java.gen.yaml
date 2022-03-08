@@ -2,5 +2,3 @@ version: v1beta1
 plugins:
   - name: java
     out: .
-  - name: kotlin
-    out: ./kotlin

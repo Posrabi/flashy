@@ -26,6 +26,8 @@ const (
 	UsersSpace Keyspace = "users"
 )
 
+// TODO: dynamically choose address
+
 const (
 	// TODO: find a way to proxy these addresses.
 	// TODO: clean up.
