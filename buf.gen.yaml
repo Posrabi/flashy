@@ -6,3 +6,10 @@ plugins:
   - name: go-grpc
     out: .
     opt: paths=source_relative
+  - name: ts-proto
+    out: .
+    path: ./node_modules/ts-proto/protoc-gen-ts_proto
+    opt:
+      - outputEncodeMethods=false,outputJsonMethods=false,outputClientImpl=false
+      - snakeToCamel=false
+    strategy: all
