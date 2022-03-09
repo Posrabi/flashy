@@ -1,7 +1,30 @@
-apply plugin: "com.android.application"
-
 import com.android.build.OutputFile
 
+plugins {
+    id 'com.google.protobuf' version '0.8.17'
+    id "com.android.application"
+}
+
+protobuf {
+  protoc {
+    artifact = "com.google.protobuf:protoc:3.19.2"
+  }
+  plugins {
+    grpc {
+      artifact = 'io.grpc:protoc-gen-grpc-java:1.44.1'
+    }
+  }
+  generateProtoTasks {
+    all().each { task ->
+      task.builtins {
+        java { option 'lite' }
+      }
+      task.plugins {
+        grpc { option 'lite' }
+      }
+    }
+  }
+}
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
  * and bundleReleaseJsAndAssets).
@@ -215,6 +238,11 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    implementation 'io.grpc:grpc-okhttp:1.44.1'
+    implementation 'io.grpc:grpc-protobuf-lite:1.44.1'
+    implementation 'io.grpc:grpc-stub:1.44.1'
+    compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
 }
 
 // Run this once to be able to run the application with BUCK
