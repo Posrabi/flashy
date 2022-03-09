@@ -2,54 +2,27 @@ syntax = "proto3";
 
 package users.proto;
 
-import "google/api/annotations.proto";
-
 option go_package = "github.com/Posrabi/flashy/protos/users";
 option java_package = "com.flashy";
 
 service UsersAPI {
 
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
-    // might need this if REST is required, for now, it does not provide any benefits.
-    option (google.api.http) = {
-      post: "/user/create",
-      body: "*"
-    };
   }
 
   rpc GetUser(GetUserRequest) returns (GetUserResponse) {
-    option (google.api.http) = {
-      get: "/user/get/{user_name}"
-      body: "*"
-    };
   }
 
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
-    option (google.api.http) = {
-      post: "/user/update",
-      body: "*"
-    };
   }
 
   rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
-    option (google.api.http) = {
-      post: "/user/delete",
-      body: "*"
-    };
   }
 
   rpc LogIn(LogInRequest) returns (LogInResponse) {
-    option (google.api.http) = {
-      post: "/user/login",
-      body: "*"
-    };
   }
 
   rpc LogOut(LogOutRequest) returns (LogOutResponse) {
-    option (google.api.http) = {
-      post: "/users/logout",
-      body: "*"
-    };
   }
 
 }
