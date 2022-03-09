@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package versus.proto;
+
 option go_package = "github.com/Posrabi/flashy/protos/versus";
 option java_package = "com.flashy";
 
