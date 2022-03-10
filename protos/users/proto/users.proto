@@ -4,6 +4,7 @@ package users.proto;
 
 option go_package = "github.com/Posrabi/flashy/protos/users";
 option java_package = "com.flashy";
+option java_outer_classname = "UsersProto";
 
 service UsersAPI {
 
