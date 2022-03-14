@@ -23,7 +23,11 @@ func LoggingMiddleware(logger log.Logger) endpoint.Middleware {
 		return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 			defer func(begin time.Time) {
 				request := ctx.Value(requestLabel)
-				_ = logger.Log(errLabel, gerr.LogErr(err), "took", time.Since(begin), "request", request)
+				if err != nil {
+					_ = logger.Log(errLabel, gerr.LogErr(err), "took", time.Since(begin), "request", request)
+				} else {
+					_ = logger.Log("took", time.Since(begin), "request", request)
+				}
 			}(time.Now())
 			return next(ctx, request)
 		}
