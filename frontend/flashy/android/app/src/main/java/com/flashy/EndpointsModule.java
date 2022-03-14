@@ -12,6 +12,9 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.Arguments;
 import io.grpc.StatusRuntimeException;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.ManagedChannel;
@@ -31,52 +34,46 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod 
-  public void CreateUser(UsersProto.CreateUserRequest request, Promise promise) {
+  public void CreateUser(ReadableMap request, Promise promise) {
     try {
-      UsersProto.CreateUserResponse resp = (UsersProto.CreateUserResponse) new GrpcCall(new CreateUserRunnable(request), channel).execute().get();
-      promise.resolve(resp);
+      UsersProto.CreateUserRequest req = UsersProto.CreateUserRequest.newBuilder()
+        .setUser(EntityConverter.convertJSUserToEntity(
+          request.hasKey("user") ? request.getMap("user") : Arguments.createMap()
+        ))
+        .build();
+      UsersProto.CreateUserResponse resp = (UsersProto.CreateUserResponse) new GrpcCall(new CreateUserRunnable(req), channel).execute()
+        .get();
+      promise.resolve(EntityConverter.convertUserEntityToJS(resp.getUser()));
     } catch (Exception e) {
       promise.reject(e);
     }
   }
 
   @ReactMethod
-  public void GetUser(UsersProto.GetUserRequest request, Promise promise) {
+  public void GetUser(ReadableMap request, Promise promise) {
     try {
-      UsersProto.GetUserResponse resp = (UsersProto.GetUserResponse) new GrpcCall(new GetUserRunnable(request), channel).execute().get();
-      promise.resolve(resp);
+      UsersProto.GetUserRequest req = UsersProto.GetUserRequest.newBuilder()
+        .setUserId(request.hasKey("user_id") ? request.getString("user_id") : "")
+        .build();
+      UsersProto.GetUserResponse resp = (UsersProto.GetUserResponse) new GrpcCall(new GetUserRunnable(req), channel).execute()
+        .get();
+      promise.resolve(EntityConverter.convertUserEntityToJS(resp.getUser()));
     } catch (Exception e) {
       promise.reject(e);
     }
   }
 
   @ReactMethod
-  public void UpdateUser(UsersProto.UpdateUserRequest request, Promise promise) {
+  public void UpdateUser(ReadableMap request, Promise promise) {
     try {
-      UsersProto.UpdateUserResponse resp = (UsersProto.UpdateUserResponse) new GrpcCall(new UpdateUserRunnable(request), channel).execute().get();
-      promise.resolve(resp);
-    } catch (Exception e) {
-      promise.reject(e);
-    }
-    
-  }
-
-  @ReactMethod
-  public void DeleteUser(UsersProto.DeleteUserRequest request, Promise promise) {
-    try {
-      UsersProto.DeleteUserResponse resp = (UsersProto.DeleteUserResponse) new GrpcCall(new DeleteUserRunnable(request), channel).execute().get();
-      promise.resolve(resp);
-    } catch (Exception e) {
-      promise.reject(e);
-    }
-    
-  }
-
-  @ReactMethod
-  public void LogIn(UsersProto.LogInRequest request, Promise promise) {
-    try {
-      UsersProto.LogInResponse resp = (UsersProto.LogInResponse) new GrpcCall(new LogInRunnable(request), channel).execute().get();
-      promise.resolve(resp);
+      UsersProto.UpdateUserRequest req = UsersProto.UpdateUserRequest.newBuilder()
+        .setUser(EntityConverter.convertJSUserToEntity(
+          request.hasKey("user") ? request.getMap("user") : Arguments.createMap()
+        ))
+        .build();
+      UsersProto.UpdateUserResponse resp = (UsersProto.UpdateUserResponse) new GrpcCall(new UpdateUserRunnable(req), channel).execute()
+        .get();
+      promise.resolve(resp.getResponse()); // String
     } catch (Exception e) {
       promise.reject(e);
     }
@@ -84,10 +81,46 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void LogIn(UsersProto.LogOutRequest request, Promise promise) {
+  public void DeleteUser(ReadableMap request, Promise promise) {
     try {
-      UsersProto.LogOutResponse resp = (UsersProto.LogOutResponse) new GrpcCall(new LogOutRunnable(request), channel).execute().get();
-      promise.resolve(resp);
+      UsersProto.DeleteUserRequest req = UsersProto.DeleteUserRequest.newBuilder()
+        .setUserId(request.hasKey("user_id") ? request.getString("user_id") : "")
+        .setHashPassword(request.hasKey("hash_password") ? request.getString("hash_password") : "")
+        .build();
+      UsersProto.DeleteUserResponse resp = (UsersProto.DeleteUserResponse) new GrpcCall(new DeleteUserRunnable(req), channel).execute()
+        .get();
+      promise.resolve(resp.getResponse()); // String
+    } catch (Exception e) {
+      promise.reject(e);
+    }
+    
+  }
+
+  @ReactMethod
+  public void LogIn(ReadableMap request, Promise promise) {
+    try {
+      UsersProto.LogInRequest req = UsersProto.LogInRequest.newBuilder()
+        .setUserName(request.hasKey("user_name") ? request.getString("user_name") : "")
+        .setHashPassword(request.hasKey("hash_password") ? request.getString("hash_password") : "")
+        .build();
+      UsersProto.LogInResponse resp = (UsersProto.LogInResponse) new GrpcCall(new LogInRunnable(req), channel).execute()
+        .get();
+      promise.resolve(EntityConverter.convertUserEntityToJS(resp.getUser()));
+    } catch (Exception e) {
+      promise.reject(e);
+    }
+    
+  }
+
+  @ReactMethod
+  public void LogOut(ReadableMap request, Promise promise) {
+    try {
+      UsersProto.LogOutRequest req = UsersProto.LogOutRequest.newBuilder()
+        .setUserId(request.hasKey("user_id") ? request.getString("user_id") : "")
+        .build();
+      UsersProto.LogOutResponse resp = (UsersProto.LogOutResponse) new GrpcCall(new LogOutRunnable(req), channel).execute()
+        .get();
+      promise.resolve(resp.getResponse());
     } catch (Exception e) {
       promise.reject(e);
     }
@@ -133,14 +166,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
       }
 
       private UsersProto.CreateUserResponse createUser(UsersProto.CreateUserRequest request, UsersAPIGrpc.UsersAPIBlockingStub blockingStub) throws StatusRuntimeException {
-        StringBuffer logs = new StringBuffer();
-        appendLogs(logs, "*** CreateUser: ");
-        UsersProto.CreateUserResponse response = blockingStub.createUser(request);
-        UsersProto.User user = response.getUser();
-        appendLogs(logs, "name={0} email={1} username={2} hashPassword={3} authToken={5} userID={6} phoneNumber={7}", 
-        user.getName(), user.getEmail(), user.getUserName(), user.getHashPassword(), user.getAuthToken(), user.getUserId(), user.getPhoneNumber());
-        System.out.println(logs.toString());
-        return response;
+        return blockingStub.createUser(request);
       }
     }
 
@@ -154,14 +180,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         return getUser(request, blockingStub);
       }
       private UsersProto.GetUserResponse getUser(UsersProto.GetUserRequest request, UsersAPIGrpc.UsersAPIBlockingStub blockingStub) throws StatusRuntimeException {
-        StringBuffer logs = new StringBuffer();
-        appendLogs(logs, "*** GetUser: ");
-        UsersProto.GetUserResponse response = blockingStub.getUser(request);
-        UsersProto.User user = response.getUser();
-        appendLogs(logs, "name={0} email={1} username={2} hashPassword={3} authToken={5} userID={6} phoneNumber={7}", 
-        user.getName(), user.getEmail(), user.getUserName(), user.getHashPassword(), user.getAuthToken(), user.getUserId(), user.getPhoneNumber());
-        System.out.println(logs.toString());
-        return response;
+        return blockingStub.getUser(request);
       }
   }
 
@@ -176,13 +195,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         return updateUser(request, blockingStub);
       }
       private UsersProto.UpdateUserResponse updateUser(UsersProto.UpdateUserRequest request, UsersAPIGrpc.UsersAPIBlockingStub blockingStub) throws StatusRuntimeException {
-        StringBuffer logs = new StringBuffer();
-        appendLogs(logs, "*** UpdateUser: ");
-        UsersProto.UpdateUserResponse response = blockingStub.updateUser(request);
-        String msg = response.getResponse();
-        appendLogs(logs, "status={0}", msg );
-        System.out.println(logs.toString());
-        return response;
+        return blockingStub.updateUser(request);
       }   
   }
 
@@ -197,13 +210,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         return deleteUser(request, blockingStub);
       }
       private UsersProto.DeleteUserResponse deleteUser(UsersProto.DeleteUserRequest request, UsersAPIGrpc.UsersAPIBlockingStub blockingStub) throws StatusRuntimeException {
-        StringBuffer logs = new StringBuffer();
-        appendLogs(logs, "*** DeleteUser: ");
-        UsersProto.DeleteUserResponse response = blockingStub.deleteUser(request);
-        String msg = response.getResponse();
-        appendLogs(logs, "status={0}", msg );
-        System.out.println(logs.toString());
-        return response;
+        return blockingStub.deleteUser(request);
       }
   }
 
@@ -218,14 +225,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         return logIn(request, blockingStub);
       }
       private UsersProto.LogInResponse logIn(UsersProto.LogInRequest request, UsersAPIGrpc.UsersAPIBlockingStub blockingStub) throws StatusRuntimeException {
-        StringBuffer logs = new StringBuffer();
-        appendLogs(logs, "*** GetUser: ");
-        UsersProto.LogInResponse response = blockingStub.logIn(request);
-        UsersProto.User user = response.getUser();
-        appendLogs(logs, "name={0} email={1} username={2} hashPassword={3} authToken={5} userID={6} phoneNumber={7}", 
-        user.getName(), user.getEmail(), user.getUserName(), user.getHashPassword(), user.getAuthToken(), user.getUserId(), user.getPhoneNumber());
-        System.out.println(logs.toString());
-        return response;
+        return blockingStub.logIn(request);
       }
   }
 
@@ -240,25 +240,36 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         return logOut(request, blockingStub);
       }
       private UsersProto.LogOutResponse logOut(UsersProto.LogOutRequest request, UsersAPIGrpc.UsersAPIBlockingStub blockingStub) throws StatusRuntimeException {
-        StringBuffer logs = new StringBuffer();
-        appendLogs(logs, "*** DeleteUser: ");
-        UsersProto.LogOutResponse response = blockingStub.logOut(request);
-        String msg = response.getResponse();
-        appendLogs(logs, "status={0}", msg );
-        System.out.println(logs.toString());
-        return response;
+        return blockingStub.logOut(request);
       }
       
   }
 
-  private static void appendLogs(StringBuffer logs, String msg, Object... params) {
-    if (params.length > 0) {
-      logs.append(MessageFormat.format(msg, params));
-    } else {
-      logs.append(msg);
-    }
-    logs.append("\n");
-  }
+  private static class EntityConverter {
+    protected static WritableMap convertUserEntityToJS(UsersProto.User user) {
+      WritableMap map = Arguments.createMap();
 
+      map.putString("user_id", user.getUserId());
+      map.putString("user_name", user.getUserName());
+      map.putString("hash_password", user.getHashPassword());
+      map.putString("name", user.getName());
+      map.putString("email", user.getEmail());
+      map.putString("auth_token", user.getAuthToken());
+      map.putString("phone_number", user.getPhoneNumber());
+
+      return map;
+    }
+    protected static UsersProto.User convertJSUserToEntity(ReadableMap user) {
+      return UsersProto.User.newBuilder()
+        .setUserName(user.hasKey("user_name") ? user.getString("user_name") : "")
+        .setAuthToken(user.hasKey("auth_token") ? user.getString("auth_token") : "")
+        .setEmail(user.hasKey("email") ? user.getString("email") : "")
+        .setHashPassword(user.hasKey("hash_password") ? user.getString("hash_password") : "")
+        .setPhoneNumber(user.hasKey("phone_number") ? user.getString("phone_number") : "")
+        .setUserId(user.hasKey("user_id") ? user.getString("user_id") : "")
+        .setName(user.hasKey("name") ? user.getString("name") : "")
+        .build();
+    }
+  }
 }
 
