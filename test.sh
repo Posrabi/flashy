@@ -25,7 +25,7 @@ done
 echo "Connected successfully"
 
 bash db_migrations.sh & 
-pids+= ( $! )
+pids+=( $! )
 
 for pid in ${pids[*]}; do
   wait $pid
