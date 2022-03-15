@@ -24,7 +24,12 @@ while ! cqlsh -u cassandra -p cassandra -e "select rpc_address from system.local
 done
 echo "Connected successfully"
 
-bash db_migrations.sh
+bash db_migrations.sh & 
+pids+= ( $! )
+
+for pid in ${pids[*]}; do
+  wait $pid
+done
 
 cd $cur_dir/backend/users/pkg/scylla && go test -v
 

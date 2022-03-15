@@ -11,6 +11,3 @@ jobs:
 
       - name: Install modules
         run: cd frontend/flashy && yarn
-
-      - name: Build
-        run: yarn build
