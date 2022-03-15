@@ -22,7 +22,7 @@ echo "Waiting for scylla to start, retrying every 30 seconds"
 
 while [ "$(docker exec scylla-node1 nodetool status | grep -c UN)" -ne 3 ] ; do
     sleep 30
-    echo " Retrying in 30 seconds"
+    echo "Retrying in 30 seconds"
 done
 echo "Connected successfully"
 
