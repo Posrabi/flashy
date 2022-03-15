@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/Posrabi/flashy/backend/apitest"
+	"github.com/Posrabi/flashy/backend/common/pkg/auth"
 	"github.com/Posrabi/flashy/backend/users/pkg/entity"
 	"github.com/Posrabi/flashy/backend/users/pkg/repository"
 	"github.com/Posrabi/flashy/backend/users/pkg/scylla"
@@ -86,7 +87,7 @@ func testUpdate_User(t *testing.T, repo repository.User) {
 		expected.PhoneNumber = "+16476666666"
 		expected.HashPassword = "newpassword"
 
-		ctx := context.WithValue(context.Background(), jwt.JWTContextKey, expected.AuthToken)
+		ctx := context.WithValue(context.Background(), jwt.JWTClaimsContextKey, auth.NewIDClaims(expected.UserID))
 		require.NoError(t, repo.UpdateUser(ctx, expected))
 
 		actual, err := repo.GetUser(ctx, expected.UserID.String())

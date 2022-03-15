@@ -79,7 +79,7 @@ func (u *userRepo) UpdateUser(ctx context.Context, user *entity.User) error {
 	q := `UPDATE %s SET user_name = ?, name = ?, email = ?, phone_number = ?, hash_password = ? WHERE user_id = ?`
 
 	if err := auth.ValidateUserFromClaims(ctx, user.UserID.String()); err != nil {
-		return gerr.NewError(err, codes.PermissionDenied)
+		return err
 	}
 
 	if err := u.sess.Query(fmt.Sprintf(q, info), user.Username, user.Name, user.Email,
