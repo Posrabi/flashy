@@ -13,4 +13,4 @@ jobs:
         run: cd frontend/flashy && yarn
 
       - name: Build
-        run: cd frontend/Flashy && yarn build
+        run: yarn build
