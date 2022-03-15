@@ -19,14 +19,10 @@ done
 unset pids
 
 echo "Waiting for scylla to start, retrying every 30 seconds"
-while ! cqlsh -u cassandra -p cassandra -e "select rpc_address from system.local" ; do
-    sleep 30
-done
-echo "Scylla has started"
 
 while [ "$(docker exec scylla-node1 nodetool status | grep -c UN)" -ne 3 ] ; do
     sleep 30
-    echo "Waiting for all 3 nodes to be online, retrying 30 seconds"
+    echo " Retrying in 30 seconds"
 done
 echo "Connected successfully"
 
