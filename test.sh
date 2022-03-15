@@ -20,18 +20,14 @@ unset pids
 
 echo "Waiting for scylla to start, retrying every 30 seconds"
 
-while [ "$(docker exec scylla-node1 nodetool status | grep -c UN)" -lt 2 ] ; do
+while [ "$(docker exec scylla-node1 nodetool status | grep -c UN)" -lt 3 ] ; do
     echo "Retrying in 30 seconds"
     sleep 30
 done
+
 echo "Connected successfully"
 
-bash db_migrations.sh & 
-pids+=( $! )
-
-for pid in ${pids[*]}; do
-  wait $pid
-done
+bash db_migrations.sh & wait $!
 
 cd $cur_dir/backend/users/pkg/scylla && go test -v
 

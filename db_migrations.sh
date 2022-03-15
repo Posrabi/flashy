@@ -5,6 +5,5 @@ cd db/migrations
 for i in *.up.cql; do
   echo "Running migration $i"
   cqlsh -u cassandra -p cassandra -f "$i" & 
-  pid=( $! )
-  wait $pid
+  wait $! 
 done
