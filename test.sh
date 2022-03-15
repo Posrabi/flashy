@@ -24,7 +24,7 @@ while ! cqlsh -u cassandra -p cassandra -e "select rpc_address from system.local
 done
 echo "Scylla has started"
 
-while [ "$(docker exec -it scylla-node1 nodetool status | grep -c UN)" -ne 3 ] ; do
+while [ "$(docker exec scylla-node1 nodetool status | grep -c UN)" -ne 3 ] ; do
     sleep 30
     echo "Waiting for all 3 nodes to be online, retrying 30 seconds"
 done
