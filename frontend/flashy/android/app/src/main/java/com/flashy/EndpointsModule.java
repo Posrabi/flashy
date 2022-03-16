@@ -255,7 +255,6 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
       map.putString("name", user.getName());
       map.putString("email", user.getEmail());
       map.putString("auth_token", user.getAuthToken());
-      map.putString("phone_number", user.getPhoneNumber());
 
       return map;
     }
@@ -265,7 +264,6 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .setAuthToken(user.hasKey("auth_token") ? user.getString("auth_token") : "")
         .setEmail(user.hasKey("email") ? user.getString("email") : "")
         .setHashPassword(user.hasKey("hash_password") ? user.getString("hash_password") : "")
-        .setPhoneNumber(user.hasKey("phone_number") ? user.getString("phone_number") : "")
         .setUserId(user.hasKey("user_id") ? user.getString("user_id") : "")
         .setName(user.hasKey("name") ? user.getString("name") : "")
         .build();

@@ -84,7 +84,6 @@ func testUpdate_User(t *testing.T, repo repository.User) {
 		expected.Email = "newemail@example.com"
 		expected.Name = "update user tester"
 		expected.Username = "new_user"
-		expected.PhoneNumber = "+16476666666"
 		expected.HashPassword = "newpassword"
 
 		ctx := context.WithValue(context.Background(), jwt.JWTClaimsContextKey, auth.NewIDClaims(expected.UserID))

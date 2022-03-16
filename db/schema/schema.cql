@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS users.info (
   user_name text,
   name text,
   email text,
-  phone_number text,
   hash_password text,
   auth_token text,
   PRIMARY KEY (user_id, auth_token)

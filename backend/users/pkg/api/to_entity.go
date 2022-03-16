@@ -17,7 +17,6 @@ func ConvertToUserEntity(user *proto.User) *entity.User {
 		Username:     user.GetUserName(),
 		Name:         user.GetName(),
 		Email:        user.GetEmail(),
-		PhoneNumber:  user.GetPhoneNumber(),
 		HashPassword: user.GetHashPassword(),
 		AuthToken:    user.GetAuthToken(),
 	}

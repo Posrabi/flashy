@@ -33,9 +33,8 @@ message User {
   string hash_password = 2;
   string name = 3;
   string email = 4;
-  string phone_number = 5;
-  string auth_token = 6;
-  string user_id = 7;
+  string auth_token = 5;
+  string user_id = 6;
 }
 
 message CreateUserRequest {

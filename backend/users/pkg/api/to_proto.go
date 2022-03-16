@@ -11,7 +11,6 @@ func ConvertToUserProto(user *entity.User) *proto.User {
 		HashPassword: user.HashPassword,
 		Name:         user.Name,
 		Email:        user.Email,
-		PhoneNumber:  user.PhoneNumber,
 		AuthToken:    user.AuthToken,
 		UserId:       user.UserID.String(),
 	}

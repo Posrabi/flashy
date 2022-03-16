@@ -6,7 +6,6 @@ export interface User {
   hash_password: string;
   name: string;
   email: string;
-  phone_number: string;
   auth_token: string;
   user_id: string;
 }

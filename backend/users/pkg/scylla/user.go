@@ -29,7 +29,7 @@ func NewUserRepository(sess *gocql.Session) repository.User {
 // Consistency is Quorum by default.
 const (
 	info       = "users.info"
-	allColumns = "user_id, user_name, name, email, phone_number, hash_password, auth_token"
+	allColumns = "user_id, user_name, name, email, hash_password, auth_token"
 )
 
 // Create a brand new user, takes in a user without user_id and auth_token, returns a user with all values.
@@ -46,7 +46,7 @@ func (u *userRepo) CreateUser(ctx context.Context, user *entity.User) (*entity.U
 		return nil, gerr.NewError(err, codes.Internal)
 	}
 	args := []interface{}{user.UserID, user.Username, user.Name, user.Email,
-		user.PhoneNumber, user.HashPassword, user.AuthToken}
+		user.HashPassword, user.AuthToken}
 
 	if err := u.sess.Query(fmt.Sprintf(q, info, allColumns), args...).Idempotent(true).WithContext(ctx).Exec(); err != nil {
 		return nil, gerr.NewScError(err, codes.AlreadyExists, fmt.Sprintf(q, info, allColumns), args)
@@ -65,7 +65,6 @@ func (u *userRepo) GetUser(ctx context.Context, userID string) (*entity.User, er
 		&user.Username,
 		&user.Name,
 		&user.Email,
-		&user.PhoneNumber,
 		&user.HashPassword,
 		&user.AuthToken,
 	); err != nil {
@@ -76,15 +75,15 @@ func (u *userRepo) GetUser(ctx context.Context, userID string) (*entity.User, er
 }
 
 func (u *userRepo) UpdateUser(ctx context.Context, user *entity.User) error {
-	q := `UPDATE %s SET user_name = ?, name = ?, email = ?, phone_number = ?, hash_password = ? WHERE user_id = ?`
+	q := `UPDATE %s SET user_name = ?, name = ?, email = ?, hash_password = ? WHERE user_id = ?`
 
 	if err := auth.ValidateUserFromClaims(ctx, user.UserID.String()); err != nil {
 		return err
 	}
 
 	if err := u.sess.Query(fmt.Sprintf(q, info), user.Username, user.Name, user.Email,
-		user.PhoneNumber, user.HashPassword, user.UserID).Idempotent(true).WithContext(ctx).Exec(); err != nil {
-		return gerr.NewScError(err, codes.Aborted, fmt.Sprintf(q, info), []interface{}{user.Username, user.Name, user.Email, user.PhoneNumber, user.HashPassword, user.UserID})
+		user.HashPassword, user.UserID).Idempotent(true).WithContext(ctx).Exec(); err != nil {
+		return gerr.NewScError(err, codes.Aborted, fmt.Sprintf(q, info), []interface{}{user.Username, user.Name, user.Email, user.HashPassword, user.UserID})
 	}
 	return nil
 }
@@ -112,7 +111,6 @@ func (u *userRepo) LogIn(ctx context.Context, username, hashPassword string) (*e
 		&user.Username,
 		&user.Name,
 		&user.Email,
-		&user.PhoneNumber,
 		&user.HashPassword,
 		&user.AuthToken,
 	); err != nil {
