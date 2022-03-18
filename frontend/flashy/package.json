@@ -10,8 +10,15 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@types/uuid": "^8.3.4",
     "react": "17.0.2",
-    "react-native": "0.67.3"
+    "react-dom": "^17.0.2",
+    "react-native": "0.67.3",
+    "react-native-fbsdk-next": "^7.3.3",
+    "react-query": "^3.34.16",
+    "recoil": "^0.6.1",
+    "recoil-outside": "^0.1.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

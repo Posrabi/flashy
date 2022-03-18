@@ -43,7 +43,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .build();
       UsersProto.CreateUserResponse resp = (UsersProto.CreateUserResponse) new GrpcCall(new CreateUserRunnable(req), channel).execute()
         .get();
-      promise.resolve(EntityConverter.convertUserEntityToJS(resp.getUser()));
+      promise.resolve(EntityConverter.createJSResponseWithUser(resp.getUser()));
     } catch (Exception e) {
       promise.reject(e);
     }
@@ -57,7 +57,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .build();
       UsersProto.GetUserResponse resp = (UsersProto.GetUserResponse) new GrpcCall(new GetUserRunnable(req), channel).execute()
         .get();
-      promise.resolve(EntityConverter.convertUserEntityToJS(resp.getUser()));
+      promise.resolve(EntityConverter.createJSResponseWithUser(resp.getUser()));
     } catch (Exception e) {
       promise.reject(e);
     }
@@ -73,7 +73,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .build();
       UsersProto.UpdateUserResponse resp = (UsersProto.UpdateUserResponse) new GrpcCall(new UpdateUserRunnable(req), channel).execute()
         .get();
-      promise.resolve(resp.getResponse()); // String
+      promise.resolve(EntityConverter.createJSResponseWithStatus(resp.getResponse()));
     } catch (Exception e) {
       promise.reject(e);
     }
@@ -89,7 +89,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .build();
       UsersProto.DeleteUserResponse resp = (UsersProto.DeleteUserResponse) new GrpcCall(new DeleteUserRunnable(req), channel).execute()
         .get();
-      promise.resolve(resp.getResponse()); // String
+      promise.resolve(EntityConverter.createJSResponseWithStatus(resp.getResponse()));
     } catch (Exception e) {
       promise.reject(e);
     }
@@ -105,7 +105,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .build();
       UsersProto.LogInResponse resp = (UsersProto.LogInResponse) new GrpcCall(new LogInRunnable(req), channel).execute()
         .get();
-      promise.resolve(EntityConverter.convertUserEntityToJS(resp.getUser()));
+      promise.resolve(EntityConverter.createJSResponseWithUser(resp.getUser()));
     } catch (Exception e) {
       promise.reject(e);
     }
@@ -120,7 +120,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .build();
       UsersProto.LogOutResponse resp = (UsersProto.LogOutResponse) new GrpcCall(new LogOutRunnable(req), channel).execute()
         .get();
-      promise.resolve(resp.getResponse());
+      promise.resolve(EntityConverter.createJSResponseWithStatus(resp.getResponse()));
     } catch (Exception e) {
       promise.reject(e);
     }
@@ -246,7 +246,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
   }
 
   private static class EntityConverter {
-    protected static WritableMap convertUserEntityToJS(UsersProto.User user) {
+    private static WritableMap convertUserEntityToJS(UsersProto.User user) {
       WritableMap map = Arguments.createMap();
 
       map.putString("user_id", user.getUserId());
@@ -258,7 +258,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
 
       return map;
     }
-    protected static UsersProto.User convertJSUserToEntity(ReadableMap user) {
+    private static UsersProto.User convertJSUserToEntity(ReadableMap user) {
       return UsersProto.User.newBuilder()
         .setUserName(user.hasKey("user_name") ? user.getString("user_name") : "")
         .setAuthToken(user.hasKey("auth_token") ? user.getString("auth_token") : "")
@@ -267,6 +267,21 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .setUserId(user.hasKey("user_id") ? user.getString("user_id") : "")
         .setName(user.hasKey("name") ? user.getString("name") : "")
         .build();
+    }
+    protected static WriteableMap createJSResponseWithUser(UsersProto.User user) {
+      WriteableMap jsUser = convertUserEntityToJS(user);
+      WritableMap resp = Arguments.createMap();
+
+      resp.putMap("user", jsUser);
+
+      return resp;
+    }
+    protected static WriteableMap createJSResponseWithStatus(String status) {
+      WriteableMap resp = Arguments.createMap();
+
+      resp.putString("response", status );
+
+      return resp;
     }
   }
 }
