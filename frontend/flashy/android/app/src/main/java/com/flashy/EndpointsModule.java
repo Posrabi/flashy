@@ -268,16 +268,16 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .setName(user.hasKey("name") ? user.getString("name") : "")
         .build();
     }
-    protected static WriteableMap createJSResponseWithUser(UsersProto.User user) {
-      WriteableMap jsUser = convertUserEntityToJS(user);
+    protected static WritableMap createJSResponseWithUser(UsersProto.User user) {
+      WritableMap jsUser = convertUserEntityToJS(user);
       WritableMap resp = Arguments.createMap();
 
       resp.putMap("user", jsUser);
 
       return resp;
     }
-    protected static WriteableMap createJSResponseWithStatus(String status) {
-      WriteableMap resp = Arguments.createMap();
+    protected static WritableMap createJSResponseWithStatus(String status) {
+      WritableMap resp = Arguments.createMap();
 
       resp.putString("response", status );
 

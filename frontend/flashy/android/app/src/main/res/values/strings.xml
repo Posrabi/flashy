@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">flashy</string>
+    <string name="facebook_app_id">1290093094818699</string>
+    <string name='facebook_client_token'>bf526507e8bb0c9b6b3fb976c3230c74</string>
 </resources>

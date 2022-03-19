@@ -6,6 +6,9 @@ import { StatusBar } from 'react-native';
 import { useRecoilValue } from 'recoil';
 import { Navigation } from './nav';
 import { themeColorState } from './state/theme';
+import { Settings } from 'react-native-fbsdk-next';
+
+Settings.initializeSDK();
 
 const App = () => {
     const themeColor = useRecoilValue(themeColorState);
