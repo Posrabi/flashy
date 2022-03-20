@@ -34,7 +34,7 @@ const (
 
 // Create a brand new user, takes in a user without user_id and auth_token, returns a user with all values.
 func (u *userRepo) CreateUser(ctx context.Context, user *entity.User) (*entity.User, error) {
-	q := `INSERT INTO %s (%s) VALUES (?, ?, ?, ?, ?, ?, ?) IF NOT EXISTS`
+	q := `INSERT INTO %s (%s) VALUES (?, ?, ?, ?, ?, ?) IF NOT EXISTS`
 
 	var err error
 	user.UserID, err = gocql.RandomUUID()
