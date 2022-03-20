@@ -243,7 +243,7 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-    
+    implementation 'com.facebook.android:facebook-android-sdk:latest.release'
     implementation 'com.google.protobuf:protobuf-javalite:3.19.4'
     implementation 'io.grpc:grpc-stub:1.45.0'
     implementation 'io.grpc:grpc-okhttp:1.45.0'

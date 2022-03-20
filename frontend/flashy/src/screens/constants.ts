@@ -3,4 +3,5 @@ export enum SCREENS {
     LOG_IN = 'LogIn',
     LEARN = 'Learn',
     SETTINGS = 'Settings',
+    SIGN_UP = 'SignUp',
 }
