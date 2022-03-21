@@ -60,7 +60,6 @@ export const LogIn = (): JSX.Element => {
                 },
                 (error) => {
                     setState(false);
-                    console.log('Log in failed with error: ');
                     console.error(error);
                 }
             );
@@ -96,7 +95,7 @@ export const LogIn = (): JSX.Element => {
             />
             {!state && (
                 <Text style={[styles.caption, styles.error]} status="danger">
-                    An error has occurred, please try again.
+                    An error has occurred, please try again later.
                 </Text>
             )}
             <Button status="info" style={[styles.fields]} onPress={onLogIn}>

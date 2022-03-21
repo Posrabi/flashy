@@ -43,6 +43,9 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .build();
       UsersProto.CreateUserResponse resp = (UsersProto.CreateUserResponse) new GrpcCall(new CreateUserRunnable(req), channel).execute()
         .get();
+      if (resp == null) {
+        promise.reject(new NullPointerException("no response"));
+      }
       promise.resolve(EntityConverter.createJSResponseWithUser(resp.getUser()));
     } catch (Exception e) {
       promise.reject(e);
@@ -57,6 +60,9 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .build();
       UsersProto.GetUserResponse resp = (UsersProto.GetUserResponse) new GrpcCall(new GetUserRunnable(req), channel).execute()
         .get();
+      if (resp == null) {
+        promise.reject(new NullPointerException("no response"));
+      }
       promise.resolve(EntityConverter.createJSResponseWithUser(resp.getUser()));
     } catch (Exception e) {
       promise.reject(e);
@@ -73,6 +79,9 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .build();
       UsersProto.UpdateUserResponse resp = (UsersProto.UpdateUserResponse) new GrpcCall(new UpdateUserRunnable(req), channel).execute()
         .get();
+      if (resp == null) {
+        promise.reject(new NullPointerException("no response"));
+      }
       promise.resolve(EntityConverter.createJSResponseWithStatus(resp.getResponse()));
     } catch (Exception e) {
       promise.reject(e);
@@ -89,6 +98,9 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .build();
       UsersProto.DeleteUserResponse resp = (UsersProto.DeleteUserResponse) new GrpcCall(new DeleteUserRunnable(req), channel).execute()
         .get();
+      if (resp == null) {
+        promise.reject(new NullPointerException("no response"));
+      }
       promise.resolve(EntityConverter.createJSResponseWithStatus(resp.getResponse()));
     } catch (Exception e) {
       promise.reject(e);
@@ -105,6 +117,9 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .build();
       UsersProto.LogInResponse resp = (UsersProto.LogInResponse) new GrpcCall(new LogInRunnable(req), channel).execute()
         .get();
+      if (resp == null) {
+        promise.reject(new NullPointerException("no response"));
+      }
       promise.resolve(EntityConverter.createJSResponseWithUser(resp.getUser()));
     } catch (Exception e) {
       promise.reject(e);
@@ -120,6 +135,9 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .build();
       UsersProto.LogOutResponse resp = (UsersProto.LogOutResponse) new GrpcCall(new LogOutRunnable(req), channel).execute()
         .get();
+      if (resp == null) {
+        promise.reject(new NullPointerException("no response"));
+      }
       promise.resolve(EntityConverter.createJSResponseWithStatus(resp.getResponse()));
     } catch (Exception e) {
       promise.reject(e);

@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Button, Input, Icon } from '@ui-kitten/components';
+import { Button, Input, Icon, Text } from '@ui-kitten/components';
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -93,6 +93,11 @@ export const SignUp = (): JSX.Element => {
                 onPress={onRegister}>
                 Register
             </Button>
+            {!status && (
+                <Text style={[styles.fields, styles.errorText]} status="danger">
+                    An error has occurred, please try again later.
+                </Text>
+            )}
         </SafeAreaView>
     );
 };
@@ -100,5 +105,8 @@ export const SignUp = (): JSX.Element => {
 const styles = StyleSheet.create({
     fields: {
         margin: 10,
+    },
+    errorText: {
+        textAlign: 'center',
     },
 });
