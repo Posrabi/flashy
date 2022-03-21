@@ -23,7 +23,11 @@ export const Navigation = (): JSX.Element => {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen name={SCREENS.SIGN_UP} component={SignUp} />
-                <Stack.Screen name={SCREENS.HOME} component={Home} />
+                <Stack.Screen
+                    name={SCREENS.HOME}
+                    component={Home}
+                    options={{ headerShown: false }}
+                />
                 <Stack.Screen name={SCREENS.LEARN} component={Learn} />
                 <Stack.Screen name={SCREENS.SETTINGS} component={Settings} />
             </Stack.Navigator>

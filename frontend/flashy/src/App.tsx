@@ -14,7 +14,7 @@ const App = () => {
     const themeColor = useRecoilValue(themeColorState);
     return (
         <>
-            <StatusBar hidden />
+            <StatusBar animated={true} />
             <IconRegistry icons={EvaIconsPack} />
             <ApplicationProvider {...eva} theme={themeColor}>
                 <Navigation />

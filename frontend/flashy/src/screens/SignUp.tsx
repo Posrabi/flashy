@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Button, Input, Icon, Text } from '@ui-kitten/components';
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native';
 import { useSetRecoilState } from 'recoil';
 import EndpointsModule from '../api/users';
 import { StackParams } from '../nav';
@@ -43,7 +43,7 @@ export const SignUp = (): JSX.Element => {
             const { user } = await EndpointsModule.CreateUser(req);
             if (user) {
                 setUser(user);
-                nav.navigate(SCREENS.HOME);
+                // nav.navigate(SCREENS.HOME);
             } else {
                 setStatus(false);
                 throw new Error('create user endpoint does not return user');
@@ -91,7 +91,7 @@ export const SignUp = (): JSX.Element => {
                 status={status ? 'primary' : 'danger'}
                 style={styles.fields}
                 onPress={onRegister}>
-                Register
+                Register Now
             </Button>
             {!status && (
                 <Text style={[styles.fields, styles.errorText]} status="danger">
@@ -105,6 +105,7 @@ export const SignUp = (): JSX.Element => {
 const styles = StyleSheet.create({
     fields: {
         margin: 10,
+        lineHeight: 30,
     },
     errorText: {
         textAlign: 'center',

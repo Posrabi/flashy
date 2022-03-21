@@ -2,10 +2,10 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Button, Icon, Input, Text } from '@ui-kitten/components';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
+import { StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { LoginManager } from 'react-native-fbsdk-next';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSetRecoilState } from 'recoil';
+import { defaultUser } from '../api/defaults';
 import EndpointsModule from '../api/users';
 import { StackParams } from '../nav';
 import { currentUser } from '../state/user';
@@ -39,6 +39,7 @@ export const LogIn = (): JSX.Element => {
                 return;
             }
             setUser(user);
+            nav.navigate(SCREENS.HOME);
         } catch (e) {
             setState(false);
             console.error(e);
@@ -73,7 +74,6 @@ export const LogIn = (): JSX.Element => {
 
     return (
         <SafeAreaView style={styles.layout}>
-            <StatusBar animated={true} hidden={false} />
             <Text style={styles.fieldsText}>Sign in with username and password</Text>
             <Input
                 placeholder="Username"
@@ -101,7 +101,14 @@ export const LogIn = (): JSX.Element => {
             <Button status="info" style={[styles.fields]} onPress={onLogIn}>
                 Sign In
             </Button>
-            <Button style={[styles.fields]} status="info" appearance="outline">
+            <Button
+                style={[styles.fields]}
+                status="info"
+                appearance="outline"
+                onPress={() => {
+                    setUser(defaultUser());
+                    nav.navigate(SCREENS.HOME);
+                }}>
                 Start without an account
             </Button>
             <Text style={styles.fieldsText}>Or</Text>
