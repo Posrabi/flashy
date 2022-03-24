@@ -11,7 +11,7 @@ import { StackParams } from '../nav';
 import { currentUser } from '../state/user';
 import { SCREENS } from './constants';
 
-type LogInScreenProp = NativeStackNavigationProp<StackParams, SCREENS.LOG_IN>;
+type LogInScreenProps = NativeStackNavigationProp<StackParams, SCREENS.LOG_IN>;
 
 export const LogIn = (): JSX.Element => {
     const [username, setUsername] = React.useState('');
@@ -19,7 +19,7 @@ export const LogIn = (): JSX.Element => {
     const [secureTextEntry, setSecureTextEntry] = React.useState(true);
     const [state, setState] = React.useState(true);
     const setUser = useSetRecoilState(currentUser);
-    const nav = useNavigation<LogInScreenProp>();
+    const nav = useNavigation<LogInScreenProps>();
 
     const EyeIcon = (props: any): JSX.Element => (
         <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)}>

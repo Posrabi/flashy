@@ -28,7 +28,11 @@ export const Navigation = (): JSX.Element => {
                     component={Home}
                     options={{ headerShown: false }}
                 />
-                <Stack.Screen name={SCREENS.LEARN} component={Learn} />
+                <Stack.Screen
+                    name={SCREENS.LEARN}
+                    component={Learn}
+                    options={{ headerShown: false }}
+                />
                 <Stack.Screen name={SCREENS.SETTINGS} component={Settings} />
             </Stack.Navigator>
         </NavigationContainer>
