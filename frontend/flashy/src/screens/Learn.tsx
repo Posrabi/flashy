@@ -58,37 +58,40 @@ export const Learn = (): JSX.Element => {
         [cardCount]
     );
 
-    const HelpModal = (props: HelpModalProps): JSX.Element => {
+    const HelpModal = useRef((props: HelpModalProps): JSX.Element => {
         if (!props.isVisible) return <></>;
         return (
-            <View style={styles.helpModalContainer}>
-                <View style={styles.helpModal}>
-                    <TouchableOpacity style={styles.helpClose} onPress={() => setHelp(false)}>
+            <View style={styles.modalContainer}>
+                <View style={styles.modal}>
+                    <TouchableOpacity style={styles.modalClose} onPress={() => setHelp(false)}>
                         <Icon name="close-circle-outline" width={25} height={25} fill="black" />
                     </TouchableOpacity>
-                    <Text style={styles.helpText}>
+                    <Text style={styles.modalText}>
                         Type into the bottom text box the word you want to learn, then the top text
-                        box the sentence. To move on to the next word, swipe the card up.
+                        box the sentence.{'\n\n'}To move on to the next word, swipe the card up.
                     </Text>
                 </View>
             </View>
         );
-    };
+    }).current;
 
-    const BackModal = (props: BackModalProps): JSX.Element => {
+    const BackModal = useRef((props: BackModalProps): JSX.Element => {
         if (!props.isVisible) return <></>;
         return (
-            <View style={styles.helpModalContainer}>
-                <View style={styles.helpModal}>
-                    <Text style={styles.helpText}>
-                        Are you sure you want to go back? All your progress so far will be lost.
+            <View style={styles.modalContainer}>
+                <View style={styles.modal}>
+                    <Text style={styles.modalText}>
+                        Are you sure you want to go back? All of your progress will be lost.
                     </Text>
-                    <View style={styles.backConfirmContainer}>
+                    <View style={styles.modalButtonContainer}>
                         <Button
                             style={styles.backConfirm}
                             status="danger"
                             children={() => <Text style={styles.backConfirmText}>Yes</Text>}
-                            onPress={() => nav.goBack()}
+                            onPress={() => {
+                                nav.goBack();
+                                setCardCount(1);
+                            }}
                         />
                         <Button
                             style={styles.backConfirm}
@@ -99,7 +102,34 @@ export const Learn = (): JSX.Element => {
                 </View>
             </View>
         );
-    };
+    }).current;
+
+    const CongratsModal = useRef((): JSX.Element => {
+        return (
+            <View style={styles.modalContainer}>
+                <View style={styles.modal}>
+                    <Text style={styles.modalText}>
+                        Congratulations!{'\n\n'}You've just completed {cardCount} cards.
+                    </Text>
+                    <View style={styles.modalButtonContainer}>
+                        <Button
+                            style={{ width: 150 }}
+                            children={() => (
+                                <Text style={styles.backConfirmText} status="info">
+                                    Return to home
+                                </Text>
+                            )}
+                            onPress={() => {
+                                nav.goBack();
+                                setCardCount(1);
+                            }}
+                        />
+                    </View>
+                </View>
+            </View>
+        );
+    }).current;
+
     return (
         <SafeAreaView style={styles.cardContainer}>
             <TouchableOpacity style={styles.back} onPress={() => setBack(true)}>
@@ -126,6 +156,7 @@ export const Learn = (): JSX.Element => {
             })()}
             <HelpModal isVisible={help} />
             <BackModal isVisible={back} />
+            {cardCount === 0 ? <CongratsModal /> : <></>}
         </SafeAreaView>
     );
 };
@@ -214,7 +245,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    helpModalContainer: {
+    modalContainer: {
         position: 'absolute',
         backgroundColor: 'rgba(0,0,0,0.5)',
         top: 0,
@@ -225,7 +256,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    helpModal: {
+    modal: {
         width: '60%',
         height: '40%',
         backgroundColor: '#ffffff',
@@ -235,13 +266,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    helpClose: {
+    modalClose: {
         position: 'absolute',
         top: 0,
         left: 0,
         margin: 10,
     },
-    helpText: {
+    modalText: {
         fontSize: 20,
         margin: 20,
         textAlign: 'center',
@@ -259,7 +290,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    backConfirmContainer: {
+    modalButtonContainer: {
         width: '100%',
         justifyContent: 'space-evenly',
         display: 'flex',
@@ -270,6 +301,7 @@ const styles = StyleSheet.create({
         width: 85,
     },
     backConfirmText: {
+        textAlign: 'center',
         color: '#ffffff',
         fontWeight: 'bold',
     },

@@ -10,9 +10,10 @@ import {
     ScrollView,
     NativeSyntheticEvent,
     NativeScrollEvent,
+    Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilState } from 'recoil';
 import { defaultUser } from '../api/defaults';
 import { StackParams } from '../nav';
 import { cardsCount, currentUser } from '../state/user';
@@ -25,7 +26,7 @@ interface CardsCountModalProps {
 // TODO: home profile, friends, leaderboards
 export const Home = (): JSX.Element => {
     const nav = useNavigation<HomeScreenProps>();
-    const setUser = useSetRecoilState(currentUser);
+    const [user, setUser] = useRecoilState(currentUser);
     const [renderCardsCountModal, setRenderCardsCountModal] = React.useState(false);
     const setCardsCount = useSetRecoilState(cardsCount);
 
@@ -50,7 +51,9 @@ export const Home = (): JSX.Element => {
                             onScroll={onCardsScroll}
                             showsVerticalScrollIndicator={false}
                             snapToInterval={50}
-                            decelerationRate="fast">
+                            decelerationRate="fast"
+                            alwaysBounceVertical={true}
+                            bounces={false}>
                             {(() => {
                                 let arr = [];
                                 for (let i = 0; i <= 50; i++) {
@@ -60,6 +63,11 @@ export const Home = (): JSX.Element => {
                                         </Text>
                                     );
                                 }
+                                arr.push(
+                                    <Text style={styles.cardsText} key="end">
+                                        {' '}
+                                    </Text>
+                                );
                                 return arr;
                             })()}
                         </ScrollView>
@@ -86,8 +94,29 @@ export const Home = (): JSX.Element => {
         );
     };
 
+    const UserProfile = (): JSX.Element => {
+        return (
+            <View style={userStyles.profileContainer}>
+                <View style={userStyles.pictureContainer}>
+                    <Image
+                        style={userStyles.profilePicture}
+                        source={{
+                            uri: 'https://scontent.fyhz1-1.fna.fbcdn.net/v/t1.6435-9/127454111_1288036738235233_8547489606110234618_n.jpg?_nc_cat=110&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=E0GsZQPxtNsAX8vARAL&_nc_ht=scontent.fyhz1-1.fna&oh=00_AT9SyNoFjCxZj5wAtss6YP9YowxBm2UtSWAlTYU1xygJDw&oe=6261C468',
+                        }}
+                    />
+                </View>
+
+                <View style={userStyles.info}>
+                    <Text style={userStyles.infoText}>Name: {user.name}</Text>
+                    <Text style={userStyles.infoText}>Completed: ... cards this month</Text>
+                </View>
+            </View>
+        );
+    };
+
     return (
         <SafeAreaView style={styles.container}>
+            <UserProfile />
             <Button style={styles.button} onPress={() => setRenderCardsCountModal(true)}>
                 Start learning new words now!
             </Button>
@@ -98,12 +127,43 @@ export const Home = (): JSX.Element => {
                     setUser(defaultUser());
                     nav.goBack();
                 }}>
-                Sign out
+                <Icon name="log-out-outline" fill="white" width={25} height={25} />
             </Button>
             <CardsCountModal isVisible={renderCardsCountModal} />
         </SafeAreaView>
     );
 };
+
+const userStyles = StyleSheet.create({
+    profileContainer: {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    profilePicture: {
+        width: 100,
+        height: 100,
+        resizeMode: 'cover',
+    },
+    pictureContainer: {
+        overflow: 'hidden',
+        margin: 30,
+        height: 100,
+        width: 100,
+        borderRadius: 50,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        elevation: 10,
+    },
+    info: {
+        display: 'flex',
+        justifyContent: 'space-evenly',
+    },
+    infoText: {
+        fontSize: 15,
+    },
+});
 
 const styles = StyleSheet.create({
     button: {
@@ -112,7 +172,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         display: 'flex',
-        justifyContent: 'center',
         alignItems: 'center',
     },
     modalContainer: {
