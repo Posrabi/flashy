@@ -13,4 +13,4 @@ jobs:
         run: cd frontend/flashy && yarn
 
       - name: test Android build
-        run: cd android && ./gradlew test
+        run: cd frontend/flashy/android && ./gradlew test
