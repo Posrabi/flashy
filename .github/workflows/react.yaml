@@ -11,3 +11,6 @@ jobs:
 
       - name: Install modules
         run: cd frontend/flashy && yarn
+
+      - name: test Android build
+        run: cd android && ./gradlew test
