@@ -11,7 +11,9 @@ import {
     Animated,
     GestureResponderHandlers,
 } from 'react-native';
+import { useRecoilState } from 'recoil';
 import { StackParams } from '../nav';
+import { cardsCount } from '../state/user';
 import { SCREENS } from './constants';
 
 interface HelpModalProps {
@@ -27,7 +29,7 @@ type LearnScreenProps = NativeStackNavigationProp<StackParams, SCREENS.LEARN>;
 export const Learn = (): JSX.Element => {
     const [help, setHelp] = React.useState(false);
     const [back, setBack] = React.useState(false);
-    const [cardCount, setCardCount] = React.useState(10);
+    const [cardCount, setCardCount] = useRecoilState(cardsCount);
     const nav = useNavigation<LearnScreenProps>();
     const pan = useRef(new Animated.ValueXY()).current;
     const panResponder = useMemo(
@@ -40,7 +42,7 @@ export const Learn = (): JSX.Element => {
                 onPanResponderRelease: (_, gestureState) => {
                     if (gestureState.dy < -150) {
                         Animated.spring(pan, {
-                            toValue: { x: gestureState.dx, y: -600 },
+                            toValue: { x: gestureState.dx, y: -525 },
                             useNativeDriver: false,
                         }).start(() => {
                             setCardCount(cardCount - 1);
