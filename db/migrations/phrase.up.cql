@@ -4,4 +4,4 @@ CREATE TABLE IF NOT EXISTS users.phrases (
   word text,
   sentence text,
   PRIMARY KEY ((user_id), phrase_time) 
-) WITH CLUSTERING ORDER BY (cur_time DESC);
+) WITH CLUSTERING ORDER BY (phrase_time DESC);
