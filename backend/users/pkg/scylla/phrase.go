@@ -41,7 +41,7 @@ func (p *phraseRepo) CreatePhrase(ctx context.Context, phrase *entity.Phrase) er
 }
 
 func (p *phraseRepo) GetPhrases(ctx context.Context, userID gocql.UUID, start, end time.Time) ([]*entity.Phrase, error) {
-	q := `SELECT word, sentence, phrase_time FROM %s WHERE user_id = ? AND phrase_time > ? and phrase_time < ?`
+	q := `SELECT user_id, word, sentence, phrase_time FROM %s WHERE user_id = ? AND phrase_time > ? and phrase_time < ?`
 
 	args := []interface{}{userID, start.UnixMilli(), end.UnixMilli()}
 
@@ -50,7 +50,7 @@ func (p *phraseRepo) GetPhrases(ctx context.Context, userID gocql.UUID, start, e
 	scanner := p.sess.Query(fmt.Sprintf(q, phraseTable), args...).Idempotent(true).WithContext(ctx).Iter().Scanner()
 	for scanner.Next() {
 		var phrase entity.Phrase
-		if err := scanner.Scan(&phrase.Word, &phrase.Sentence, &phrase.Time); err != nil {
+		if err := scanner.Scan(&phrase.UserID, &phrase.Word, &phrase.Sentence, &phrase.Time); err != nil {
 			return nil, gerr.NewScError(err, codes.Internal, fmt.Sprintf(q, phraseTable), args)
 		}
 		phrases = append(phrases, &phrase)
