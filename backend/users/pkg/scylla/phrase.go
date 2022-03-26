@@ -49,11 +49,11 @@ func (p *phraseRepo) GetPhrases(ctx context.Context, userID gocql.UUID, start, e
 
 	scanner := p.sess.Query(fmt.Sprintf(q, phraseTable), args...).Idempotent(true).WithContext(ctx).Iter().Scanner()
 	for scanner.Next() {
-		var phrase *entity.Phrase
+		var phrase entity.Phrase
 		if err := scanner.Scan(&phrase.Word, &phrase.Sentence); err != nil {
 			return nil, gerr.NewScError(err, codes.Internal, fmt.Sprintf(q, phraseTable), args)
 		}
-		phrases = append(phrases, phrase)
+		phrases = append(phrases, &phrase)
 	}
 
 	if err := scanner.Err(); err != nil {
