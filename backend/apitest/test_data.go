@@ -4,7 +4,9 @@ import (
 	"time"
 
 	"github.com/gocql/gocql"
+	"github.com/google/uuid"
 
+	"github.com/Posrabi/flashy/backend/users/pkg/api"
 	"github.com/Posrabi/flashy/backend/users/pkg/entity"
 )
 
@@ -27,5 +29,20 @@ var TestUsers = []*entity.User{
 		Email:        "test2@example.com",
 		HashPassword: "thisisnotahash",
 		AuthToken:    "supereasytoguesssecret",
+	},
+}
+
+var TestPhrases = []*entity.Phrase{
+	{
+		UserID:   api.ConvertToUserIDEntity(uuid.New().String()),
+		Word:     "hello",
+		Sentence: "hello world",
+		Time:     time.Now(),
+	},
+	{
+		UserID:   api.ConvertToUserIDEntity(uuid.New().String()),
+		Word:     "some word",
+		Sentence: "some sentence",
+		Time:     time.Now(),
 	},
 }

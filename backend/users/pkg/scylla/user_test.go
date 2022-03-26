@@ -49,7 +49,7 @@ func userSetup(t *testing.T) {
 
 	t.Cleanup(func() {
 		for _, user := range apitest.TestUsers {
-			require.NoError(t, apitest.UserRepo.DeleteUser(context.Background(), user.UserID.String()))
+			require.NoError(t, apitest.UserRepo.DeleteUser(context.Background(), user.UserID))
 		}
 	})
 
@@ -71,7 +71,7 @@ func testGet_User(t *testing.T, repo repository.User) {
 	t.Helper()
 
 	for _, expected := range apitest.TestUsers {
-		actual, err := repo.GetUser(context.WithValue(context.Background(), jwt.JWTContextKey, expected.AuthToken), expected.UserID.String())
+		actual, err := repo.GetUser(context.WithValue(context.Background(), jwt.JWTContextKey, expected.AuthToken), expected.UserID)
 		require.NoError(t, err)
 		require.Equal(t, expected, actual)
 	}
@@ -89,7 +89,7 @@ func testUpdate_User(t *testing.T, repo repository.User) {
 		ctx := context.WithValue(context.Background(), jwt.JWTClaimsContextKey, auth.NewIDClaims(expected.UserID))
 		require.NoError(t, repo.UpdateUser(ctx, expected))
 
-		actual, err := repo.GetUser(ctx, expected.UserID.String())
+		actual, err := repo.GetUser(ctx, expected.UserID)
 		require.NoError(t, err)
 		require.Equal(t, expected, actual)
 	}
@@ -99,7 +99,7 @@ func testDelete_User(t *testing.T, repo repository.User) {
 	t.Helper()
 
 	for i, deleting := range apitest.TestUsers {
-		require.NoError(t, repo.DeleteUser(context.Background(), deleting.UserID.String()))
+		require.NoError(t, repo.DeleteUser(context.Background(), deleting.UserID))
 		removeUserAtIndex(apitest.TestUsers, i)
 	}
 }
@@ -120,7 +120,7 @@ func testLogOut_User(t *testing.T, repo repository.User) {
 
 	for _, user := range apitest.TestUsers {
 		require.NoError(t, repo.LogOut(context.WithValue(context.Background(), jwt.JWTContextKey,
-			user.AuthToken), user.UserID.String()))
+			user.AuthToken), user.UserID))
 	}
 }
 

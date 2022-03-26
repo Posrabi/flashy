@@ -46,13 +46,13 @@ func NewRegisteredClaims() jwt.RegisteredClaims {
 	}
 }
 
-func ValidateUserFromClaims(ctx context.Context, userID string) error {
+func ValidateUserFromClaims(ctx context.Context, userID gocql.UUID) error {
 	claims, ok := ctx.Value(kitjwt.JWTClaimsContextKey).(*IDClaims)
 	if !ok {
 		return gerr.NewError(errors.New("missing claims"), codes.Unauthenticated)
 	}
 
-	if claims.ID.String() != userID {
+	if claims.ID != userID {
 		return gerr.NewError(errors.New("missing claims"), codes.PermissionDenied)
 	}
 	return nil

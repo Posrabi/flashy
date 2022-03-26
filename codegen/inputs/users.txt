@@ -4,3 +4,6 @@ UpdateUser
 DeleteUser
 LogIn
 LogOut
+CreatePhrase
+GetPhrases
+DeletePhrase

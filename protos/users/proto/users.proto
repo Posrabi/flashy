@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package users.proto;
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "github.com/Posrabi/flashy/protos/users";
 option java_package = "com.flashy";
 option java_outer_classname = "UsersProto";
@@ -26,6 +28,15 @@ service UsersAPI {
   rpc LogOut(LogOutRequest) returns (LogOutResponse) {
   }
 
+  rpc CreatePhrase(CreatePhraseRequest) returns (CreatePhraseResponse) {
+  }
+
+  rpc GetPhrases(GetPhrasesRequest) returns (GetPhrasesResponse) {
+  }
+
+  rpc DeletePhrase(DeletePhraseRequest) returns (DeletePhraseResponse) {
+  }
+
 }
 
 message User {
@@ -35,6 +46,13 @@ message User {
   string email = 4;
   string auth_token = 5;
   string user_id = 6;
+}
+
+message Phrase {
+  string user_id = 1;
+  string word = 2;
+  string sentence = 3;
+  google.protobuf.Timestamp phrase_time = 4;
 }
 
 message CreateUserRequest {
@@ -84,5 +102,32 @@ message LogOutRequest {
 }
 
 message LogOutResponse {
+  string response = 1;
+}
+
+message CreatePhraseRequest {
+  Phrase phrase = 1;
+}
+
+message CreatePhraseResponse {
+  string response = 1;
+}
+
+message GetPhrasesRequest {
+  string user_id = 1;
+  google.protobuf.Timestamp start = 2;
+  google.protobuf.Timestamp end = 3;
+}
+
+message GetPhrasesResponse {
+  repeated Phrase phrases = 1;
+}
+
+message DeletePhraseRequest {
+  string user_id = 1;
+  google.protobuf.Timestamp phrase_time = 2;
+}
+
+message DeletePhraseResponse {
   string response = 1;
 }

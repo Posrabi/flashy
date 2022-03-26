@@ -32,7 +32,7 @@ func (s *service) CreateUser(ctx context.Context, r *proto.CreateUserRequest) (*
 }
 
 func (s *service) GetUser(ctx context.Context, r *proto.GetUserRequest) (*proto.GetUserResponse, error) {
-	user, err := s.repo.GetUser(ctx, r.GetUserId())
+	user, err := s.repo.GetUser(ctx, ConvertToUserIDEntity(r.GetUserId()))
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (s *service) UpdateUser(ctx context.Context, r *proto.UpdateUserRequest) (*
 }
 
 func (s *service) DeleteUser(ctx context.Context, r *proto.DeleteUserRequest) (*proto.DeleteUserResponse, error) {
-	if err := s.repo.DeleteUser(ctx, r.GetUserId()); err != nil {
+	if err := s.repo.DeleteUser(ctx, ConvertToUserIDEntity(r.GetUserId())); err != nil {
 		return nil, err
 	}
 	return &proto.DeleteUserResponse{
@@ -70,10 +70,44 @@ func (s *service) LogIn(ctx context.Context, r *proto.LogInRequest) (*proto.LogI
 }
 
 func (s *service) LogOut(ctx context.Context, r *proto.LogOutRequest) (*proto.LogOutResponse, error) {
-	if err := s.repo.LogOut(ctx, r.GetUserId()); err != nil {
+	if err := s.repo.LogOut(ctx, ConvertToUserIDEntity(r.GetUserId())); err != nil {
 		return nil, err
 	}
 	return &proto.LogOutResponse{
+		Response: "Success",
+	}, nil
+}
+
+func (s *service) CreatePhrase(ctx context.Context, r *proto.CreatePhraseRequest) (*proto.CreatePhraseResponse, error) {
+	if err := s.repo.CreatePhrase(ctx, ConvertToPhraseEntity(r.GetPhrase())); err != nil {
+		return nil, err
+	}
+	return &proto.CreatePhraseResponse{
+		Response: "Success",
+	}, nil
+}
+
+func (s *service) GetPhrases(ctx context.Context, r *proto.GetPhrasesRequest) (*proto.GetPhrasesResponse, error) {
+	phrases, err := s.repo.GetPhrases(ctx, ConvertToUserIDEntity(r.GetUserId()), r.GetStart().AsTime(), r.GetEnd().AsTime())
+	if err != nil {
+		return nil, err
+	}
+	var protoPhrases []*proto.Phrase
+	for _, phrase := range phrases {
+		protoPhrases = append(protoPhrases, ConvertToPhraseProto(phrase))
+	}
+
+	return &proto.GetPhrasesResponse{
+		Phrases: protoPhrases,
+	}, nil
+}
+
+func (s *service) DeletePhrase(ctx context.Context, r *proto.DeletePhraseRequest) (*proto.DeletePhraseResponse, error) {
+	if err := s.repo.DeletePhrase(ctx, ConvertToUserIDEntity(r.GetUserId()), r.GetPhraseTime().AsTime()); err != nil {
+		return nil, err
+	}
+
+	return &proto.DeletePhraseResponse{
 		Response: "Success",
 	}, nil
 }

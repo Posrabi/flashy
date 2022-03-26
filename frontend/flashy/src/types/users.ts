@@ -10,6 +10,13 @@ export interface User {
   user_id: string;
 }
 
+export interface Phrase {
+  user_id: string;
+  word: string;
+  sentence: string;
+  phrase_time: Date | undefined;
+}
+
 export interface CreateUserRequest {
   user: User | undefined;
 }
@@ -60,6 +67,33 @@ export interface LogOutResponse {
   response: string;
 }
 
+export interface CreatePhraseRequest {
+  phrase: Phrase | undefined;
+}
+
+export interface CreatePhraseResponse {
+  response: string;
+}
+
+export interface GetPhrasesRequest {
+  user_id: string;
+  start: Date | undefined;
+  end: Date | undefined;
+}
+
+export interface GetPhrasesResponse {
+  phrases: Phrase[];
+}
+
+export interface DeletePhraseRequest {
+  user_id: string;
+  phrase_time: Date | undefined;
+}
+
+export interface DeletePhraseResponse {
+  response: string;
+}
+
 export interface UsersAPI {
   CreateUser(request: CreateUserRequest): Promise<CreateUserResponse>;
   GetUser(request: GetUserRequest): Promise<GetUserResponse>;
@@ -67,4 +101,7 @@ export interface UsersAPI {
   DeleteUser(request: DeleteUserRequest): Promise<DeleteUserResponse>;
   LogIn(request: LogInRequest): Promise<LogInResponse>;
   LogOut(request: LogOutRequest): Promise<LogOutResponse>;
+  CreatePhrase(request: CreatePhraseRequest): Promise<CreatePhraseResponse>;
+  GetPhrases(request: GetPhrasesRequest): Promise<GetPhrasesResponse>;
+  DeletePhrase(request: DeletePhraseRequest): Promise<DeletePhraseResponse>;
 }

@@ -7,4 +7,5 @@ import (
 var (
 	UserEndpoint string
 	UserRepo     repository.User
+	PhraseRepo   repository.Phrase
 )

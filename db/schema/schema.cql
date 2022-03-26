@@ -9,9 +9,17 @@ CREATE TABLE IF NOT EXISTS users.info (
   email text,
   hash_password text,
   auth_token text,
-  PRIMARY KEY (user_id, auth_token)
+  PRIMARY KEY ((user_id), auth_token)
 );
 
 CREATE INDEX user_name ON users.info (user_name); # global secondary index
 
 CREATE INDEX auth_token ON users.info ((user_id), auth_token); # local secondary index
+
+CREATE TABLE IF NOT EXISTS users.phrases (
+  user_id uuid,
+  phrase_time timestamp,
+  word text,
+  sentence text,
+  PRIMARY KEY ((user_id), cur_time) 
+) WITH CLUSTERING ORDER BY (cur_time DESC);
