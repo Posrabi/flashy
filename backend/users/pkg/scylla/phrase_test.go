@@ -53,7 +53,8 @@ func testGet_Phrases(t *testing.T, repo repository.Phrase) {
 	for _, phrase := range apitest.TestPhrases {
 		phrases, err := repo.GetPhrases(context.Background(), phrase.UserID, time.Now().Add(time.Minute*-1), time.Now())
 		require.NoError(t, err)
-		require.Equal(t, phrase, phrases[0])
+		require.Equal(t, phrase.Word, phrases[0].Word)
+		require.Equal(t, phrase.Sentence, phrases[0].Sentence)
 	}
 }
 
