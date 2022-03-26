@@ -19,7 +19,7 @@ type phraseRepo struct {
 
 const (
 	phraseColumns = "user_id, phrase_time, word, sentence"
-	phraseTable   = "users.phrase"
+	phraseTable   = "users.phrases"
 )
 
 func NewPhraseRepository(sess *gocql.Session) repository.Phrase {
