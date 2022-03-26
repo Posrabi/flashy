@@ -21,5 +21,5 @@ CREATE TABLE IF NOT EXISTS users.phrases (
   phrase_time timestamp,
   word text,
   sentence text,
-  PRIMARY KEY ((user_id), cur_time) 
+  PRIMARY KEY ((user_id), phrase_time) 
 ) WITH CLUSTERING ORDER BY (cur_time DESC);
