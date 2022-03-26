@@ -14,7 +14,7 @@ export interface Phrase {
   user_id: string;
   word: string;
   sentence: string;
-  phrase_time: Date | undefined;
+  phrase_time: number;
 }
 
 export interface CreateUserRequest {
@@ -77,8 +77,8 @@ export interface CreatePhraseResponse {
 
 export interface GetPhrasesRequest {
   user_id: string;
-  start: Date | undefined;
-  end: Date | undefined;
+  start: number;
+  end: number;
 }
 
 export interface GetPhrasesResponse {
@@ -87,7 +87,7 @@ export interface GetPhrasesResponse {
 
 export interface DeletePhraseRequest {
   user_id: string;
-  phrase_time: Date | undefined;
+  phrase_time: number;
 }
 
 export interface DeletePhraseResponse {

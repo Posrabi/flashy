@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.lang.ref.WeakReference;
 import java.text.MessageFormat;
 import java.net.InetAddress;
+import java.util.List;
 
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -14,6 +15,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.Arguments;
 import io.grpc.StatusRuntimeException;
 import io.grpc.ManagedChannelBuilder;
@@ -37,9 +39,9 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
   public void CreateUser(ReadableMap request, Promise promise) {
     try {
       UsersProto.CreateUserRequest req = UsersProto.CreateUserRequest.newBuilder()
-        .setUser(EntityConverter.convertJSUserToEntity(
+        .setUser( EntityConverter.convertJSUserToEntity( 
           request.hasKey("user") ? request.getMap("user") : Arguments.createMap()
-        ))
+          ))
         .build();
       UsersProto.CreateUserResponse resp = (UsersProto.CreateUserResponse) new GrpcCall(new CreateUserRunnable(req), channel).execute()
         .get();
@@ -73,9 +75,9 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
   public void UpdateUser(ReadableMap request, Promise promise) {
     try {
       UsersProto.UpdateUserRequest req = UsersProto.UpdateUserRequest.newBuilder()
-        .setUser(EntityConverter.convertJSUserToEntity(
+        .setUser( EntityConverter.convertJSUserToEntity( 
           request.hasKey("user") ? request.getMap("user") : Arguments.createMap()
-        ))
+          ))
         .build();
       UsersProto.UpdateUserResponse resp = (UsersProto.UpdateUserResponse) new GrpcCall(new UpdateUserRunnable(req), channel).execute()
         .get();
@@ -143,6 +145,61 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
       promise.reject(e);
     }
    
+  }
+
+  @ReactMethod
+  public void CreatePhrase(ReadableMap request, Promise promise) {
+    try {
+      UsersProto.CreatePhraseRequest req = UsersProto.CreatePhraseRequest.newBuilder()
+        .setPhrase( EntityConverter.convertJSPhraseToEntity(
+          request.hasKey("phrase") ? request.getMap("phrase") : Arguments.createMap()
+          ))
+        .build();
+      UsersProto.CreatePhraseResponse resp = (UsersProto.CreatePhraseResponse) new GrpcCall(new CreatePhraseRunnable(req), channel).execute()
+        .get();
+      if (resp == null) {
+        promise.reject(new NullPointerException("no response"));
+      }
+      promise.resolve(EntityConverter.createJSResponseWithStatus(resp.getResponse()));
+    } catch (Exception e) {
+      promise.reject(e);
+    }
+  }
+
+  @ReactMethod
+  public void GetPhrases(ReadableMap request, Promise promise) {
+    try {
+      UsersProto.GetPhrasesRequest req = UsersProto.GetPhrasesRequest.newBuilder()
+        .setUserId(request.hasKey("user_id") ? request.getString("user_id") : "")
+        // timestamp
+        .build();
+      UsersProto.GetPhrasesResponse resp = (UsersProto.GetPhrasesResponse) new GrpcCall(new GetPhrasesRunnable(req), channel).execute()
+        .get();
+      if (resp == null) {
+        promise.reject(new NullPointerException("no response"));
+      }
+      promise.resolve(EntityConverter.createJSReponseWithPhrases(resp.getPhrasesList()));
+    } catch (Exception e) {
+      promise.reject(e);
+    }
+  }
+
+  @ReactMethod
+  public void DeletePhrase(ReadableMap request, Promise promise) {
+    try {
+      UsersProto.DeletePhraseRequest req = UsersProto.DeletePhraseRequest.newBuilder()
+        .setUserId(request.hasKey("user_id") ? request.getString("user_id") : "")
+        // timestamp
+        .build();
+      UsersProto.DeletePhraseResponse resp = (UsersProto.DeletePhraseResponse) new GrpcCall(new DeletePhraseRunnable(req), channel).execute()
+        .get();
+      if (resp == null) {
+        promise.reject(new NullPointerException("no response"));
+      }
+      promise.resolve(EntityConverter.createJSResponseWithStatus(resp.getResponse()));
+    } catch (Exception e) {
+      promise.reject(e);
+    }
   }
 
   private static class GrpcCall extends AsyncTask<Void, Void, Object> {
@@ -263,8 +320,57 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
       
   }
 
+  private static class CreatePhraseRunnable implements GrpcRunnable {
+    private final UsersProto.CreatePhraseRequest request;
+    CreatePhraseRunnable(UsersProto.CreatePhraseRequest request) {
+      this.request = request;
+    }
+
+      @Override
+      public UsersProto.CreatePhraseResponse run(UsersAPIGrpc.UsersAPIBlockingStub blockingStub, UsersAPIGrpc.UsersAPIStub asyncStub) throws Exception {
+        return createPhrase(request, blockingStub);
+      }
+
+      private UsersProto.CreatePhraseResponse createPhrase(UsersProto.CreatePhraseRequest request, UsersAPIGrpc.UsersAPIBlockingStub blockingStub) throws StatusRuntimeException {
+        return blockingStub.createPhrase(request);
+      }
+  }
+
+  private static class GetPhrasesRunnable implements GrpcRunnable {
+    private final UsersProto.GetPhrasesRequest request;
+    GetPhrasesRunnable(UsersProto.GetPhrasesRequest request) {
+      this.request = request;
+    }
+
+      @Override
+      public UsersProto.GetPhrasesResponse run(UsersAPIGrpc.UsersAPIBlockingStub blockingStub, UsersAPIGrpc.UsersAPIStub asyncStub) throws Exception {
+        return getPhrases(request, blockingStub);
+      }
+
+      private UsersProto.GetPhrasesResponse getPhrases(UsersProto.GetPhrasesRequest request, UsersAPIGrpc.UsersAPIBlockingStub blockingStub) throws StatusRuntimeException {
+        return blockingStub.getPhrases(request);
+      }
+  }
+
+  private static class DeletePhraseRunnable implements GrpcRunnable {
+    private final UsersProto.DeletePhraseRequest request;
+    DeletePhraseRunnable(UsersProto.DeletePhraseRequest request) {
+      this.request = request;
+    }
+
+      @Override
+      public UsersProto.DeletePhraseResponse run(UsersAPIGrpc.UsersAPIBlockingStub blockingStub, UsersAPIGrpc.UsersAPIStub asyncStub) throws Exception {
+        return deletePhrase(request, blockingStub);
+      }
+
+      private UsersProto.DeletePhraseResponse deletePhrase(UsersProto.DeletePhraseRequest request, UsersAPIGrpc.UsersAPIBlockingStub blockingStub) throws StatusRuntimeException {
+        return blockingStub.deletePhrase(request);
+      }
+  }
+
   private static class EntityConverter {
-    private static WritableMap convertUserEntityToJS(UsersProto.User user) {
+    // Types
+    protected static WritableMap convertUserEntityToJS(UsersProto.User user) {
       WritableMap map = Arguments.createMap();
 
       map.putString("user_id", user.getUserId());
@@ -276,7 +382,8 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
 
       return map;
     }
-    private static UsersProto.User convertJSUserToEntity(ReadableMap user) {
+
+    protected static UsersProto.User convertJSUserToEntity(ReadableMap user) {
       return UsersProto.User.newBuilder()
         .setUserName(user.hasKey("user_name") ? user.getString("user_name") : "")
         .setAuthToken(user.hasKey("auth_token") ? user.getString("auth_token") : "")
@@ -286,6 +393,28 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .setName(user.hasKey("name") ? user.getString("name") : "")
         .build();
     }
+
+    protected static WritableMap convertPhraseEntityToJS(UsersProto.Phrase phrase) {
+      WritableMap map = Arguments.createMap();
+
+      map.putString("user_id", phrase.getUserId());
+      map.putString("word", phrase.getWord());
+      map.putString("sentence", phrase.getSentence());
+      map.putDouble("phrase_time", phrase.getPhraseTime());
+
+      return map;
+    }
+
+    protected static UsersProto.Phrase convertJSPhraseToEntity(ReadableMap phrase) {
+      return UsersProto.Phrase.newBuilder()
+        .setUserId(phrase.hasKey("user_id") ? phrase.getString("user_id") : "")
+        .setWord(phrase.hasKey("word") ? phrase.getString("word") : "")
+        .setSentence(phrase.hasKey("sentence") ? phrase.getString("sentence") : "")
+        .setPhraseTime(phrase.hasKey("phrase_time") ? (long) phrase.getDouble("phrase_time") : 0)
+        .build();
+    }
+
+    // Responses
     protected static WritableMap createJSResponseWithUser(UsersProto.User user) {
       WritableMap jsUser = convertUserEntityToJS(user);
       WritableMap resp = Arguments.createMap();
@@ -294,10 +423,21 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
 
       return resp;
     }
+
     protected static WritableMap createJSResponseWithStatus(String status) {
       WritableMap resp = Arguments.createMap();
 
       resp.putString("response", status );
+
+      return resp;
+    }
+
+    protected static WritableArray createJSReponseWithPhrases(List<UsersProto.Phrase> phrases) {
+      WritableArray resp = Arguments.createArray();
+
+      for (UsersProto.Phrase phrase : phrases) {
+        resp.pushMap(convertPhraseEntityToJS(phrase));
+      }
 
       return resp;
     }

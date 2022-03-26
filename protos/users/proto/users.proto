@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package users.proto;
 
-import "google/protobuf/timestamp.proto";
-
 option go_package = "github.com/Posrabi/flashy/protos/users";
 option java_package = "com.flashy";
 option java_outer_classname = "UsersProto";
@@ -52,7 +50,7 @@ message Phrase {
   string user_id = 1;
   string word = 2;
   string sentence = 3;
-  google.protobuf.Timestamp phrase_time = 4;
+  int64 phrase_time = 4;
 }
 
 message CreateUserRequest {
@@ -115,8 +113,8 @@ message CreatePhraseResponse {
 
 message GetPhrasesRequest {
   string user_id = 1;
-  google.protobuf.Timestamp start = 2;
-  google.protobuf.Timestamp end = 3;
+  int64 start = 2;
+  int64 end = 3;
 }
 
 message GetPhrasesResponse {
@@ -125,7 +123,7 @@ message GetPhrasesResponse {
 
 message DeletePhraseRequest {
   string user_id = 1;
-  google.protobuf.Timestamp phrase_time = 2;
+  int64 phrase_time = 2;
 }
 
 message DeletePhraseResponse {

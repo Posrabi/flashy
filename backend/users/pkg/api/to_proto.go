@@ -1,8 +1,6 @@
 package api
 
 import (
-	"google.golang.org/protobuf/types/known/timestamppb"
-
 	"github.com/Posrabi/flashy/backend/users/pkg/entity"
 	proto "github.com/Posrabi/flashy/protos/users/proto"
 )
@@ -23,6 +21,6 @@ func ConvertToPhraseProto(phrase *entity.Phrase) *proto.Phrase {
 		UserId:     phrase.UserID.String(),
 		Word:       phrase.Word,
 		Sentence:   phrase.Sentence,
-		PhraseTime: timestamppb.New(phrase.Time),
+		PhraseTime: phrase.Time.Unix(),
 	}
 }

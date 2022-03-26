@@ -1,6 +1,8 @@
 package api
 
 import (
+	"time"
+
 	"github.com/gocql/gocql"
 
 	"github.com/Posrabi/flashy/backend/users/pkg/entity"
@@ -23,7 +25,7 @@ func ConvertToPhraseEntity(phrase *proto.Phrase) *entity.Phrase {
 		UserID:   ConvertToUserIDEntity(phrase.UserId),
 		Word:     phrase.GetWord(),
 		Sentence: phrase.GetSentence(),
-		Time:     phrase.GetPhraseTime().AsTime(),
+		Time:     time.UnixMilli(phrase.GetPhraseTime()),
 	}
 }
 

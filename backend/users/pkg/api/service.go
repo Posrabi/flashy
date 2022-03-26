@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"time"
 
 	"github.com/go-kit/log"
 
@@ -88,7 +89,7 @@ func (s *service) CreatePhrase(ctx context.Context, r *proto.CreatePhraseRequest
 }
 
 func (s *service) GetPhrases(ctx context.Context, r *proto.GetPhrasesRequest) (*proto.GetPhrasesResponse, error) {
-	phrases, err := s.repo.GetPhrases(ctx, ConvertToUserIDEntity(r.GetUserId()), r.GetStart().AsTime(), r.GetEnd().AsTime())
+	phrases, err := s.repo.GetPhrases(ctx, ConvertToUserIDEntity(r.GetUserId()), time.UnixMilli(r.GetStart()), time.UnixMilli(r.GetEnd()))
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +104,7 @@ func (s *service) GetPhrases(ctx context.Context, r *proto.GetPhrasesRequest) (*
 }
 
 func (s *service) DeletePhrase(ctx context.Context, r *proto.DeletePhraseRequest) (*proto.DeletePhraseResponse, error) {
-	if err := s.repo.DeletePhrase(ctx, ConvertToUserIDEntity(r.GetUserId()), r.GetPhraseTime().AsTime()); err != nil {
+	if err := s.repo.DeletePhrase(ctx, ConvertToUserIDEntity(r.GetUserId()), time.UnixMilli(r.GetPhraseTime())); err != nil {
 		return nil, err
 	}
 
