@@ -1,14 +1,19 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Button, Icon, Input, Text } from '@ui-kitten/components';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { LoginManager } from 'react-native-fbsdk-next';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { defaultUser } from '../api/defaults';
 import EndpointsModule from '../api/users';
 import { StackParams } from '../nav';
-import { currentUser } from '../state/user';
+import {
+    currentUser,
+    getAuthTokenFromStorage,
+    getUserIDFromStorage,
+    storeUser,
+} from '../state/user';
 import { SCREENS } from './constants';
 
 type LogInScreenProps = NativeStackNavigationProp<StackParams, SCREENS.LOG_IN>;
@@ -18,7 +23,7 @@ export const LogIn = (): JSX.Element => {
     const [password, setPassword] = React.useState('');
     const [secureTextEntry, setSecureTextEntry] = React.useState(true);
     const [state, setState] = React.useState(true);
-    const setUser = useSetRecoilState(currentUser);
+    const [user, setUser] = useRecoilState(currentUser);
     const nav = useNavigation<LogInScreenProps>();
 
     const EyeIcon = (props: any): JSX.Element => (
@@ -26,6 +31,35 @@ export const LogIn = (): JSX.Element => {
             <Icon {...props} name={!secureTextEntry ? 'eye' : 'eye-off'} />
         </TouchableOpacity>
     );
+
+    useEffect(() => {
+        if (user.user_id) nav.navigate(SCREENS.HOME);
+        else {
+            (async () => {
+                try {
+                    const userID = await getUserIDFromStorage();
+                    const authToken = await getAuthTokenFromStorage();
+                    if (userID && authToken) {
+                        const resp = await EndpointsModule.GetUser({
+                            user_id: userID,
+                            // @ts-ignore
+                            auth_token: authToken, // hack
+                        });
+                        if (resp.user) {
+                            setUser(resp.user);
+                            console.log(user);
+                            storeUser(resp.user.user_id, resp.user.auth_token);
+                            nav.navigate(SCREENS.HOME);
+                        } else {
+                            console.error('unable to find user');
+                        }
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            })();
+        }
+    }, []);
 
     const onLogIn = async (): Promise<void> => {
         try {
@@ -39,6 +73,7 @@ export const LogIn = (): JSX.Element => {
                 return;
             }
             setUser(user);
+            storeUser(user.user_id, user.auth_token);
             nav.navigate(SCREENS.HOME);
         } catch (e) {
             setState(false);

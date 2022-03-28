@@ -23,12 +23,15 @@ const (
 )
 
 var EndpointAuthMap = map[string]AuthLevel{
-	"CreateUser": AuthLevel_NONE,
-	"GetUser":    AuthLevel_HIGH,
-	"UpdateUser": AuthLevel_HIGH,
-	"DeleteUser": AuthLevel_NONE,
-	"LogIn":      AuthLevel_NONE,
-	"LogOut":     AuthLevel_NONE,
+	"CreateUser":   AuthLevel_NONE,
+	"GetUser":      AuthLevel_HIGH,
+	"UpdateUser":   AuthLevel_HIGH,
+	"DeleteUser":   AuthLevel_NONE,
+	"LogIn":        AuthLevel_NONE,
+	"LogOut":       AuthLevel_NONE,
+	"CreatePhrase": AuthLevel_NONE,
+	"GetPhrase":    AuthLevel_HIGH,
+	"DeletePhrase": AuthLevel_HIGH,
 }
 
 // TODO: make this cleaner.
@@ -42,9 +45,7 @@ func NewJWTParser(logger log.Logger) endpoint.Middleware {
 			} else {
 				returnEndpoint = val.(string)
 			}
-
 			request := ctx.Value(requestLabel)
-
 			tokenString, ok := ctx.Value(kitjwt.JWTContextKey).(string)
 			if !ok {
 				_ = logger.Log("error", jwt.ErrTokenMalformed, "endpoint", returnEndpoint, "request", request)

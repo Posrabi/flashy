@@ -20,6 +20,8 @@ import com.facebook.react.bridge.Arguments;
 import io.grpc.StatusRuntimeException;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.ManagedChannel;
+import io.grpc.Metadata;
+import io.grpc.stub.MetadataUtils;
 import android.os.AsyncTask;
 
 public class EndpointsModule extends ReactContextBaseJavaModule {
@@ -43,7 +45,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
           request.hasKey("user") ? request.getMap("user") : Arguments.createMap()
           ))
         .build();
-      UsersProto.CreateUserResponse resp = (UsersProto.CreateUserResponse) new GrpcCall(new CreateUserRunnable(req), channel).execute()
+      UsersProto.CreateUserResponse resp = (UsersProto.CreateUserResponse) new GrpcCall(new CreateUserRunnable(req), channel, null).execute()
         .get();
       if (resp == null) {
         promise.reject(new NullPointerException("no response"));
@@ -60,7 +62,10 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
       UsersProto.GetUserRequest req = UsersProto.GetUserRequest.newBuilder()
         .setUserId(request.hasKey("user_id") ? request.getString("user_id") : "")
         .build();
-      UsersProto.GetUserResponse resp = (UsersProto.GetUserResponse) new GrpcCall(new GetUserRunnable(req), channel).execute()
+      Metadata metadata = new Metadata();
+      Metadata.Key<String> key = Metadata.Key.of("JWTToken", Metadata.ASCII_STRING_MARSHALLER);
+      metadata.put(key, request.hasKey("auth_token") ? request.getString("auth_token") : "");
+      UsersProto.GetUserResponse resp = (UsersProto.GetUserResponse) new GrpcCall(new GetUserRunnable(req), channel, metadata).execute()
         .get();
       if (resp == null) {
         promise.reject(new NullPointerException("no response"));
@@ -79,7 +84,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
           request.hasKey("user") ? request.getMap("user") : Arguments.createMap()
           ))
         .build();
-      UsersProto.UpdateUserResponse resp = (UsersProto.UpdateUserResponse) new GrpcCall(new UpdateUserRunnable(req), channel).execute()
+      UsersProto.UpdateUserResponse resp = (UsersProto.UpdateUserResponse) new GrpcCall(new UpdateUserRunnable(req), channel, null).execute()
         .get();
       if (resp == null) {
         promise.reject(new NullPointerException("no response"));
@@ -98,7 +103,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .setUserId(request.hasKey("user_id") ? request.getString("user_id") : "")
         .setHashPassword(request.hasKey("hash_password") ? request.getString("hash_password") : "")
         .build();
-      UsersProto.DeleteUserResponse resp = (UsersProto.DeleteUserResponse) new GrpcCall(new DeleteUserRunnable(req), channel).execute()
+      UsersProto.DeleteUserResponse resp = (UsersProto.DeleteUserResponse) new GrpcCall(new DeleteUserRunnable(req), channel, null).execute()
         .get();
       if (resp == null) {
         promise.reject(new NullPointerException("no response"));
@@ -117,7 +122,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .setUserName(request.hasKey("user_name") ? request.getString("user_name") : "")
         .setHashPassword(request.hasKey("hash_password") ? request.getString("hash_password") : "")
         .build();
-      UsersProto.LogInResponse resp = (UsersProto.LogInResponse) new GrpcCall(new LogInRunnable(req), channel).execute()
+      UsersProto.LogInResponse resp = (UsersProto.LogInResponse) new GrpcCall(new LogInRunnable(req), channel, null).execute()
         .get();
       if (resp == null) {
         promise.reject(new NullPointerException("no response"));
@@ -135,7 +140,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
       UsersProto.LogOutRequest req = UsersProto.LogOutRequest.newBuilder()
         .setUserId(request.hasKey("user_id") ? request.getString("user_id") : "")
         .build();
-      UsersProto.LogOutResponse resp = (UsersProto.LogOutResponse) new GrpcCall(new LogOutRunnable(req), channel).execute()
+      UsersProto.LogOutResponse resp = (UsersProto.LogOutResponse) new GrpcCall(new LogOutRunnable(req), channel, null).execute()
         .get();
       if (resp == null) {
         promise.reject(new NullPointerException("no response"));
@@ -155,7 +160,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
           request.hasKey("phrase") ? request.getMap("phrase") : Arguments.createMap()
           ))
         .build();
-      UsersProto.CreatePhraseResponse resp = (UsersProto.CreatePhraseResponse) new GrpcCall(new CreatePhraseRunnable(req), channel).execute()
+      UsersProto.CreatePhraseResponse resp = (UsersProto.CreatePhraseResponse) new GrpcCall(new CreatePhraseRunnable(req), channel, null).execute()
         .get();
       if (resp == null) {
         promise.reject(new NullPointerException("no response"));
@@ -174,7 +179,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .setStart(request.hasKey("start") ? (long) request.getDouble("start") : 0)
         .setEnd(request.hasKey("end") ? (long) request.getDouble("end") : 0)
         .build();
-      UsersProto.GetPhrasesResponse resp = (UsersProto.GetPhrasesResponse) new GrpcCall(new GetPhrasesRunnable(req), channel).execute()
+      UsersProto.GetPhrasesResponse resp = (UsersProto.GetPhrasesResponse) new GrpcCall(new GetPhrasesRunnable(req), channel, null).execute()
         .get();
       if (resp == null) {
         promise.reject(new NullPointerException("no response"));
@@ -192,7 +197,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .setUserId(request.hasKey("user_id") ? request.getString("user_id") : "")
         .setPhraseTime(request.hasKey("phrase_time") ? (long) request.getDouble("phrase_time") : 0)
         .build();
-      UsersProto.DeletePhraseResponse resp = (UsersProto.DeletePhraseResponse) new GrpcCall(new DeletePhraseRunnable(req), channel).execute()
+      UsersProto.DeletePhraseResponse resp = (UsersProto.DeletePhraseResponse) new GrpcCall(new DeletePhraseRunnable(req), channel, null).execute()
         .get();
       if (resp == null) {
         promise.reject(new NullPointerException("no response"));
@@ -206,16 +211,23 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
   private static class GrpcCall extends AsyncTask<Void, Void, Object> {
     private final GrpcRunnable grpcRunnable;
     private final ManagedChannel channel;
+    private final Metadata metadata;
 
-    GrpcCall(GrpcRunnable grpcRunnable, ManagedChannel channel) {
+    GrpcCall(GrpcRunnable grpcRunnable, ManagedChannel channel, Metadata metadata) {
       this.grpcRunnable = grpcRunnable;
       this.channel = channel;
+      this.metadata = metadata;
     }
 
     @Override
     protected Object doInBackground(Void... params) {
       try {
-        return grpcRunnable.run(UsersAPIGrpc.newBlockingStub(channel), UsersAPIGrpc.newStub(channel));
+        if (metadata == null) {
+          return grpcRunnable.run(UsersAPIGrpc.newBlockingStub(channel), UsersAPIGrpc.newStub(channel));
+        } else {
+          return grpcRunnable.run(UsersAPIGrpc.newBlockingStub(channel).withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata)),
+             UsersAPIGrpc.newStub(channel).withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata)));
+        }
       } catch (Exception e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);

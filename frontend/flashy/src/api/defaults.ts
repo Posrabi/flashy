@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 export const defaultUser = (): User => {
     return {
         user_name: 'guest',
-        user_id: uuidv4(),
+        user_id: '',
         hash_password: '',
         name: 'Guest',
         email: '',
