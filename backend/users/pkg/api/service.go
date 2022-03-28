@@ -28,7 +28,7 @@ func (s *service) CreateUser(ctx context.Context, r *proto.CreateUserRequest) (*
 		return nil, err
 	}
 	return &proto.CreateUserResponse{
-		User: ConvertToUserProto(user),
+		User: user.ToProto(),
 	}, nil
 }
 
@@ -38,7 +38,7 @@ func (s *service) GetUser(ctx context.Context, r *proto.GetUserRequest) (*proto.
 		return nil, err
 	}
 	return &proto.GetUserResponse{
-		User: ConvertToUserProto(user),
+		User: user.ToProto(),
 	}, nil
 }
 
@@ -66,7 +66,7 @@ func (s *service) LogIn(ctx context.Context, r *proto.LogInRequest) (*proto.LogI
 		return nil, err
 	}
 	return &proto.LogInResponse{
-		User: ConvertToUserProto(user),
+		User: user.ToProto(),
 	}, nil
 }
 
@@ -95,7 +95,7 @@ func (s *service) GetPhrases(ctx context.Context, r *proto.GetPhrasesRequest) (*
 	}
 	var protoPhrases []*proto.Phrase
 	for _, phrase := range phrases {
-		protoPhrases = append(protoPhrases, ConvertToPhraseProto(phrase))
+		protoPhrases = append(protoPhrases, phrase.ToProto())
 	}
 
 	return &proto.GetPhrasesResponse{

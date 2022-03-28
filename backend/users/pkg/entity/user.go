@@ -1,6 +1,10 @@
 package entity
 
-import "github.com/gocql/gocql"
+import (
+	"github.com/gocql/gocql"
+
+	proto "github.com/Posrabi/flashy/protos/users/proto"
+)
 
 type User struct {
 	UserID       gocql.UUID `db:"user_id"`
@@ -9,4 +13,15 @@ type User struct {
 	Email        string     `db:"email"`
 	HashPassword string     `db:"hash_password"`
 	AuthToken    string     `db:"auth_token"`
+}
+
+func (u *User) ToProto() *proto.User {
+	return &proto.User{
+		UserName:     u.Username,
+		HashPassword: u.HashPassword,
+		Name:         u.Name,
+		Email:        u.Email,
+		AuthToken:    u.AuthToken,
+		UserId:       u.UserID.String(),
+	}
 }
