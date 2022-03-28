@@ -171,14 +171,15 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
     try {
       UsersProto.GetPhrasesRequest req = UsersProto.GetPhrasesRequest.newBuilder()
         .setUserId(request.hasKey("user_id") ? request.getString("user_id") : "")
-        // timestamp
+        .setStart(request.hasKey("start") ? (long) request.getDouble("start") : 0)
+        .setEnd(request.hasKey("end") ? (long) request.getDouble("end") : 0)
         .build();
       UsersProto.GetPhrasesResponse resp = (UsersProto.GetPhrasesResponse) new GrpcCall(new GetPhrasesRunnable(req), channel).execute()
         .get();
       if (resp == null) {
         promise.reject(new NullPointerException("no response"));
       }
-      promise.resolve(EntityConverter.createJSReponseWithPhrases(resp.getPhrasesList()));
+      promise.resolve(EntityConverter.createJSResponseWithPhrases(resp.getPhrasesList()));
     } catch (Exception e) {
       promise.reject(e);
     }
@@ -189,7 +190,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
     try {
       UsersProto.DeletePhraseRequest req = UsersProto.DeletePhraseRequest.newBuilder()
         .setUserId(request.hasKey("user_id") ? request.getString("user_id") : "")
-        // timestamp
+        .setPhraseTime(request.hasKey("phrase_time") ? (long) request.getDouble("phrase_time") : 0)
         .build();
       UsersProto.DeletePhraseResponse resp = (UsersProto.DeletePhraseResponse) new GrpcCall(new DeletePhraseRunnable(req), channel).execute()
         .get();
@@ -432,12 +433,14 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
       return resp;
     }
 
-    protected static WritableArray createJSReponseWithPhrases(List<UsersProto.Phrase> phrases) {
-      WritableArray resp = Arguments.createArray();
+    protected static WritableMap createJSResponseWithPhrases(List<UsersProto.Phrase> phrases) {
+      WritableMap resp = Arguments.createMap();
+      WritableArray arr = Arguments.createArray();
 
       for (UsersProto.Phrase phrase : phrases) {
-        resp.pushMap(convertPhraseEntityToJS(phrase));
+        arr.pushMap(convertPhraseEntityToJS(phrase));
       }
+      resp.putArray("phrases", arr);
 
       return resp;
     }

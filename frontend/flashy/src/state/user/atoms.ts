@@ -9,5 +9,5 @@ export const currentUser: RecoilState<User> = atom<User>({
 
 export const cardsCount: RecoilState<number> = atom<number>({
     key: 'cardsCount',
-    default: 0,
+    default: 1,
 });

@@ -26,7 +26,7 @@ type HomeScreenProps = NativeStackNavigationProp<StackParams, SCREENS.HOME>;
 interface CardsCountModalProps {
     isVisible: Boolean;
 }
-// TODO: home profile, friends, leaderboards
+// TODO: friends, leaderboards
 export const Home = (): JSX.Element => {
     const nav = useNavigation<HomeScreenProps>();
     const [user, setUser] = useRecoilState(currentUser);
@@ -118,14 +118,14 @@ export const Home = (): JSX.Element => {
     };
 
     const History = (): JSX.Element => {
-        const { isLoading, isError, error, data } = useGetPhraseHistory(user.user_id);
+        const { isLoading, isError, error, data, isFetching } = useGetPhraseHistory(user.user_id);
         if (isError) console.error(error);
         return (
             <View style={historyStyles.container}>
                 <View style={historyStyles.textContainer}>
                     <Text style={historyStyles.text}>History</Text>
                 </View>
-                {isLoading ? (
+                {isLoading || isFetching ? (
                     <LoadingScreen />
                 ) : isError ? (
                     <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -135,13 +135,33 @@ export const Home = (): JSX.Element => {
                     </View>
                 ) : (
                     <FlatList
+                        style={{ width: '100%' }}
+                        showsVerticalScrollIndicator={false}
                         data={data}
                         renderItem={({ item }) => (
-                            <View>
-                                <Text>{item.word}</Text>
-                                <Text>{item.sentence}</Text>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                }}>
+                                <Text
+                                    style={{
+                                        width: '30%',
+                                        marginHorizontal: 5,
+                                        textAlign: 'center',
+                                        fontWeight: 'bold',
+                                    }}>
+                                    {item.word}
+                                </Text>
+                                <Text
+                                    style={{
+                                        width: '55%',
+                                        marginHorizontal: 5,
+                                    }}>
+                                    {item.sentence}
+                                </Text>
                             </View>
-                        )}></FlatList>
+                        )}
+                    />
                 )}
             </View>
         );
@@ -152,7 +172,7 @@ export const Home = (): JSX.Element => {
             <UserProfile />
             <History />
             <Button style={styles.button} onPress={() => setRenderCardsCountModal(true)}>
-                Start learning new words now!
+                Start learning now!
             </Button>
             <Button
                 status="danger"
@@ -204,7 +224,6 @@ const historyStyles = StyleSheet.create({
         borderColor: 'black',
         borderWidth: 2,
         width: '90%',
-
         alignItems: 'center',
         margin: 20,
     },
@@ -229,17 +248,15 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     container: {
-        height: 200,
+        flex: 1,
         display: 'flex',
         alignItems: 'center',
     },
     modalContainer: {
         position: 'absolute',
         backgroundColor: 'rgba(0,0,0,0.5)',
-        top: 0,
-        right: 0,
-        left: 0,
-        bottom: 0,
+        width: '100%',
+        height: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

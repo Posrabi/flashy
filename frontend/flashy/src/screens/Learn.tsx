@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Input, Text, Icon, Button } from '@ui-kitten/components';
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, Dispatch, SetStateAction } from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -11,9 +11,11 @@ import {
     Animated,
     GestureResponderHandlers,
 } from 'react-native';
-import { useRecoilState } from 'recoil';
+import { useQueryClient } from 'react-query';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import EndpointsModule from '../api/users';
 import { StackParams } from '../nav';
-import { cardsCount } from '../state/user';
+import { cardsCount, currentUser } from '../state/user';
 import { SCREENS } from './constants';
 
 interface HelpModalProps {
@@ -30,6 +32,11 @@ export const Learn = (): JSX.Element => {
     const [help, setHelp] = React.useState(false);
     const [back, setBack] = React.useState(false);
     const [cardCount, setCardCount] = useRecoilState(cardsCount);
+    const user = useRecoilValue(currentUser);
+    const [word, setWord] = React.useState('');
+    const [sentence, setSentence] = React.useState('');
+    const [complete, setComplete] = React.useState(0);
+    const queryClient = useQueryClient();
     const nav = useNavigation<LearnScreenProps>();
     const pan = useRef(new Animated.ValueXY()).current;
     const panResponder = useMemo(
@@ -47,6 +54,19 @@ export const Learn = (): JSX.Element => {
                         }).start(() => {
                             setCardCount(cardCount - 1);
                             pan.setValue({ x: 0, y: 0 });
+                            if (word && sentence) {
+                                EndpointsModule.CreatePhrase({
+                                    phrase: {
+                                        user_id: user.user_id,
+                                        word: word,
+                                        sentence: sentence,
+                                        phrase_time: 0,
+                                    },
+                                });
+                                setWord('');
+                                setSentence('');
+                                setComplete(complete + 1);
+                            }
                         });
                     } else
                         Animated.spring(pan, {
@@ -55,10 +75,10 @@ export const Learn = (): JSX.Element => {
                         }).start();
                 },
             }),
-        [cardCount]
+        [cardCount, word, sentence, complete]
     );
 
-    const HelpModal = useRef((props: HelpModalProps): JSX.Element => {
+    const HelpModal = (props: HelpModalProps): JSX.Element => {
         if (!props.isVisible) return <></>;
         return (
             <View style={styles.modalContainer}>
@@ -73,15 +93,15 @@ export const Learn = (): JSX.Element => {
                 </View>
             </View>
         );
-    }).current;
+    };
 
-    const BackModal = useRef((props: BackModalProps): JSX.Element => {
+    const BackModal = (props: BackModalProps): JSX.Element => {
         if (!props.isVisible) return <></>;
         return (
             <View style={styles.modalContainer}>
                 <View style={styles.modal}>
                     <Text style={styles.modalText}>
-                        Are you sure you want to go back? All of your progress will be lost.
+                        Are you sure you want to go back? Your progress on this card will be lost.
                     </Text>
                     <View style={styles.modalButtonContainer}>
                         <Button
@@ -89,6 +109,7 @@ export const Learn = (): JSX.Element => {
                             status="danger"
                             children={() => <Text style={styles.backConfirmText}>Yes</Text>}
                             onPress={() => {
+                                queryClient.invalidateQueries('getPhrasesHistory');
                                 nav.goBack();
                                 setCardCount(1);
                             }}
@@ -102,14 +123,14 @@ export const Learn = (): JSX.Element => {
                 </View>
             </View>
         );
-    }).current;
+    };
 
-    const CongratsModal = useRef((): JSX.Element => {
+    const CongratsModal = (): JSX.Element => {
         return (
             <View style={styles.modalContainer}>
                 <View style={styles.modal}>
                     <Text style={styles.modalText}>
-                        Congratulations!{'\n\n'}You've just completed {cardCount} cards.
+                        Congratulations!{'\n\n'}You've just completed {complete} cards.
                     </Text>
                     <View style={styles.modalButtonContainer}>
                         <Button
@@ -120,6 +141,7 @@ export const Learn = (): JSX.Element => {
                                 </Text>
                             )}
                             onPress={() => {
+                                queryClient.invalidateQueries('getPhrasesHistory');
                                 nav.goBack();
                                 setCardCount(1);
                             }}
@@ -128,7 +150,7 @@ export const Learn = (): JSX.Element => {
                 </View>
             </View>
         );
-    }).current;
+    };
 
     return (
         <SafeAreaView style={styles.cardContainer}>
@@ -144,6 +166,10 @@ export const Learn = (): JSX.Element => {
                     if (i == cardCount - 1) {
                         arr.push(
                             <Card
+                                word={word}
+                                sentence={sentence}
+                                setWord={setWord}
+                                setSentence={setSentence}
                                 key={i}
                                 top={true}
                                 panHandler={panResponder.panHandlers}
@@ -165,11 +191,13 @@ interface CardProps {
     top: Boolean;
     panHandler?: GestureResponderHandlers;
     pan?: any;
+    word?: string;
+    sentence?: string;
+    setWord?: Dispatch<SetStateAction<string>>;
+    setSentence?: Dispatch<SetStateAction<string>>;
 }
 
 const Card = (props: CardProps): JSX.Element => {
-    const [sentence, setSentence] = React.useState('');
-    const [word, setWord] = React.useState('');
     return (
         <Animated.View
             style={[
@@ -182,16 +210,20 @@ const Card = (props: CardProps): JSX.Element => {
             ]}
             {...props.panHandler}>
             <Input
-                value={sentence}
-                onChangeText={setSentence}
+                value={props.sentence}
+                onChangeText={(val) => {
+                    props.setSentence ? props.setSentence(val) : null;
+                }}
                 placeholder="Input your sentence here"
                 style={styles.input}
                 multiline={true}
                 textStyle={styles.inputText}
             />
             <Input
-                value={word}
-                onChangeText={setWord}
+                value={props.word}
+                onChangeText={(val) => {
+                    props.setWord ? props.setWord(val) : null;
+                }}
                 placeholder="Insert your word here"
                 style={styles.input}
                 textAlign="center"

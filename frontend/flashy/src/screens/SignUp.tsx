@@ -43,7 +43,7 @@ export const SignUp = (): JSX.Element => {
             const { user } = await EndpointsModule.CreateUser(req);
             if (user) {
                 setUser(user);
-                // nav.navigate(SCREENS.HOME);
+                nav.navigate(SCREENS.HOME);
             } else {
                 setStatus(false);
                 throw new Error('create user endpoint does not return user');
