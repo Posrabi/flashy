@@ -26,6 +26,7 @@ type HomeScreenProps = NativeStackNavigationProp<StackParams, SCREENS.HOME>;
 interface CardsCountModalProps {
     isVisible: Boolean;
 }
+const miliToNano = 1000;
 // TODO: friends, leaderboards
 export const Home = (): JSX.Element => {
     const nav = useNavigation<HomeScreenProps>();
@@ -119,12 +120,67 @@ export const Home = (): JSX.Element => {
 
     const History = (): JSX.Element => {
         const { isLoading, isError, error, data, isFetching } = useGetPhraseHistory(user.user_id);
+        const [expanded, setExpanded] = React.useState(false);
         if (isError) console.error(error);
+        if (expanded)
+            return (
+                <View style={historyStyles.expandedContainer}>
+                    <View style={historyStyles.expandedModal}>
+                        <TouchableOpacity
+                            style={[
+                                historyStyles.textContainer,
+                                { borderTopLeftRadius: 15, borderTopRightRadius: 15 },
+                            ]}
+                            onPress={() => setExpanded(false)}>
+                            <Text style={historyStyles.text}>History</Text>
+                        </TouchableOpacity>
+                        <FlatList
+                            style={{ width: '100%' }}
+                            showsVerticalScrollIndicator={false}
+                            data={data}
+                            renderItem={({ item }) => (
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        borderColor: 'black',
+                                        margin: 2,
+                                        marginVertical: 5,
+                                    }}>
+                                    <Text
+                                        style={{
+                                            width: '30%',
+                                            marginHorizontal: 5,
+                                            textAlign: 'center',
+                                            fontWeight: 'bold',
+                                        }}>
+                                        {item.word}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            width: '40%',
+                                            marginHorizontal: 5,
+                                        }}>
+                                        {item.sentence}
+                                    </Text>
+                                    <Text style={{ flex: 1, textAlign: 'center' }}>
+                                        {new Date(
+                                            item.phrase_time * miliToNano
+                                        ).toLocaleDateString()}
+                                    </Text>
+                                </View>
+                            )}
+                        />
+                    </View>
+                </View>
+            );
         return (
             <View style={historyStyles.container}>
-                <View style={historyStyles.textContainer}>
+                <TouchableOpacity
+                    style={historyStyles.textContainer}
+                    onPress={() => setExpanded(true)}>
                     <Text style={historyStyles.text}>History</Text>
-                </View>
+                </TouchableOpacity>
                 {isLoading || isFetching ? (
                     <LoadingScreen />
                 ) : isError ? (
@@ -205,7 +261,6 @@ const userStyles = StyleSheet.create({
         height: 100,
         width: 100,
         borderRadius: 50,
-
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 10,
@@ -231,6 +286,7 @@ const historyStyles = StyleSheet.create({
     textContainer: {
         borderTopLeftRadius: 8,
         borderTopRightRadius: 8,
+        height: 35,
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
@@ -241,6 +297,23 @@ const historyStyles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 17,
         margin: 5,
+    },
+    expandedContainer: {
+        position: 'absolute',
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 1,
+    },
+    expandedModal: {
+        height: '80%',
+        width: '90%',
+        backgroundColor: 'white',
+        elevation: 10,
+        borderRadius: 15,
+        borderColor: 'black',
     },
 });
 

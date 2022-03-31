@@ -96,7 +96,7 @@ func (u *userRepo) DeleteUser(ctx context.Context, userID gocql.UUID) error {
 }
 
 func (u *userRepo) LogIn(ctx context.Context, username, hashPassword string) (*entity.User, error) {
-	q := `SELECT user_id, user_name, name, email, facebook_access_token, auth_token FROM %s WHERE user_name = ?`
+	q := `SELECT user_id, user_name, name, email, hash_password, facebook_access_token, auth_token FROM %s WHERE user_name = ?`
 
 	var user entity.User
 	if err := u.sess.Query(fmt.Sprintf(q, info), username).Consistency(gocql.One).Idempotent(true).WithContext(ctx).Scan(
@@ -104,6 +104,7 @@ func (u *userRepo) LogIn(ctx context.Context, username, hashPassword string) (*e
 		&user.Username,
 		&user.Name,
 		&user.Email,
+		&user.HashPassword,
 		&user.FacebookAccessToken,
 		&user.AuthToken,
 	); err != nil {
@@ -114,6 +115,7 @@ func (u *userRepo) LogIn(ctx context.Context, username, hashPassword string) (*e
 	if user.HashPassword != hashPassword {
 		return nil, gerr.NewError(errors.New("invalid password"), codes.PermissionDenied)
 	}
+	user.HashPassword = ""
 
 	return &user, nil
 }

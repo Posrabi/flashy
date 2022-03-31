@@ -12,7 +12,7 @@ type Phrase struct {
 	UserID   gocql.UUID `db:"user_id"`
 	Word     string     `db:"word"`
 	Sentence string     `db:"sentence"`
-	Time     time.Time  `db:"cur_time"`
+	Time     time.Time  `db:"phrase_time"`
 }
 
 func (p *Phrase) ToProto() *proto.Phrase {
