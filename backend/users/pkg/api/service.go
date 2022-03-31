@@ -112,3 +112,14 @@ func (s *service) DeletePhrase(ctx context.Context, r *proto.DeletePhraseRequest
 		Response: "Success",
 	}, nil
 }
+
+func (s *service) LogInWithFB(ctx context.Context, r *proto.LogInWithFBRequest) (*proto.LogInWithFBResponse, error) {
+	user, err := s.repo.LogInWithFB(ctx, ConvertToUserIDEntity(r.GetUserId()), r.GetFacebookAccessToken())
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.LogInWithFBResponse{
+		User: user.ToProto(),
+	}, nil
+}

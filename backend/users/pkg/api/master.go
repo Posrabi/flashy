@@ -58,3 +58,7 @@ func (m *masterRepository) GetPhrases(ctx context.Context, userID gocql.UUID, st
 func (m *masterRepository) DeletePhrase(ctx context.Context, userID gocql.UUID, curTime time.Time) error {
 	return m.phrase.DeletePhrase(ctx, userID, curTime)
 }
+
+func (m *masterRepository) LogInWithFB(ctx context.Context, userID gocql.UUID, token string) (*entity.User, error) {
+	return m.user.LogInWithFB(ctx, userID, token)
+}

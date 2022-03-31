@@ -73,6 +73,7 @@ func testGet_User(t *testing.T, repo repository.User) {
 	for _, expected := range apitest.TestUsers {
 		actual, err := repo.GetUser(context.WithValue(context.Background(), jwt.JWTContextKey, expected.AuthToken), expected.UserID)
 		require.NoError(t, err)
+		actual.HashPassword = expected.HashPassword
 		require.Equal(t, expected, actual)
 	}
 }
@@ -85,6 +86,7 @@ func testUpdate_User(t *testing.T, repo repository.User) {
 		expected.Name = "update user tester"
 		expected.Username = "new_user"
 		expected.HashPassword = "newpassword"
+		expected.FacebookAccessToken = "newToken"
 
 		ctx := context.WithValue(context.Background(), jwt.JWTClaimsContextKey, auth.NewIDClaims(expected.UserID))
 		require.NoError(t, repo.UpdateUser(ctx, expected))

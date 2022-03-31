@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	proto "github.com/Posrabi/flashy/protos/users/proto"
 )
@@ -20,7 +21,7 @@ func SetupAPIConnection(t *testing.T) {
 }
 
 func setupAPIConn(t *testing.T) *grpc.ClientConn {
-	conn, err := grpc.Dial(UserEndpoint, grpc.WithInsecure())
+	conn, err := grpc.Dial(UserEndpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Logf("this test requires a live gRPC connection to the api - error: %s", err.Error())
 		t.Fail()

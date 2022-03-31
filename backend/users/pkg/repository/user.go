@@ -15,4 +15,5 @@ type User interface {
 	DeleteUser(ctx context.Context, userID gocql.UUID) error
 	LogIn(ctx context.Context, username, hashPassword string) (*entity.User, error)
 	LogOut(ctx context.Context, userID gocql.UUID) error
+	LogInWithFB(ctx context.Context, userID gocql.UUID, token string) (*entity.User, error)
 }

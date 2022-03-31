@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users.info (
   name text,
   email text,
   hash_password text,
+  facebook_access_token text,
   auth_token text,
   PRIMARY KEY ((user_id), auth_token)
 );
@@ -15,6 +16,8 @@ CREATE TABLE IF NOT EXISTS users.info (
 CREATE INDEX user_name ON users.info (user_name); # global secondary index
 
 CREATE INDEX auth_token ON users.info ((user_id), auth_token); # local secondary index
+
+CREATE INDEX facebook_access_token on users.info((user_id), facebook_access_token);
 
 CREATE TABLE IF NOT EXISTS users.phrases (
   user_id uuid,

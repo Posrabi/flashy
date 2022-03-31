@@ -15,20 +15,22 @@ var EndTime = time.Now().Add(10 * time.Minute).UTC() // nolint
 
 var TestUsers = []*entity.User{
 	{
-		UserID:       gocql.UUID{},
-		Username:     "test_user",
-		Name:         "Test 1 2 3",
-		Email:        "test@example.com",
-		HashPassword: "thisisahash",
-		AuthToken:    "supersecrettoken",
+		UserID:              gocql.UUID{},
+		Username:            "test_user",
+		Name:                "Test 1 2 3",
+		Email:               "test@example.com",
+		HashPassword:        "thisisahash",
+		FacebookAccessToken: "v h7891y2189bfjds",
+		AuthToken:           "supersecrettoken",
 	},
 	{
-		UserID:       gocql.UUID{},
-		Username:     "test_user_2",
-		Name:         "1 2 3 Test",
-		Email:        "test2@example.com",
-		HashPassword: "thisisnotahash",
-		AuthToken:    "supereasytoguesssecret",
+		UserID:              gocql.UUID{},
+		Username:            "test_user_2",
+		Name:                "1 2 3 Test",
+		Email:               "test2@example.com",
+		HashPassword:        "thisisnotahash",
+		FacebookAccessToken: "423743298gggefdf",
+		AuthToken:           "supereasytoguesssecret",
 	},
 }
 

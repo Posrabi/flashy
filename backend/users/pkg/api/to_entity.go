@@ -11,12 +11,13 @@ import (
 
 func ConvertToUserEntity(user *proto.User) *entity.User {
 	return &entity.User{
-		UserID:       ConvertToUserIDEntity(user.GetUserId()),
-		Username:     user.GetUserName(),
-		Name:         user.GetName(),
-		Email:        user.GetEmail(),
-		HashPassword: user.GetHashPassword(),
-		AuthToken:    user.GetAuthToken(),
+		UserID:              ConvertToUserIDEntity(user.GetUserId()),
+		Username:            user.GetUserName(),
+		Name:                user.GetName(),
+		Email:               user.GetEmail(),
+		HashPassword:        user.GetHashPassword(),
+		FacebookAccessToken: user.GetFacebookAccessToken(),
+		AuthToken:           user.GetAuthToken(),
 	}
 }
 

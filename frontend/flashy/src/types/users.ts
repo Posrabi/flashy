@@ -7,6 +7,7 @@ export interface User {
   name: string;
   email: string;
   auth_token: string;
+  facebook_access_token: string;
   user_id: string;
 }
 
@@ -94,6 +95,15 @@ export interface DeletePhraseResponse {
   response: string;
 }
 
+export interface LogInWithFBRequest {
+  facebook_access_token: string;
+  user_id: string;
+}
+
+export interface LogInWithFBResponse {
+  user: User | undefined;
+}
+
 export interface UsersAPI {
   CreateUser(request: CreateUserRequest): Promise<CreateUserResponse>;
   GetUser(request: GetUserRequest): Promise<GetUserResponse>;
@@ -104,4 +114,5 @@ export interface UsersAPI {
   CreatePhrase(request: CreatePhraseRequest): Promise<CreatePhraseResponse>;
   GetPhrases(request: GetPhrasesRequest): Promise<GetPhrasesResponse>;
   DeletePhrase(request: DeletePhraseRequest): Promise<DeletePhraseResponse>;
+  LogInWithFB(request: LogInWithFBRequest): Promise<LogInWithFBResponse>;
 }
