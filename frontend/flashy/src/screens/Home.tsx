@@ -19,7 +19,7 @@ import { defaultUser } from '../api/defaults';
 import { LoadingScreen } from '../components/Loading';
 import { StackParams } from '../nav';
 import { useGetPhraseHistory } from '../state/phrase';
-import { cardsCount, currentUser } from '../state/user';
+import { cardsCount, clearUser, currentUser } from '../state/user';
 import { SCREENS } from './constants';
 
 type HomeScreenProps = NativeStackNavigationProp<StackParams, SCREENS.HOME>;
@@ -179,6 +179,7 @@ export const Home = (): JSX.Element => {
                 style={styles.button}
                 onPress={() => {
                     setUser(defaultUser());
+                    clearUser();
                     nav.goBack();
                 }}>
                 <Icon name="log-out-outline" fill="white" width={25} height={25} />

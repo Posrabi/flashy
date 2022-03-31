@@ -27,3 +27,11 @@ export const getAuthTokenFromStorage = async (): Promise<any> => {
         console.error(error);
     }
 };
+
+export const clearUser = async (): Promise<any> => {
+    try {
+        await EncryptedStorage.clear();
+    } catch (error) {
+        console.error(error);
+    }
+};

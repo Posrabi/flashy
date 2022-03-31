@@ -43,11 +43,10 @@ export const LogIn = (): JSX.Element => {
                         const resp = await EndpointsModule.GetUser({
                             user_id: userID,
                             // @ts-ignore
-                            auth_token: authToken, // hack
+                            auth_token: authToken, // hack to pass auth_token to getUser endpoint.
                         });
                         if (resp.user) {
                             setUser(resp.user);
-                            console.log(user);
                             storeUser(resp.user.user_id, resp.user.auth_token);
                             nav.navigate(SCREENS.HOME);
                         } else {
@@ -92,6 +91,7 @@ export const LogIn = (): JSX.Element => {
                         console.log(
                             `Log in success with permissions: ${result.grantedPermissions?.toString()}`
                         );
+                        console.log(result);
                     }
                 },
                 (error) => {
