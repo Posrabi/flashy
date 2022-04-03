@@ -60,6 +60,7 @@ func testCreate_User(t *testing.T, repo repository.User) {
 	for i, user := range apitest.TestUsers {
 		updatedUser, err := repo.CreateUser(context.Background(), user)
 		require.NoError(t, err)
+		updatedUser.HashPassword = user.HashPassword
 		apitest.TestUsers[i] = updatedUser
 	}
 }
@@ -90,6 +91,7 @@ func testUpdate_User(t *testing.T, repo repository.User) {
 
 		actual, err := repo.GetUser(ctx, expected.UserID)
 		require.NoError(t, err)
+		expected.HashPassword = actual.HashPassword
 		require.Equal(t, expected, actual)
 	}
 }
