@@ -49,14 +49,13 @@ func (u *userRepo) CreateUser(ctx context.Context, user *entity.User) (*entity.U
 	if err := u.sess.Query(fmt.Sprintf(q, info), args...).Idempotent(true).WithContext(ctx).Exec(); err != nil {
 		return nil, gerr.NewScError(err, codes.AlreadyExists, fmt.Sprintf(q, info), args)
 	}
-	user.HashPassword = ""
 
 	return user, nil
 }
 
 // TODO: make this more secure.
 func (u *userRepo) GetUser(ctx context.Context, userID gocql.UUID) (*entity.User, error) {
-	q := `SELECT user_id, user_name, name, email, facebook_access_token, auth_token FROM %s WHERE user_id = ? AND auth_token = ?`
+	q := `SELECT user_id, user_name, name, email, hash_password, facebook_access_token, auth_token FROM %s WHERE user_id = ? AND auth_token = ?`
 
 	var user entity.User
 	if err := u.sess.Query(fmt.Sprintf(q, info), userID, ctx.Value(jwt.JWTContextKey)).WithContext(ctx).Consistency(gocql.One).Idempotent(true).Scan(
@@ -64,6 +63,7 @@ func (u *userRepo) GetUser(ctx context.Context, userID gocql.UUID) (*entity.User
 		&user.Username,
 		&user.Name,
 		&user.Email,
+		&user.HashPassword,
 		&user.FacebookAccessToken,
 		&user.AuthToken,
 	); err != nil {
@@ -116,7 +116,6 @@ func (u *userRepo) LogIn(ctx context.Context, username, hashPassword string) (*e
 	if user.HashPassword != hashPassword {
 		return nil, gerr.NewError(errors.New("invalid password"), codes.PermissionDenied)
 	}
-	user.HashPassword = ""
 
 	return &user, nil
 }

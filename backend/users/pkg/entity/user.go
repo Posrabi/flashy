@@ -19,7 +19,6 @@ type User struct {
 func (u *User) ToProto() *proto.User {
 	return &proto.User{
 		UserName:            u.Username,
-		HashPassword:        u.HashPassword,
 		Name:                u.Name,
 		Email:               u.Email,
 		AuthToken:           u.AuthToken,
