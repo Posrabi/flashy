@@ -29,11 +29,9 @@ const (
 // TODO: dynamically choose address
 
 const (
-	// TODO: find a way to proxy these addresses.
-	// TODO: clean up.
 	node1      string = "localhost:9042"
 	node2      string = "localhost:9043"
-	node3      string = "localhost:9044"
+	node3      string = "localhost:9044" // hosts for local running a local scylla cluster
 	retries           = 5
 	maxRetries        = 10 * time.Second
 )
@@ -57,7 +55,8 @@ func SetupDB(level AccessType, dbType DBType) (*gocql.Session, error) {
 func createClusterConfig(dbType DBType) *gocql.ClusterConfig {
 	switch dbType {
 	case ProdDB:
-		return gocql.NewCluster(node1, node2, node3)
+		host := os.Getenv("DB_ENDPOINT")
+		return gocql.NewCluster(host)
 	case DevDB:
 		return gocql.NewCluster(node1, node2, node3)
 	default:

@@ -67,7 +67,12 @@ func grpcServe() error {
 
 	var svcUsers api.Service
 
-	sess, err := api.SetupDB(api.ReadAndWrite, api.DevDB)
+	dbType := api.DevDB
+	if env := os.Getenv("ENV"); env == "prod" {
+		dbType = api.ProdDB
+	}
+
+	sess, err := api.SetupDB(api.ReadAndWrite, dbType)
 	if err != nil {
 		return fmt.Errorf("failed to set up DB %w", err)
 	}

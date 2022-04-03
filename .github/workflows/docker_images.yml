@@ -1,0 +1,52 @@
+name: Docker Images
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  go-base:
+    runs-on: ubuntu-latest
+    name: Go base image
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Login to DO
+        id: login-do
+        run: echo ${{ secrets.DO_REGISTRY_TOKEN }} | docker login -u ${{ secrets.DO_REGISTRY_USERNAME }} --password-stdin ${{ secrets.DO_REGISTRY_ENDPOINT }}
+      - name: Build, tag, and push go-base Image to DO Registry
+        env:
+          REGISTRY: ${{ secrets.DO_REGISTRY_ENDPOINT }}
+          REPOSITORY: go-base
+        run: |
+          docker image build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker image push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+      - name: Logout of ScaleWay
+        run: docker logout
+
+  users:
+    runs-on: ubuntu-latest
+    name: users image
+    needs: go-base
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Login to DO
+        id: login-do
+        run: echo ${{ secrets.DO_REGISTRY_TOKEN }} | docker login -u ${{ secrets.DO_REGISTRY_USERNAME }} --password-stdin ${{ secrets.DO_REGISTRY_ENDPOINT }}
+      - name: Build, tag, and push users image to ScaleWay Registry
+        env:
+          REGISTRY: ${{ secrets.DO_REGISTRY_ENDPOINT }}
+          REPOSITORY: users
+        run: |
+          docker image build \ 
+            --build-arg BASE_IMAGE=$REGISTRY/go-base:$IMAGE_TAG \
+            --target final -t $REGISTRY/$REPOSITORY:$IMAGE_TAG backend/users
+          docker image push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+      - name: Logout of ScaleWay
+        run: docker logout
