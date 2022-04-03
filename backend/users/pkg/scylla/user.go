@@ -123,7 +123,7 @@ func (u *userRepo) LogIn(ctx context.Context, username, hashPassword string) (*e
 func (u *userRepo) LogOut(ctx context.Context, userID gocql.UUID) error {
 	q := `UPDATE %s SET auth_token = ?, facebook_access_token = ? WHERE user_id = ? IF EXISTS`
 
-	if err := u.sess.Query(fmt.Sprintf(q, info), " ", userID).Consistency(gocql.All).WithContext(ctx).Exec(); err != nil {
+	if err := u.sess.Query(fmt.Sprintf(q, info), "", "", userID).Consistency(gocql.All).WithContext(ctx).Exec(); err != nil {
 		return gerr.NewScError(err, codes.Aborted, fmt.Sprintf(q, info), []interface{}{" ", userID.String()})
 	}
 	return nil

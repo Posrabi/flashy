@@ -45,9 +45,7 @@ jobs:
           REGISTRY: ${{ secrets.DO_REGISTRY_ENDPOINT }}
           REPOSITORY: users
         run: |
-          docker image build \ 
-            --build-arg BASE_IMAGE=$REGISTRY/go-base:$IMAGE_TAG \
-            --target final -t $REGISTRY/$REPOSITORY:$IMAGE_TAG backend/users
+          docker image build --build-arg BASE_IMAGE=$REGISTRY/go-base:$IMAGE_TAG --target final -t $REGISTRY/$REPOSITORY:$IMAGE_TAG backend/users
           docker image push $REGISTRY/$REPOSITORY:$IMAGE_TAG
       - name: Logout of DO
         if: always()
