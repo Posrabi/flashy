@@ -5,5 +5,5 @@ RUN apk --no-cache add \
   ca-certificates build-base libffi-dev openssl-dev \
   python3 python3-dev py3-pip
 WORKDIR /root/
-COPY --from=build-env /go/src/github.com/Posrabi/flashy/backend/users .
+COPY --from=build-env /go/src/github.com/Posrabi/flashy/build/users .
 CMD ["./users", "server"]

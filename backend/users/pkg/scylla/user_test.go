@@ -2,7 +2,6 @@ package scylla_test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/Posrabi/flashy/backend/apitest"
@@ -60,9 +59,7 @@ func testCreate_User(t *testing.T, repo repository.User) {
 
 	for i, user := range apitest.TestUsers {
 		updatedUser, err := repo.CreateUser(context.Background(), user)
-		if err != nil {
-			fmt.Println(err)
-		}
+		require.NoError(t, err)
 		apitest.TestUsers[i] = updatedUser
 	}
 }

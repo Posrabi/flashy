@@ -24,7 +24,8 @@ jobs:
         run: |
           docker image build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker image push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-      - name: Logout of ScaleWay
+      - name: Logout of DO
+        if: always()
         run: docker logout
 
   users:
@@ -39,7 +40,7 @@ jobs:
       - name: Login to DO
         id: login-do
         run: echo ${{ secrets.DO_REGISTRY_TOKEN }} | docker login -u ${{ secrets.DO_REGISTRY_USERNAME }} --password-stdin ${{ secrets.DO_REGISTRY_ENDPOINT }}
-      - name: Build, tag, and push users image to ScaleWay Registry
+      - name: Build, tag, and push users image to DO Registry
         env:
           REGISTRY: ${{ secrets.DO_REGISTRY_ENDPOINT }}
           REPOSITORY: users
@@ -48,5 +49,6 @@ jobs:
             --build-arg BASE_IMAGE=$REGISTRY/go-base:$IMAGE_TAG \
             --target final -t $REGISTRY/$REPOSITORY:$IMAGE_TAG backend/users
           docker image push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-      - name: Logout of ScaleWay
+      - name: Logout of DO
+        if: always()
         run: docker logout

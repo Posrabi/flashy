@@ -49,6 +49,7 @@ func (u *userRepo) CreateUser(ctx context.Context, user *entity.User) (*entity.U
 	if err := u.sess.Query(fmt.Sprintf(q, info), args...).Idempotent(true).WithContext(ctx).Exec(); err != nil {
 		return nil, gerr.NewScError(err, codes.AlreadyExists, fmt.Sprintf(q, info), args)
 	}
+	user.HashPassword = ""
 
 	return user, nil
 }
