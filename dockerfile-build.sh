@@ -17,7 +17,7 @@ services="users"
 
 echo "[STARTING] - Building go services"
 
-for svc in $services; do
+for service in $services; do
   CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o build/${service} backend/${service}/main.go &
   pids+=( $! )
 done
