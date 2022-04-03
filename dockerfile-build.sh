@@ -11,7 +11,7 @@ done
 
 unset pids
 
-services = "users"
+services="users"
 
 echo "[STARTING] - Building go services"
 
