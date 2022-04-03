@@ -14,19 +14,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Login to DO
-        id: login-do
-        run: echo ${{ secrets.DO_REGISTRY_TOKEN }} | docker login -u ${{ secrets.DO_REGISTRY_USERNAME }} --password-stdin ${{ secrets.DO_REGISTRY_ENDPOINT }}
-      - name: Build, tag, and push go-base Image to DO Registry
+      - name: Configure AWS Creds
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ECR_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build, tag, and push go-base image to ECR
         env:
-          REGISTRY: ${{ secrets.DO_REGISTRY_ENDPOINT }}
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: go-base
         run: |
           docker image build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker image push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-      - name: Logout of DO
+      - name: Logout of ECR
         if: always()
-        run: docker logout
+        run: docker logout ${{ steps.login-ecr.outputs.registry }}
 
   users:
     runs-on: ubuntu-latest
@@ -37,16 +43,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Login to DO
-        id: login-do
-        run: echo ${{ secrets.DO_REGISTRY_TOKEN }} | docker login -u ${{ secrets.DO_REGISTRY_USERNAME }} --password-stdin ${{ secrets.DO_REGISTRY_ENDPOINT }}
-      - name: Build, tag, and push users image to DO Registry
+      - name: Configure AWS Creds
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ECR_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build, tag, and push users image to ECR
         env:
-          REGISTRY: ${{ secrets.DO_REGISTRY_ENDPOINT }}
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: users
         run: |
           docker image build --build-arg BASE_IMAGE=$REGISTRY/go-base:$IMAGE_TAG --target final -t $REGISTRY/$REPOSITORY:$IMAGE_TAG backend/users
           docker image push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-      - name: Logout of DO
+      - name: Logout of ECR
         if: always()
-        run: docker logout
+        run: docker logout ${{ steps.login-ecr.outputs.registry }}
