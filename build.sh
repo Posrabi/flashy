@@ -4,6 +4,30 @@ set -eu -o pipefail
 
 pids=()
 
+BUILD_TS=false
+
+for arg in "$@"; do 
+  if [ $arg = "ts" ]; then
+    BUILD_TS=true
+  fi
+done
+
+if [ $BUILD_TS = true ]; then
+  make ts=1 pb &
+else
+  make pb &
+fi
+pids+=( $! )
+
+make gen &
+pids+=( $! )
+
+for pid in ${pids[*]}; do
+  wait $pid
+done
+
+unset pids
+
 services="users"
 
 echo "[STARTING] - Building Go services"

@@ -2,7 +2,9 @@
 # this builds all the svcs and bundle them into base_image, the each dockerfile will extract from the base_image as an individual svc.
 pids=()
 
-make &
+make pb &
+pids+=( $! )
+make gen &
 pids+=( $! )
 
 for pid in ${pids[*]}; do
@@ -24,4 +26,4 @@ for pid in ${pids[*]}; do
   wait $pid
 done
 
-echo "[FINISHED} - Building go services"
+echo "[FINISHED] - Building go services"
