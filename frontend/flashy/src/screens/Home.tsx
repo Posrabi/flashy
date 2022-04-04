@@ -49,28 +49,27 @@ export const Home = (): JSX.Element => {
                         onPress={() => setRenderCardsCountModal(false)}>
                         <Icon name="close-circle-outline" width={25} height={25} fill="black" />
                     </TouchableOpacity>
-                    <Text style={styles.modalText}>Select how many cards you will need.</Text>
+                    <Text style={styles.modalText}>Select the number of cards:</Text>
                     <View style={styles.cardsScroll}>
                         <ScrollView
                             onScroll={onCardsScroll}
                             showsVerticalScrollIndicator={false}
                             snapToInterval={50}
                             decelerationRate="fast"
-                            alwaysBounceVertical={true}
-                            bounces={false}>
+                            alwaysBounceVertical={true}>
                             {(() => {
                                 let arr = [];
                                 for (let i = 0; i <= 50; i++) {
                                     arr.push(
-                                        <Text style={styles.cardsText} key={i}>
-                                            {i}
-                                        </Text>
+                                        <View style={styles.cardsTextContainer} key={i}>
+                                            <Text style={styles.cardsText}>{i}</Text>
+                                        </View>
                                     );
                                 }
                                 arr.push(
-                                    <Text style={styles.cardsText} key="end">
-                                        {' '}
-                                    </Text>
+                                    <View style={styles.cardsTextContainer} key="end">
+                                        <Text style={styles.cardsText}> </Text>
+                                    </View>
                                 );
                                 return arr;
                             })()}
@@ -166,17 +165,17 @@ export const Home = (): JSX.Element => {
                                     </Text>
                                     {item.correct ? (
                                         <Icon
-                                            name="close-outline"
-                                            width={25}
-                                            height={25}
-                                            fill="red"
-                                        />
-                                    ) : (
-                                        <Icon
                                             name="checkmark-outline"
                                             width={25}
                                             height={25}
                                             fill="green"
+                                        />
+                                    ) : (
+                                        <Icon
+                                            name="close-outline"
+                                            width={25}
+                                            height={25}
+                                            fill="red"
                                         />
                                     )}
                                     <Text style={{ flex: 1, textAlign: 'center' }}>
@@ -239,12 +238,136 @@ export const Home = (): JSX.Element => {
         );
     };
 
+    const Leaderboard = (): JSX.Element => {
+        const [expanded, setExpanded] = React.useState(false);
+        if (expanded)
+            return (
+                <View style={historyStyles.expandedContainer}>
+                    <View style={historyStyles.expandedModal}>
+                        <TouchableOpacity
+                            style={[
+                                historyStyles.textContainer,
+                                {
+                                    borderTopLeftRadius: 15,
+                                    borderTopRightRadius: 15,
+                                    backgroundColor: '#f59b42',
+                                },
+                            ]}
+                            onPress={() => setExpanded(false)}>
+                            <Text style={historyStyles.text}>Leaderboard</Text>
+                        </TouchableOpacity>
+                        <FlatList
+                            style={{ width: '100%' }}
+                            showsVerticalScrollIndicator={false}
+                            data={[]}
+                            renderItem={({ item }) => (
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        borderColor: 'black',
+                                        margin: 2,
+                                        marginVertical: 5,
+                                    }}>
+                                    {/* <Text
+                                        style={{
+                                            width: '30%',
+                                            marginHorizontal: 5,
+                                            textAlign: 'center',
+                                            fontWeight: 'bold',
+                                            fontSize: 16,
+                                        }}>
+                                        {item.word}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            width: '35%',
+                                            marginHorizontal: 5,
+                                        }}>
+                                        {item.sentence}
+                                    </Text>
+                                    {item.correct ? (
+                                        <Icon
+                                            name="close-outline"
+                                            width={25}
+                                            height={25}
+                                            fill="red"
+                                        />
+                                    ) : (
+                                        <Icon
+                                            name="checkmark-outline"
+                                            width={25}
+                                            height={25}
+                                            fill="green"
+                                        />
+                                    )}
+                                    <Text style={{ flex: 1, textAlign: 'center' }}>
+                                        {new Date(
+                                            item.phrase_time * miliToNano
+                                        ).toLocaleDateString()}
+                                    </Text> */}
+                                </View>
+                            )}
+                        />
+                    </View>
+                </View>
+            );
+        return (
+            <View style={historyStyles.container}>
+                <TouchableOpacity
+                    style={[historyStyles.textContainer, { backgroundColor: '#f59b42' }]}
+                    onPress={() => setExpanded(true)}>
+                    <Text style={historyStyles.text}>Leaderboard</Text>
+                </TouchableOpacity>
+                {/* {isLoading || isFetching ? (
+                    <LoadingScreen />
+                ) : isError ? (
+                    <View style={{ flex: 1, justifyContent: 'center' }}>
+                        <Text status="danger">
+                            An error has occurred while loading friends...
+                        </Text>
+                    </View>
+                ) : ( */}
+                <FlatList
+                    style={{ width: '100%' }}
+                    showsVerticalScrollIndicator={false}
+                    data={[]}
+                    renderItem={({ item }) => (
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                            }}>
+                            {/* <Text
+                                    style={{
+                                        width: '30%',
+                                        marginHorizontal: 5,
+                                        textAlign: 'center',
+                                        fontWeight: 'bold',
+                                    }}>
+                                    {item.word}
+                                </Text>
+                                <Text
+                                    style={{
+                                        width: '55%',
+                                        marginHorizontal: 5,
+                                    }}>
+                                    {item.sentence}
+                                </Text> */}
+                        </View>
+                    )}
+                />
+                {/* )} */}
+            </View>
+        );
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <UserProfile />
             <History />
+            <Leaderboard />
             <Button style={styles.button} onPress={() => setRenderCardsCountModal(true)}>
-                Start learning now!
+                Start now!
             </Button>
             <Button
                 status="danger"
@@ -298,6 +421,7 @@ const historyStyles = StyleSheet.create({
         width: '90%',
         alignItems: 'center',
         margin: 20,
+        marginBottom: 5,
     },
     textContainer: {
         borderTopLeftRadius: 8,
@@ -335,7 +459,9 @@ const historyStyles = StyleSheet.create({
 
 const styles = StyleSheet.create({
     button: {
-        margin: 10,
+        margin: 15,
+        marginBottom: 0,
+        width: 200,
     },
     container: {
         flex: 1,
@@ -353,7 +479,7 @@ const styles = StyleSheet.create({
     },
     modal: {
         width: '65%',
-        height: '45%',
+        height: '47%',
         backgroundColor: '#ffffff',
         borderRadius: 15,
         elevation: 5,
@@ -372,29 +498,31 @@ const styles = StyleSheet.create({
         left: 0,
         margin: 10,
     },
+    cardsTextContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 50,
+    },
     cardsText: {
         textAlign: 'center',
-        height: 50,
         fontSize: 20,
         fontWeight: 'bold',
     },
     cardsScroll: {
-        height: 130,
+        height: 150,
         width: '80%',
-        borderWidth: 2,
-        borderColor: 'black',
     },
     topGradient: {
         position: 'absolute',
         width: '100%',
         top: 0,
-        height: 70,
+        height: 80,
     },
     bottomGradient: {
         position: 'absolute',
         width: '100%',
         bottom: 0,
-        height: 70,
+        height: 80,
     },
     confirmButton: {
         margin: 20,
