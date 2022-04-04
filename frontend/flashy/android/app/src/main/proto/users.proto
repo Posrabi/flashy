@@ -55,6 +55,7 @@ message Phrase {
   string word = 2;
   string sentence = 3;
   int64 phrase_time = 4;
+  bool correct = 5;
 }
 
 message CreateUserRequest {

@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native';
 import { useSetRecoilState } from 'recoil';
 import EndpointsModule from '../api/users';
 import { StackParams } from '../nav';
-import { currentUser } from '../state/user';
+import { currentUser, storeUser } from '../state/user';
 import { CreateUserRequest } from '../types';
 import { SCREENS } from './constants';
 
@@ -36,6 +36,7 @@ export const SignUp = (): JSX.Element => {
                 name: name,
                 email: email,
                 auth_token: '',
+                facebook_access_token: '',
                 user_id: '',
             },
         };
@@ -43,6 +44,7 @@ export const SignUp = (): JSX.Element => {
             const { user } = await EndpointsModule.CreateUser(req);
             if (user) {
                 setUser(user);
+                storeUser(user.user_id, user.auth_token);
                 nav.navigate(SCREENS.HOME);
             } else {
                 setStatus(false);

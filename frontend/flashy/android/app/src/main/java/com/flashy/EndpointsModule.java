@@ -414,6 +414,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
       map.putString("word", phrase.getWord());
       map.putString("sentence", phrase.getSentence());
       map.putDouble("phrase_time", phrase.getPhraseTime());
+      map.putBoolean("correct", phrase.getCorrect());
 
       return map;
     }
@@ -424,6 +425,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .setWord(phrase.hasKey("word") ? phrase.getString("word") : "")
         .setSentence(phrase.hasKey("sentence") ? phrase.getString("sentence") : "")
         .setPhraseTime(phrase.hasKey("phrase_time") ? (long) phrase.getDouble("phrase_time") : 0)
+        .setCorrect(phrase.getBoolean("correct"))
         .build();
     }
 

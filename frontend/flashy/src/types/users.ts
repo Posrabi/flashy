@@ -16,6 +16,7 @@ export interface Phrase {
   word: string;
   sentence: string;
   phrase_time: number;
+  correct: boolean;
 }
 
 export interface CreateUserRequest {

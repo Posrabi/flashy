@@ -111,7 +111,7 @@ export const Home = (): JSX.Element => {
                 </View>
 
                 <View style={userStyles.info}>
-                    <Text style={userStyles.infoText}>Name: {user.name}</Text>
+                    <Text style={userStyles.infoText}>{user.name}</Text>
                     <Text style={userStyles.infoText}>Completed: ... cards this month</Text>
                 </View>
             </View>

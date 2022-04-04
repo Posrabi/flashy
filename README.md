@@ -4,6 +4,7 @@ WIP
 
 TODOs:
 
+- Some animations while shuffling
 - Deploy on DO
 - Deploy to AppStore
 - Objective-C gRPC stub

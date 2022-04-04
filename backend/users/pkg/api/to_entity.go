@@ -27,6 +27,7 @@ func ConvertToPhraseEntity(phrase *proto.Phrase) *entity.Phrase {
 		Word:     phrase.GetWord(),
 		Sentence: phrase.GetSentence(),
 		Time:     time.UnixMilli(phrase.GetPhraseTime()),
+		Correct:  phrase.GetCorrect(),
 	}
 }
 

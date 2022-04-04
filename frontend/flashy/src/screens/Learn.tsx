@@ -16,6 +16,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import EndpointsModule from '../api/users';
 import { StackParams } from '../nav';
 import { cardsCount, currentUser } from '../state/user';
+import { shuffleArray } from '../utils';
 import { SCREENS } from './constants';
 
 interface HelpModalProps {
@@ -26,16 +27,31 @@ interface BackModalProps {
     isVisible: boolean;
 }
 
+enum LearnState {
+    FILLING = 1,
+    MEMORIZE = 2,
+    DONE = 3,
+}
+
+interface Phrase {
+    word: string;
+    sentence: string;
+}
+
 type LearnScreenProps = NativeStackNavigationProp<StackParams, SCREENS.LEARN>;
 
 export const Learn = (): JSX.Element => {
     const [help, setHelp] = React.useState(false);
     const [back, setBack] = React.useState(false);
-    const [cardCount, setCardCount] = useRecoilState(cardsCount);
+    const [initialCardCount, setInitialCardCount] = useRecoilState(cardsCount);
+    const [cardCount, setCardCount] = React.useState(initialCardCount);
     const user = useRecoilValue(currentUser);
     const [word, setWord] = React.useState('');
     const [sentence, setSentence] = React.useState('');
     const [complete, setComplete] = React.useState(0);
+    const [state, setState] = React.useState(LearnState.FILLING);
+    const [phraseList, setPhraseList] = React.useState<Phrase[]>([]);
+    const [guess, setGuess] = React.useState('');
     const queryClient = useQueryClient();
     const nav = useNavigation<LearnScreenProps>();
     const pan = useRef(new Animated.ValueXY()).current;
@@ -52,21 +68,53 @@ export const Learn = (): JSX.Element => {
                             toValue: { x: gestureState.dx, y: -525 },
                             useNativeDriver: false,
                         }).start(() => {
-                            setCardCount(cardCount - 1);
-                            pan.setValue({ x: 0, y: 0 });
-                            if (word && sentence) {
-                                EndpointsModule.CreatePhrase({
-                                    phrase: {
-                                        user_id: user.user_id,
-                                        word: word,
-                                        sentence: sentence,
-                                        phrase_time: 0,
-                                    },
-                                });
-                                setWord('');
-                                setSentence('');
-                                setComplete(complete + 1);
+                            if (state === LearnState.FILLING) {
+                                let phrases = phraseList;
+                                if (word && sentence) {
+                                    phrases.push({ word: word, sentence: sentence });
+                                }
+                                if (cardCount === 1) {
+                                    setState(LearnState.MEMORIZE);
+                                    setPhraseList(shuffleArray(phrases));
+                                    setCardCount(phraseList?.length);
+                                } else {
+                                    setPhraseList(phrases);
+                                    setCardCount(cardCount - 1);
+                                    setWord('');
+                                    setSentence('');
+                                }
+                            } else if (state === LearnState.MEMORIZE) {
+                                let curPhrase = phraseList[phraseList.length - 1];
+                                if (guess === curPhrase.word) {
+                                    setComplete(complete + 1);
+                                    EndpointsModule.CreatePhrase({
+                                        phrase: {
+                                            user_id: user.user_id,
+                                            word: curPhrase.word,
+                                            sentence: curPhrase.sentence,
+                                            phrase_time: 0,
+                                            correct: true,
+                                        },
+                                    });
+                                } else {
+                                    EndpointsModule.CreatePhrase({
+                                        phrase: {
+                                            user_id: user.user_id,
+                                            word: curPhrase.word,
+                                            sentence: curPhrase.sentence,
+                                            phrase_time: 0,
+                                            correct: false,
+                                        },
+                                    });
+                                }
+                                setGuess('');
+                                setPhraseList(phraseList.slice(0, -1));
+                                if (cardCount === 1) {
+                                    setState(LearnState.DONE);
+                                }
+                                setCardCount(cardCount - 1);
                             }
+                            pan.setValue({ x: 0, y: 0 });
                         });
                     } else
                         Animated.spring(pan, {
@@ -75,7 +123,7 @@ export const Learn = (): JSX.Element => {
                         }).start();
                 },
             }),
-        [cardCount, word, sentence, complete]
+        [cardCount, state, phraseList, word, sentence, complete, guess]
     );
 
     const HelpModal = (props: HelpModalProps): JSX.Element => {
@@ -109,7 +157,6 @@ export const Learn = (): JSX.Element => {
                             status="danger"
                             children={() => <Text style={styles.backConfirmText}>Yes</Text>}
                             onPress={() => {
-                                queryClient.invalidateQueries('getPhrasesHistory');
                                 nav.goBack();
                                 setCardCount(1);
                             }}
@@ -143,7 +190,7 @@ export const Learn = (): JSX.Element => {
                             onPress={() => {
                                 queryClient.invalidateQueries('getPhrasesHistory');
                                 nav.goBack();
-                                setCardCount(1);
+                                setInitialCardCount(1);
                             }}
                         />
                     </View>
@@ -160,29 +207,54 @@ export const Learn = (): JSX.Element => {
             <TouchableOpacity style={styles.help} onPress={() => setHelp(true)}>
                 <Icon name="question-mark-outline" width={30} height={30} fill="black" />
             </TouchableOpacity>
-            {(() => {
-                const arr = [];
-                for (let i = 0; i < cardCount; i++) {
-                    if (i == cardCount - 1) {
-                        arr.push(
-                            <Card
-                                word={word}
-                                sentence={sentence}
-                                setWord={setWord}
-                                setSentence={setSentence}
-                                key={i}
-                                top={true}
-                                panHandler={panResponder.panHandlers}
-                                pan={pan}
-                            />
-                        );
-                    } else arr.push(<Card top={false} key={i} />);
-                }
-                return arr;
-            })()}
+            {state === LearnState.FILLING
+                ? (() => {
+                      const arr = [];
+                      for (let i = 0; i < cardCount; i++) {
+                          if (i == cardCount - 1) {
+                              arr.push(
+                                  <Card
+                                      word={word}
+                                      sentence={sentence}
+                                      setWord={setWord}
+                                      setSentence={setSentence}
+                                      key={i}
+                                      top={true}
+                                      panHandler={panResponder.panHandlers}
+                                      pan={pan}
+                                  />
+                              );
+                          } else arr.push(<Card top={false} key={i} />);
+                      }
+                      return arr;
+                  })()
+                : phraseList.map((phrase, i) => {
+                      if (i === cardCount - 1) {
+                          return (
+                              <MemorizeCard
+                                  word={phrase.word}
+                                  sentence={phrase.sentence}
+                                  guess={guess}
+                                  setGuess={setGuess}
+                                  key={i}
+                                  top={true}
+                                  panHandler={panResponder.panHandlers}
+                                  pan={pan}
+                              />
+                          );
+                      }
+                      return (
+                          <MemorizeCard
+                              word={phrase.word}
+                              sentence={phrase.sentence}
+                              top={false}
+                              key={i}
+                          />
+                      );
+                  })}
             <HelpModal isVisible={help} />
             <BackModal isVisible={back} />
-            {cardCount === 0 ? <CongratsModal /> : <></>}
+            {state === LearnState.DONE ? <CongratsModal /> : <></>}
         </SafeAreaView>
     );
 };
@@ -214,7 +286,7 @@ const Card = (props: CardProps): JSX.Element => {
                 onChangeText={(val) => {
                     props.setSentence ? props.setSentence(val) : null;
                 }}
-                placeholder="Input your sentence here"
+                placeholder="Put your sentence here"
                 style={styles.input}
                 multiline={true}
                 textStyle={styles.inputText}
@@ -224,10 +296,48 @@ const Card = (props: CardProps): JSX.Element => {
                 onChangeText={(val) => {
                     props.setWord ? props.setWord(val) : null;
                 }}
-                placeholder="Insert your word here"
+                placeholder="Put your word here"
                 style={styles.input}
                 textAlign="center"
                 size="large"
+            />
+        </Animated.View>
+    );
+};
+
+interface MemorizeCardProps {
+    top: Boolean;
+    panHandler?: GestureResponderHandlers;
+    pan?: any;
+    word: string;
+    sentence: string;
+    guess?: string;
+    setGuess?: Dispatch<SetStateAction<string>>;
+}
+
+const MemorizeCard = (props: MemorizeCardProps): JSX.Element => {
+    return (
+        <Animated.View
+            style={[
+                styles.card,
+                { backgroundColor: '#287478' },
+                props.top
+                    ? {
+                          transform: [{ translateX: props.pan.x }, { translateY: props.pan.y }],
+                      }
+                    : {},
+            ]}
+            {...props.panHandler}>
+            <Text>{props.sentence.replace(props.word, '...')}</Text>
+            <Text>What is the hidden word?</Text>
+            <Input
+                value={props.guess}
+                onChangeText={(val) => {
+                    props.setGuess ? props.setGuess(val) : null;
+                }}
+                placeholder="Make your guess here"
+                style={styles.input}
+                textAlign="center"
             />
         </Animated.View>
     );

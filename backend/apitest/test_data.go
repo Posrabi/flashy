@@ -40,11 +40,13 @@ var TestPhrases = []*entity.Phrase{
 		Word:     "hello",
 		Sentence: "hello world",
 		Time:     time.Now(),
+		Correct:  true,
 	},
 	{
 		UserID:   api.ConvertToUserIDEntity(uuid.New().String()),
 		Word:     "some word",
 		Sentence: "some sentence",
 		Time:     time.Now(),
+		Correct:  true,
 	},
 }
