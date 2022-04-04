@@ -16,7 +16,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import EndpointsModule from '../api/users';
 import { StackParams } from '../nav';
 import { cardsCount, currentUser } from '../state/user';
-import { shuffleArray } from '../utils';
+import { arrayShuffler, stringSearcher } from '../utils';
 import { SCREENS } from './constants';
 
 interface HelpModalProps {
@@ -40,6 +40,10 @@ interface Phrase {
 
 type LearnScreenProps = NativeStackNavigationProp<StackParams, SCREENS.LEARN>;
 
+/**
+ *
+ * @returns Learn screen
+ */
 export const Learn = (): JSX.Element => {
     const [help, setHelp] = React.useState(false);
     const [back, setBack] = React.useState(false);
@@ -52,6 +56,7 @@ export const Learn = (): JSX.Element => {
     const [state, setState] = React.useState(LearnState.FILLING);
     const [phraseList, setPhraseList] = React.useState<Phrase[]>([]);
     const [guess, setGuess] = React.useState('');
+    const [wrong, setWrong] = React.useState(false);
     const queryClient = useQueryClient();
     const nav = useNavigation<LearnScreenProps>();
     const pan = useRef(new Animated.ValueXY()).current;
@@ -63,7 +68,8 @@ export const Learn = (): JSX.Element => {
                     useNativeDriver: false,
                 }),
                 onPanResponderRelease: (_, gestureState) => {
-                    if (gestureState.dy < -150) {
+                    if (gestureState.dy < -150 && stringSearcher(sentence, word)) {
+                        setWrong(false);
                         Animated.spring(pan, {
                             toValue: { x: gestureState.dx, y: -525 },
                             useNativeDriver: false,
@@ -75,7 +81,7 @@ export const Learn = (): JSX.Element => {
                                 }
                                 if (cardCount === 1) {
                                     setState(LearnState.MEMORIZE);
-                                    setPhraseList(shuffleArray(phrases));
+                                    setPhraseList(arrayShuffler(phrases));
                                     setCardCount(phraseList?.length);
                                 } else {
                                     setPhraseList(phrases);
@@ -116,11 +122,13 @@ export const Learn = (): JSX.Element => {
                             }
                             pan.setValue({ x: 0, y: 0 });
                         });
-                    } else
+                    } else {
+                        setWrong(true);
                         Animated.spring(pan, {
                             toValue: { x: 0, y: 0 },
                             useNativeDriver: false,
                         }).start();
+                    }
                 },
             }),
         [cardCount, state, phraseList, word, sentence, complete, guess]
@@ -177,7 +185,8 @@ export const Learn = (): JSX.Element => {
             <View style={styles.modalContainer}>
                 <View style={styles.modal}>
                     <Text style={styles.modalText}>
-                        Congratulations!{'\n\n'}You've just completed {complete} cards.
+                        Congratulations!{'\n\n'}You've got {complete} out of {initialCardCount}{' '}
+                        cards correct .
                     </Text>
                     <View style={styles.modalButtonContainer}>
                         <Button
@@ -214,6 +223,7 @@ export const Learn = (): JSX.Element => {
                           if (i == cardCount - 1) {
                               arr.push(
                                   <Card
+                                      wrong={wrong}
                                       word={word}
                                       sentence={sentence}
                                       setWord={setWord}
@@ -265,15 +275,21 @@ interface CardProps {
     pan?: any;
     word?: string;
     sentence?: string;
+    wrong?: Boolean;
     setWord?: Dispatch<SetStateAction<string>>;
     setSentence?: Dispatch<SetStateAction<string>>;
 }
 
+/**
+ *
+ * @returns Card to register the phrases
+ */
 const Card = (props: CardProps): JSX.Element => {
     return (
         <Animated.View
             style={[
                 styles.card,
+                props.wrong ? styles.wrong : {},
                 props.top
                     ? {
                           transform: [{ translateX: props.pan.x }, { translateY: props.pan.y }],
@@ -315,12 +331,16 @@ interface MemorizeCardProps {
     setGuess?: Dispatch<SetStateAction<string>>;
 }
 
+/**
+ *
+ * @returns Card for users to memorize and guess the word.
+ */
 const MemorizeCard = (props: MemorizeCardProps): JSX.Element => {
     return (
         <Animated.View
             style={[
                 styles.card,
-                { backgroundColor: '#287478', justifyContent: 'center' },
+                { backgroundColor: '#1385d1', justifyContent: 'center' },
                 props.top
                     ? {
                           transform: [{ translateX: props.pan.x }, { translateY: props.pan.y }],
@@ -328,8 +348,19 @@ const MemorizeCard = (props: MemorizeCardProps): JSX.Element => {
                     : {},
             ]}
             {...props.panHandler}>
-            <Text style={{ fontSize: 19 }}>{props.sentence.replace(props.word, '...')}</Text>
-            <Text style={{ fontSize: 18, fontWeight: 'bold', margin: 10 }}>
+            <Text
+                style={{
+                    fontSize: 19,
+                    margin: 10,
+                    backgroundColor: 'white',
+                    width: '80%',
+                    borderRadius: 5,
+                    textAlign: 'left',
+                }}>
+                {'\t'}
+                {props.sentence.replace(`${props.word}`, ' ..... ')}
+            </Text>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', margin: 10, marginBottom: 0 }}>
                 What is the hidden word?
             </Text>
             <Input
@@ -402,7 +433,7 @@ const styles = StyleSheet.create({
     },
     modal: {
         width: '60%',
-        height: '40%',
+        height: 300,
         backgroundColor: '#ffffff',
         borderRadius: 15,
         elevation: 5,
@@ -448,5 +479,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#ffffff',
         fontWeight: 'bold',
+    },
+    wrong: {
+        borderColor: 'red',
+        borderWidth: 1.5,
     },
 });
