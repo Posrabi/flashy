@@ -185,8 +185,8 @@ export const Learn = (): JSX.Element => {
             <View style={styles.modalContainer}>
                 <View style={styles.modal}>
                     <Text style={styles.modalText}>
-                        Congratulations!{'\n\n'}You've got {complete} out of {initialCardCount}{' '}
-                        cards correct .
+                        Congratulations!{'\n\n'}You've got {complete} out of {initialCardCount} card
+                        {initialCardCount !== 1 ? 's' : ''} correct .
                     </Text>
                     <View style={styles.modalButtonContainer}>
                         <Button

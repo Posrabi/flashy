@@ -27,10 +27,11 @@ interface CardsCountModalProps {
     isVisible: Boolean;
 }
 const miliToNano = 1000;
-// TODO: friends, leaderboards
+// TODO: FB login SDK integration.
 export const Home = (): JSX.Element => {
-    const nav = useNavigation<HomeScreenProps>();
     const [user, setUser] = useRecoilState(currentUser);
+    const { isLoading, isError, error, data, isFetching } = useGetPhraseHistory(user.user_id);
+    const nav = useNavigation<HomeScreenProps>();
     const [renderCardsCountModal, setRenderCardsCountModal] = React.useState(false);
     const setCardsCount = useSetRecoilState(cardsCount);
 
@@ -111,14 +112,20 @@ export const Home = (): JSX.Element => {
 
                 <View style={userStyles.info}>
                     <Text style={userStyles.infoText}>{user.name}</Text>
-                    <Text style={userStyles.infoText}>Completed: ... cards this month</Text>
+                    <Text style={userStyles.infoText}>
+                        Completed:{' '}
+                        {
+                            // @ts-ignore
+                            isError || isFetching || isFetching ? '...' : data.length
+                        }{' '}
+                        cards this month
+                    </Text>
                 </View>
             </View>
         );
     };
 
     const History = (): JSX.Element => {
-        const { isLoading, isError, error, data, isFetching } = useGetPhraseHistory(user.user_id);
         const [expanded, setExpanded] = React.useState(false);
         if (isError) console.error(error);
         if (expanded)
@@ -420,7 +427,7 @@ const historyStyles = StyleSheet.create({
         borderWidth: 2,
         width: '90%',
         alignItems: 'center',
-        margin: 20,
+        margin: 15,
         marginBottom: 5,
     },
     textContainer: {
@@ -460,7 +467,7 @@ const historyStyles = StyleSheet.create({
 const styles = StyleSheet.create({
     button: {
         margin: 15,
-        marginBottom: 0,
+        marginBottom: 5,
         width: 200,
     },
     container: {
