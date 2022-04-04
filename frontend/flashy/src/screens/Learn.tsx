@@ -320,7 +320,7 @@ const MemorizeCard = (props: MemorizeCardProps): JSX.Element => {
         <Animated.View
             style={[
                 styles.card,
-                { backgroundColor: '#287478' },
+                { backgroundColor: '#287478', justifyContent: 'center' },
                 props.top
                     ? {
                           transform: [{ translateX: props.pan.x }, { translateY: props.pan.y }],
@@ -328,8 +328,10 @@ const MemorizeCard = (props: MemorizeCardProps): JSX.Element => {
                     : {},
             ]}
             {...props.panHandler}>
-            <Text>{props.sentence.replace(props.word, '...')}</Text>
-            <Text>What is the hidden word?</Text>
+            <Text style={{ fontSize: 19 }}>{props.sentence.replace(props.word, '...')}</Text>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', margin: 10 }}>
+                What is the hidden word?
+            </Text>
             <Input
                 value={props.guess}
                 onChangeText={(val) => {

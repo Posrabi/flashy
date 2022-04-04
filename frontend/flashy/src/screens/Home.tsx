@@ -153,16 +153,32 @@ export const Home = (): JSX.Element => {
                                             marginHorizontal: 5,
                                             textAlign: 'center',
                                             fontWeight: 'bold',
+                                            fontSize: 16,
                                         }}>
                                         {item.word}
                                     </Text>
                                     <Text
                                         style={{
-                                            width: '40%',
+                                            width: '35%',
                                             marginHorizontal: 5,
                                         }}>
                                         {item.sentence}
                                     </Text>
+                                    {item.correct ? (
+                                        <Icon
+                                            name="close-outline"
+                                            width={25}
+                                            height={25}
+                                            fill="red"
+                                        />
+                                    ) : (
+                                        <Icon
+                                            name="checkmark-outline"
+                                            width={25}
+                                            height={25}
+                                            fill="green"
+                                        />
+                                    )}
                                     <Text style={{ flex: 1, textAlign: 'center' }}>
                                         {new Date(
                                             item.phrase_time * miliToNano
