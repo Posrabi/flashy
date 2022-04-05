@@ -32,6 +32,7 @@ var EndpointAuthMap = map[string]AuthLevel{
 	"CreatePhrase": AuthLevel_NONE,
 	"GetPhrase":    AuthLevel_HIGH,
 	"DeletePhrase": AuthLevel_HIGH,
+	"LogInWithFB":  AuthLevel_NONE,
 }
 
 // TODO: make this cleaner.

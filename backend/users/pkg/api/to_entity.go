@@ -3,15 +3,13 @@ package api
 import (
 	"time"
 
-	"github.com/gocql/gocql"
-
 	"github.com/Posrabi/flashy/backend/users/pkg/entity"
 	proto "github.com/Posrabi/flashy/protos/users/proto"
 )
 
 func ConvertToUserEntity(user *proto.User) *entity.User {
 	return &entity.User{
-		UserID:              ConvertToUserIDEntity(user.GetUserId()),
+		UserID:              user.GetUserId(),
 		Username:            user.GetUserName(),
 		Name:                user.GetName(),
 		Email:               user.GetEmail(),
@@ -23,18 +21,10 @@ func ConvertToUserEntity(user *proto.User) *entity.User {
 
 func ConvertToPhraseEntity(phrase *proto.Phrase) *entity.Phrase {
 	return &entity.Phrase{
-		UserID:   ConvertToUserIDEntity(phrase.UserId),
+		UserID:   phrase.UserId,
 		Word:     phrase.GetWord(),
 		Sentence: phrase.GetSentence(),
 		Time:     time.UnixMilli(phrase.GetPhraseTime()),
 		Correct:  phrase.GetCorrect(),
 	}
-}
-
-func ConvertToUserIDEntity(userID string) gocql.UUID {
-	uuid, err := gocql.ParseUUID(userID)
-	if err != nil {
-		uuid = gocql.UUID{}
-	}
-	return uuid
 }

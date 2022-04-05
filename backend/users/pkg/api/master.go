@@ -27,7 +27,7 @@ func (m *masterRepository) CreateUser(ctx context.Context, user *entity.User) (*
 	return m.user.CreateUser(ctx, user)
 }
 
-func (m *masterRepository) GetUser(ctx context.Context, userID gocql.UUID) (*entity.User, error) {
+func (m *masterRepository) GetUser(ctx context.Context, userID string) (*entity.User, error) {
 	return m.user.GetUser(ctx, userID)
 }
 
@@ -35,7 +35,7 @@ func (m *masterRepository) UpdateUser(ctx context.Context, user *entity.User) er
 	return m.user.UpdateUser(ctx, user)
 }
 
-func (m *masterRepository) DeleteUser(ctx context.Context, userID gocql.UUID) error {
+func (m *masterRepository) DeleteUser(ctx context.Context, userID string) error {
 	return m.user.DeleteUser(ctx, userID)
 }
 
@@ -43,7 +43,7 @@ func (m *masterRepository) LogIn(ctx context.Context, username, hashPassword str
 	return m.user.LogIn(ctx, username, hashPassword)
 }
 
-func (m *masterRepository) LogOut(ctx context.Context, userID gocql.UUID) error {
+func (m *masterRepository) LogOut(ctx context.Context, userID string) error {
 	return m.user.LogOut(ctx, userID)
 }
 
@@ -51,14 +51,14 @@ func (m *masterRepository) CreatePhrase(ctx context.Context, phrase *entity.Phra
 	return m.phrase.CreatePhrase(ctx, phrase)
 }
 
-func (m *masterRepository) GetPhrases(ctx context.Context, userID gocql.UUID, start, end time.Time) ([]*entity.Phrase, error) {
+func (m *masterRepository) GetPhrases(ctx context.Context, userID string, start, end time.Time) ([]*entity.Phrase, error) {
 	return m.phrase.GetPhrases(ctx, userID, start, end)
 }
 
-func (m *masterRepository) DeletePhrase(ctx context.Context, userID gocql.UUID, curTime time.Time) error {
+func (m *masterRepository) DeletePhrase(ctx context.Context, userID string, curTime time.Time) error {
 	return m.phrase.DeletePhrase(ctx, userID, curTime)
 }
 
-func (m *masterRepository) LogInWithFB(ctx context.Context, userID gocql.UUID, token string) (*entity.User, error) {
+func (m *masterRepository) LogInWithFB(ctx context.Context, userID, token string) (*entity.User, error) {
 	return m.user.LogInWithFB(ctx, userID, token)
 }

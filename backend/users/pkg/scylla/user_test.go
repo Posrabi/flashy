@@ -20,8 +20,12 @@ func TestUserRepository(t *testing.T) {
 		testCreate_User(t, apitest.UserRepo)
 	})
 
-	t.Run("Login_User", func(t *testing.T) {
+	t.Run("LogIn_User", func(t *testing.T) {
 		testLogIn_User(t, apitest.UserRepo)
+	})
+
+	t.Run("LogInWithFB_User", func(t *testing.T) {
+		testLogInWithFB_User(t, apitest.UserRepo)
 	})
 
 	t.Run("Get_User", func(t *testing.T) {
@@ -120,6 +124,19 @@ func testLogOut_User(t *testing.T, repo repository.User) {
 	for _, user := range apitest.TestUsers {
 		require.NoError(t, repo.LogOut(context.WithValue(context.Background(), jwt.JWTContextKey,
 			user.AuthToken), user.UserID))
+	}
+}
+
+func testLogInWithFB_User(t *testing.T, repo repository.User) {
+	t.Helper()
+
+	for _, expected := range apitest.TestUsers {
+		if expected.FacebookAccessToken != "" {
+			actual, err := repo.LogInWithFB(context.Background(), expected.UserID, expected.FacebookAccessToken)
+			require.NoError(t, err)
+			actual.HashPassword = expected.HashPassword
+			require.Equal(t, expected, actual)
+		}
 	}
 }
 
