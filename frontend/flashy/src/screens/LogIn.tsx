@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Button, Icon, Input, Text } from '@ui-kitten/components';
 import React, { useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
-import { LoginManager } from 'react-native-fbsdk-next';
+import { AccessToken, LoginManager, Profile } from 'react-native-fbsdk-next';
 import { useRecoilState } from 'recoil';
 import { defaultUser } from '../api/defaults';
 import EndpointsModule from '../api/users';
@@ -11,9 +11,13 @@ import { StackParams } from '../nav';
 import {
     currentUser,
     getAuthTokenFromStorage,
+    getFBAccessToken,
     getUserIDFromStorage,
+    storeFBAccessToken,
+    storeProfileURI,
     storeUser,
 } from '../state/user';
+import { CreateUserRequest } from '../types';
 import { SCREENS } from './constants';
 
 type LogInScreenProps = NativeStackNavigationProp<StackParams, SCREENS.LOG_IN>;
@@ -25,13 +29,11 @@ export const LogIn = (): JSX.Element => {
     const [state, setState] = React.useState(true);
     const [user, setUser] = useRecoilState(currentUser);
     const nav = useNavigation<LogInScreenProps>();
-
     const EyeIcon = (props: any): JSX.Element => (
         <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)}>
             <Icon {...props} name={!secureTextEntry ? 'eye' : 'eye-off'} />
         </TouchableOpacity>
     );
-
     useEffect(() => {
         if (user.user_id) nav.navigate(SCREENS.HOME);
         else {
@@ -39,6 +41,22 @@ export const LogIn = (): JSX.Element => {
                 try {
                     const userID = await getUserIDFromStorage();
                     const authToken = await getAuthTokenFromStorage();
+                    const facebookAccessToken = await getFBAccessToken();
+                    if (facebookAccessToken && userID) {
+                        const resp = await EndpointsModule.LogInWithFB({
+                            user_id: userID,
+                            facebook_access_token: facebookAccessToken,
+                        });
+                        if (resp.user) {
+                            setUser(resp.user);
+                            storeUser(resp.user.user_id, '');
+                            storeFBAccessToken(resp.user.facebook_access_token);
+                            nav.navigate(SCREENS.HOME);
+                            return;
+                        } else {
+                            console.error('unable to find user');
+                        }
+                    }
                     if (userID && authToken) {
                         const resp = await EndpointsModule.GetUser({
                             user_id: userID,
@@ -81,17 +99,45 @@ export const LogIn = (): JSX.Element => {
     };
 
     const LogInWithFacebook = (): JSX.Element => {
-        const logIn = () =>
+        const onFBLogIn = (): Promise<void> =>
             LoginManager.logInWithPermissions(['public_profile', 'email']).then(
                 (result) => {
                     if (result.isCancelled) {
                         setState(false);
                         console.log('Log in cancelled');
                     } else {
-                        console.log(
-                            `Log in success with permissions: ${result.grantedPermissions?.toString()}`
-                        );
-                        console.log(result);
+                        setState(true);
+                        AccessToken.getCurrentAccessToken().then((data) => {
+                            if (data?.accessToken) {
+                                Profile.getCurrentProfile().then(async (profile) => {
+                                    try {
+                                        const req: CreateUserRequest = {
+                                            user: {
+                                                name: profile?.name || 'N/A',
+                                                email: profile?.email || '',
+                                                facebook_access_token: data.accessToken.toString(),
+                                                user_name: '',
+                                                hash_password: '',
+                                                auth_token: '',
+                                                user_id: profile?.userID || '',
+                                            },
+                                        };
+                                        const { user } = await EndpointsModule.CreateUser(req);
+                                        if (user) {
+                                            console.log(user.user_id);
+                                            setUser(user);
+                                            storeUser(user.user_id, '');
+                                            storeFBAccessToken(user.facebook_access_token);
+                                            nav.navigate(SCREENS.HOME);
+                                        }
+                                        storeProfileURI(profile?.imageURL || '');
+                                    } catch (e) {
+                                        setState(false);
+                                        console.error(e);
+                                    }
+                                });
+                            }
+                        });
                     }
                 },
                 (error) => {
@@ -100,7 +146,7 @@ export const LogIn = (): JSX.Element => {
                 }
             );
         return (
-            <TouchableOpacity style={[styles.fields, styles.facebook]} onPress={logIn}>
+            <TouchableOpacity style={[styles.fields, styles.facebook]} onPress={onFBLogIn}>
                 <Icon name="facebook" fill="white" width={30} height={30} />
                 <Text style={styles.facebookText}>Sign in with Facebook</Text>
             </TouchableOpacity>
@@ -112,6 +158,7 @@ export const LogIn = (): JSX.Element => {
             <Text style={styles.fieldsText}>Sign in with username and password</Text>
             <Input
                 placeholder="Username"
+                autoCapitalize="none"
                 size="large"
                 status={state ? 'basic' : 'danger'}
                 value={username}

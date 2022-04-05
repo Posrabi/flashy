@@ -28,7 +28,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
   private final ManagedChannel channel;
   EndpointsModule(ReactApplicationContext context){
     super(context);
-    channel = ManagedChannelBuilder.forAddress("10.0.2.2", 8080).usePlaintext().build();
+    channel = ManagedChannelBuilder.forAddress("localhost", 8080).usePlaintext().build();
     
   }
 
@@ -208,6 +208,24 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
     }
   }
 
+  @ReactMethod
+  public void LogInWithFB(ReadableMap request, Promise promise) {
+    try {
+      UsersProto.LogInWithFBRequest req = UsersProto.LogInWithFBRequest.newBuilder()
+        .setUserId(request.hasKey("user_id") ? request.getString("user_id") : "")
+        .setFacebookAccessToken(request.hasKey("facebook_access_token") ? request.getString("facebook_access_token") : "")
+        .build();
+      UsersProto.LogInWithFBResponse resp = (UsersProto.LogInWithFBResponse) new GrpcCall(new LogInWithFBRunnable(req), channel, null).execute()
+        .get();
+      if (resp == null) {
+        promise.reject(new NullPointerException("no response"));
+      }
+      promise.resolve(EntityConverter.createJSResponseWithUser(resp.getUser())); 
+    } catch (Exception e) {
+      promise.reject(e);
+    }
+  }
+
   private static class GrpcCall extends AsyncTask<Void, Void, Object> {
     private final GrpcRunnable grpcRunnable;
     private final ManagedChannel channel;
@@ -381,6 +399,22 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
       }
   }
 
+  private static class LogInWithFBRunnable implements GrpcRunnable {
+    private final UsersProto.LogInWithFBRequest request;
+    LogInWithFBRunnable(UsersProto.LogInWithFBRequest request) {
+      this.request = request;
+    }
+      @Override
+      public UsersProto.LogInWithFBResponse run(UsersAPIGrpc.UsersAPIBlockingStub blockingStub, UsersAPIGrpc.UsersAPIStub asyncStub) throws Exception {
+        return logInWithFB(request, blockingStub);
+      }
+
+      private UsersProto.LogInWithFBResponse logInWithFB(UsersProto.LogInWithFBRequest request, UsersAPIGrpc.UsersAPIBlockingStub blockingStub) throws StatusRuntimeException {
+        return blockingStub.logInWithFB(request);
+      }
+
+  }
+
   private static class EntityConverter {
     // Types
     protected static WritableMap convertUserEntityToJS(UsersProto.User user) {
@@ -391,6 +425,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
       map.putString("hash_password", user.getHashPassword());
       map.putString("name", user.getName());
       map.putString("email", user.getEmail());
+      map.putString("facebook_access_token", user.getFacebookAccessToken());
       map.putString("auth_token", user.getAuthToken());
 
       return map;
@@ -404,6 +439,7 @@ public class EndpointsModule extends ReactContextBaseJavaModule {
         .setHashPassword(user.hasKey("hash_password") ? user.getString("hash_password") : "")
         .setUserId(user.hasKey("user_id") ? user.getString("user_id") : "")
         .setName(user.hasKey("name") ? user.getString("name") : "")
+        .setFacebookAccessToken(user.hasKey("facebook_access_token") ? user.getString("facebook_access_token") : "")
         .build();
     }
 

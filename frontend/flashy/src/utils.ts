@@ -28,11 +28,15 @@ export const arrayShuffler = (array: Array<any>): Array<any> => {
  */
 export const stringSearcher = (str: string, search: string): Boolean => {
     let index = str.indexOf(search);
+    // let nxt = [];
+    // // prob need to do kmp haizz
+    // for (let char of search) {
+    // }
     if (index !== -1) {
         if (
             (index === 0 && str[index + search.length] === ' ') ||
             (index === str.length - search.length && str[index - 1] === ' ') ||
-            (str[index - 1] === ' ' && str[index + search.length] === ' ')
+            (str[index - 1] === ' ' && str[index + search.length + 1] === ' ')
         )
             return true;
         return false;

@@ -35,3 +35,37 @@ export const clearUser = async (): Promise<any> => {
         console.error(error);
     }
 };
+
+export const storeFBAccessToken = async (token: string): Promise<any> => {
+    try {
+        await EncryptedStorage.setItem('facebook_access_token', token);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const getFBAccessToken = async (): Promise<any> => {
+    try {
+        const token = await EncryptedStorage.getItem('facebook_access_token');
+        return token;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+export const storeProfileURI = async (uri: string): Promise<any> => {
+    try {
+        await EncryptedStorage.setItem('profile_uri', uri);
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+export const getProfileURI = async (): Promise<any> => {
+    try {
+        const uri = await EncryptedStorage.getItem('profile_uri');
+        return uri;
+    } catch (e) {
+        console.error(e);
+    }
+};

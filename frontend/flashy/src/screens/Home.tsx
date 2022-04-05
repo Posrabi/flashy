@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Button, Text, Icon } from '@ui-kitten/components';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -16,10 +16,11 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { useSetRecoilState, useRecoilState } from 'recoil';
 import { defaultUser } from '../api/defaults';
+import EndpointsModule from '../api/users';
 import { LoadingScreen } from '../components/Loading';
 import { StackParams } from '../nav';
 import { useGetPhraseHistory } from '../state/phrase';
-import { cardsCount, clearUser, currentUser } from '../state/user';
+import { cardsCount, clearUser, currentUser, getProfileURI } from '../state/user';
 import { SCREENS } from './constants';
 
 type HomeScreenProps = NativeStackNavigationProp<StackParams, SCREENS.HOME>;
@@ -34,11 +35,18 @@ export const Home = (): JSX.Element => {
     const nav = useNavigation<HomeScreenProps>();
     const [renderCardsCountModal, setRenderCardsCountModal] = React.useState(false);
     const setCardsCount = useSetRecoilState(cardsCount);
-
+    const [profileURI, setProfileURI] = React.useState('');
     const onCardsScroll = (event: NativeSyntheticEvent<NativeScrollEvent>): void => {
         const cardsScrollIndex = Math.round(event.nativeEvent.contentOffset.y / 50);
         setCardsCount(cardsScrollIndex + 1);
     };
+
+    useEffect(() => {
+        (async () => {
+            const uri = await getProfileURI();
+            setProfileURI(uri);
+        })();
+    }, []);
 
     const CardsCountModal = (props: CardsCountModalProps): JSX.Element => {
         if (!props.isVisible) return <></>;
@@ -99,13 +107,14 @@ export const Home = (): JSX.Element => {
     };
 
     const UserProfile = (): JSX.Element => {
+        Promise.resolve(getProfileURI()).then();
         return (
             <View style={userStyles.profileContainer}>
                 <View style={userStyles.pictureContainer}>
                     <Image
                         style={userStyles.profilePicture}
                         source={{
-                            uri: 'https://scontent.fyhz1-1.fna.fbcdn.net/v/t1.6435-9/127454111_1288036738235233_8547489606110234618_n.jpg?_nc_cat=110&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=E0GsZQPxtNsAX8vARAL&_nc_ht=scontent.fyhz1-1.fna&oh=00_AT9SyNoFjCxZj5wAtss6YP9YowxBm2UtSWAlTYU1xygJDw&oe=6261C468',
+                            uri: profileURI,
                         }}
                     />
                 </View>
@@ -379,10 +388,17 @@ export const Home = (): JSX.Element => {
             <Button
                 status="danger"
                 style={styles.button}
-                onPress={() => {
-                    setUser(defaultUser());
-                    clearUser();
-                    nav.goBack();
+                onPress={async () => {
+                    try {
+                        await EndpointsModule.LogOut({
+                            user_id: user.user_id,
+                        });
+                        setUser(defaultUser());
+                        clearUser();
+                        nav.goBack();
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }}>
                 <Icon name="log-out-outline" fill="white" width={25} height={25} />
             </Button>

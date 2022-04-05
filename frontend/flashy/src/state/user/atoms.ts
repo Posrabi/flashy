@@ -11,3 +11,8 @@ export const cardsCount: RecoilState<number> = atom<number>({
     key: 'cardsCount',
     default: 1,
 });
+
+export const profilePicture: RecoilState<string> = atom<string>({
+    key: 'profilePicture',
+    default: '',
+});

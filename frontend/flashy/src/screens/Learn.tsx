@@ -186,7 +186,7 @@ export const Learn = (): JSX.Element => {
                 <View style={styles.modal}>
                     <Text style={styles.modalText}>
                         Congratulations!{'\n\n'}You've got {complete} out of {initialCardCount} card
-                        {initialCardCount !== 1 ? 's' : ''} correct .
+                        {initialCardCount !== 1 ? 's' : ''} correct
                     </Text>
                     <View style={styles.modalButtonContainer}>
                         <Button
@@ -302,6 +302,8 @@ const Card = (props: CardProps): JSX.Element => {
                 onChangeText={(val) => {
                     props.setSentence ? props.setSentence(val) : null;
                 }}
+                autoCorrect
+                autoCapitalize="none"
                 placeholder="Put your sentence here"
                 style={styles.input}
                 multiline={true}
@@ -312,6 +314,7 @@ const Card = (props: CardProps): JSX.Element => {
                 onChangeText={(val) => {
                     props.setWord ? props.setWord(val) : null;
                 }}
+                autoCapitalize="none"
                 placeholder="Put your word here"
                 style={styles.input}
                 textAlign="center"
@@ -364,6 +367,8 @@ const MemorizeCard = (props: MemorizeCardProps): JSX.Element => {
                 What is the hidden word?
             </Text>
             <Input
+                autoCorrect={false}
+                autoCapitalize="none"
                 value={props.guess}
                 onChangeText={(val) => {
                     props.setGuess ? props.setGuess(val) : null;
