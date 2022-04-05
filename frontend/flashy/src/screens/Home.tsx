@@ -10,8 +10,8 @@ import {
     ScrollView,
     NativeSyntheticEvent,
     NativeScrollEvent,
-    Image,
     FlatList,
+    Image,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSetRecoilState, useRecoilState } from 'recoil';
@@ -107,15 +107,18 @@ export const Home = (): JSX.Element => {
     };
 
     const UserProfile = (): JSX.Element => {
-        Promise.resolve(getProfileURI()).then();
         return (
             <View style={userStyles.profileContainer}>
                 <View style={userStyles.pictureContainer}>
                     <Image
                         style={userStyles.profilePicture}
-                        source={{
-                            uri: profileURI,
-                        }}
+                        source={
+                            profileURI
+                                ? {
+                                      uri: profileURI,
+                                  }
+                                : require('../assets/blank-profile-picture-973460.png')
+                        }
                     />
                 </View>
 
@@ -413,8 +416,8 @@ const userStyles = StyleSheet.create({
         flexDirection: 'row',
     },
     profilePicture: {
-        width: 100,
-        height: 100,
+        width: 125,
+        height: 125,
         resizeMode: 'cover',
     },
     pictureContainer: {

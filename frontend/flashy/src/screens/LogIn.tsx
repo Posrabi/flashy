@@ -168,6 +168,7 @@ export const LogIn = (): JSX.Element => {
             <Input
                 placeholder="Password"
                 size="large"
+                autoCapitalize="none"
                 status={state ? 'basic' : 'danger'}
                 value={password}
                 style={styles.fields}

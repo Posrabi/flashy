@@ -21,7 +21,7 @@ func ConvertToUserEntity(user *proto.User) *entity.User {
 
 func ConvertToPhraseEntity(phrase *proto.Phrase) *entity.Phrase {
 	return &entity.Phrase{
-		UserID:   phrase.UserId,
+		UserID:   phrase.GetUserId(),
 		Word:     phrase.GetWord(),
 		Sentence: phrase.GetSentence(),
 		Time:     time.UnixMilli(phrase.GetPhraseTime()),
