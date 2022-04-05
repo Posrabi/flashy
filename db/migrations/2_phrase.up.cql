@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS users.phrases (
-  user_id uuid,
+  user_id text,
   phrase_time timestamp,
   word text,
   sentence text,
