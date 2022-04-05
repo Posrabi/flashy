@@ -134,6 +134,7 @@ func testLogInWithFB_User(t *testing.T, repo repository.User) {
 		if expected.FacebookAccessToken != "" {
 			actual, err := repo.LogInWithFB(context.Background(), expected.UserID, expected.FacebookAccessToken)
 			require.NoError(t, err)
+			actual.Username = expected.Username
 			actual.HashPassword = expected.HashPassword
 			require.Equal(t, expected, actual)
 		}
