@@ -94,7 +94,7 @@ export const Home = (): JSX.Element => {
                     </View>
                     <Button
                         status="success"
-                        style={styles.confirmButton}
+                        style={[styles.confirmButton, { backgroundColor: '#5fad74' }]}
                         children={() => <Text style={styles.confirmText}>Confirm</Text>}
                         onPress={() => {
                             nav.navigate(SCREENS.LEARN);
@@ -232,10 +232,12 @@ export const Home = (): JSX.Element => {
                             <View
                                 style={{
                                     flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
                                 }}>
                                 <Text
                                     style={{
-                                        width: '30%',
+                                        width: '25%',
                                         marginHorizontal: 5,
                                         textAlign: 'center',
                                         fontWeight: 'bold',
@@ -244,7 +246,7 @@ export const Home = (): JSX.Element => {
                                 </Text>
                                 <Text
                                     style={{
-                                        width: '55%',
+                                        width: '65%',
                                         marginHorizontal: 5,
                                     }}>
                                     {item.sentence}
@@ -553,6 +555,7 @@ const styles = StyleSheet.create({
     confirmButton: {
         margin: 20,
         width: 125,
+        borderWidth: 0,
     },
     confirmText: {
         fontWeight: 'bold',

@@ -16,7 +16,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import EndpointsModule from '../api/users';
 import { StackParams } from '../nav';
 import { cardsCount, currentUser } from '../state/user';
-import { arrayShuffler, stringSearcher } from '../utils';
+import { arrayShuffler, stringHider, stringSearcher } from '../utils';
 import { SCREENS } from './constants';
 
 interface HelpModalProps {
@@ -71,7 +71,7 @@ export const Learn = (): JSX.Element => {
                     if (gestureState.dy < -150 && stringSearcher(sentence, word)) {
                         setWrong(false);
                         Animated.spring(pan, {
-                            toValue: { x: gestureState.dx, y: -525 },
+                            toValue: { x: gestureState.dx, y: -550 },
                             useNativeDriver: false,
                         }).start(() => {
                             if (state === LearnState.FILLING) {
@@ -361,7 +361,7 @@ const MemorizeCard = (props: MemorizeCardProps): JSX.Element => {
                     textAlign: 'left',
                 }}>
                 {'\t'}
-                {props.sentence.replace(`${props.word}`, ' ..... ')}
+                {stringHider(props.sentence, props.word)}
             </Text>
             <Text style={{ fontSize: 18, fontWeight: 'bold', margin: 10, marginBottom: 0 }}>
                 What is the hidden word?

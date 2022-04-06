@@ -20,26 +20,36 @@ export const arrayShuffler = (array: Array<any>): Array<any> => {
     return array;
 };
 
+const substringPositionsArray = (strArray: string[], search: string): Array<number> => {
+    const result = [];
+    for (let i = 0; i < strArray.length; i++) {
+        if (strArray[i] === search) {
+            result.push(i);
+        }
+    }
+    return result;
+};
+
 /**
  *
  * @param str string to search
  * @param search string to search for
  * @returns boolean of whether search is in str
  */
-export const stringSearcher = (str: string, search: string): Boolean => {
-    let index = str.indexOf(search);
-    // let nxt = [];
-    // // prob need to do kmp haizz
-    // for (let char of search) {
-    // }
-    if (index !== -1) {
-        if (
-            (index === 0 && str[index + search.length] === ' ') ||
-            (index === str.length - search.length && str[index - 1] === ' ') ||
-            (str[index - 1] === ' ' && str[index + search.length + 1] === ' ')
-        )
-            return true;
-        return false;
+export const stringSearcher = (str: string, search: string): Array<number> => {
+    return substringPositionsArray(str.split(' '), search);
+};
+
+export const stringHider = (str: string, replace: string): string => {
+    const strArray = str.split(' ');
+    const indices = substringPositionsArray(strArray, replace);
+    for (let i = 0; i < indices.length; i++) {
+        strArray[indices[i]] = '.....';
     }
-    return false;
+    console.log(strArray);
+    let res = '';
+    for (const str of strArray) {
+        res += str + ' ';
+    }
+    return res.slice(0, res.length - 1);
 };
