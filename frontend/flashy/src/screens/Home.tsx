@@ -20,7 +20,7 @@ import EndpointsModule from '../api/users';
 import { LoadingScreen } from '../components/Loading';
 import { StackParams } from '../nav';
 import { useGetPhraseHistory } from '../state/phrase';
-import { cardsCount, clearUser, currentUser, getProfileURI } from '../state/user';
+import { cardsCount, clearUser, currentUser, getProfileURI, useGetFriends } from '../state/user';
 import { SCREENS } from './constants';
 
 type HomeScreenProps = NativeStackNavigationProp<StackParams, SCREENS.HOME>;
@@ -40,12 +40,25 @@ export const Home = (): JSX.Element => {
         const cardsScrollIndex = Math.round(event.nativeEvent.contentOffset.y / 50);
         setCardsCount(cardsScrollIndex + 1);
     };
+    const [friends, setFriends] = React.useState<Record<string, any>>({
+        data: [],
+        summary: { total_count: 0 },
+    });
+    useGetFriends((err, res) => {
+        if (err) {
+            console.error(err);
+        } else if (res) {
+            console.log(res);
+            setFriends(res);
+        }
+    });
 
     useEffect(() => {
         (async () => {
             const uri = await getProfileURI();
             setProfileURI(uri);
         })();
+        return setProfileURI('');
     }, []);
 
     const CardsCountModal = (props: CardsCountModalProps): JSX.Element => {
@@ -280,7 +293,7 @@ export const Home = (): JSX.Element => {
                         <FlatList
                             style={{ width: '100%' }}
                             showsVerticalScrollIndicator={false}
-                            data={[]}
+                            data={friends.data}
                             renderItem={({ item }) => (
                                 <View
                                     style={{
@@ -352,7 +365,7 @@ export const Home = (): JSX.Element => {
                 <FlatList
                     style={{ width: '100%' }}
                     showsVerticalScrollIndicator={false}
-                    data={[]}
+                    data={friends.data}
                     renderItem={({ item }) => (
                         <View
                             style={{
@@ -395,6 +408,7 @@ export const Home = (): JSX.Element => {
                 style={styles.button}
                 onPress={async () => {
                     try {
+                        if (!user.user_id) return nav.goBack();
                         await EndpointsModule.LogOut({
                             user_id: user.user_id,
                         });

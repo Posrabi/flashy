@@ -46,7 +46,6 @@ export const stringHider = (str: string, replace: string): string => {
     for (let i = 0; i < indices.length; i++) {
         strArray[indices[i]] = '.....';
     }
-    console.log(strArray);
     let res = '';
     for (const str of strArray) {
         res += str + ' ';

@@ -100,7 +100,7 @@ export const LogIn = (): JSX.Element => {
 
     const LogInWithFacebook = (): JSX.Element => {
         const onFBLogIn = (): Promise<void> =>
-            LoginManager.logInWithPermissions(['public_profile', 'email']).then(
+            LoginManager.logInWithPermissions(['public_profile', 'email', 'user_friends']).then(
                 (result) => {
                     if (result.isCancelled) {
                         setState(false);
@@ -124,7 +124,6 @@ export const LogIn = (): JSX.Element => {
                                         };
                                         const { user } = await EndpointsModule.CreateUser(req);
                                         if (user) {
-                                            console.log(user.user_id);
                                             setUser(user);
                                             storeUser(user.user_id, '');
                                             storeFBAccessToken(user.facebook_access_token);
