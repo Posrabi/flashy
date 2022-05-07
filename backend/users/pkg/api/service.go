@@ -33,7 +33,7 @@ func (s *service) CreateUser(ctx context.Context, r *proto.CreateUserRequest) (*
 }
 
 func (s *service) GetUser(ctx context.Context, r *proto.GetUserRequest) (*proto.GetUserResponse, error) {
-	user, err := s.repo.GetUser(ctx, ConvertToUserIDEntity(r.GetUserId()))
+	user, err := s.repo.GetUser(ctx, r.GetUserId())
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (s *service) UpdateUser(ctx context.Context, r *proto.UpdateUserRequest) (*
 }
 
 func (s *service) DeleteUser(ctx context.Context, r *proto.DeleteUserRequest) (*proto.DeleteUserResponse, error) {
-	if err := s.repo.DeleteUser(ctx, ConvertToUserIDEntity(r.GetUserId())); err != nil {
+	if err := s.repo.DeleteUser(ctx, r.GetUserId()); err != nil {
 		return nil, err
 	}
 	return &proto.DeleteUserResponse{
@@ -71,7 +71,7 @@ func (s *service) LogIn(ctx context.Context, r *proto.LogInRequest) (*proto.LogI
 }
 
 func (s *service) LogOut(ctx context.Context, r *proto.LogOutRequest) (*proto.LogOutResponse, error) {
-	if err := s.repo.LogOut(ctx, ConvertToUserIDEntity(r.GetUserId())); err != nil {
+	if err := s.repo.LogOut(ctx, r.GetUserId()); err != nil {
 		return nil, err
 	}
 	return &proto.LogOutResponse{
@@ -89,7 +89,7 @@ func (s *service) CreatePhrase(ctx context.Context, r *proto.CreatePhraseRequest
 }
 
 func (s *service) GetPhrases(ctx context.Context, r *proto.GetPhrasesRequest) (*proto.GetPhrasesResponse, error) {
-	phrases, err := s.repo.GetPhrases(ctx, ConvertToUserIDEntity(r.GetUserId()), time.UnixMilli(r.GetStart()), time.UnixMilli(r.GetEnd()))
+	phrases, err := s.repo.GetPhrases(ctx, r.GetUserId(), time.UnixMilli(r.GetStart()), time.UnixMilli(r.GetEnd()))
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func (s *service) GetPhrases(ctx context.Context, r *proto.GetPhrasesRequest) (*
 }
 
 func (s *service) DeletePhrase(ctx context.Context, r *proto.DeletePhraseRequest) (*proto.DeletePhraseResponse, error) {
-	if err := s.repo.DeletePhrase(ctx, ConvertToUserIDEntity(r.GetUserId()), time.UnixMilli(r.GetPhraseTime())); err != nil {
+	if err := s.repo.DeletePhrase(ctx, r.GetUserId(), time.UnixMilli(r.GetPhraseTime())); err != nil {
 		return nil, err
 	}
 
@@ -114,7 +114,7 @@ func (s *service) DeletePhrase(ctx context.Context, r *proto.DeletePhraseRequest
 }
 
 func (s *service) LogInWithFB(ctx context.Context, r *proto.LogInWithFBRequest) (*proto.LogInWithFBResponse, error) {
-	user, err := s.repo.LogInWithFB(ctx, ConvertToUserIDEntity(r.GetUserId()), r.GetFacebookAccessToken())
+	user, err := s.repo.LogInWithFB(ctx, r.GetUserId(), r.GetFacebookAccessToken())
 	if err != nil {
 		return nil, err
 	}

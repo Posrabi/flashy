@@ -4,9 +4,8 @@ WIP
 
 TODOs:
 
-- Some animations while shuffling
-- Deploy on DO
+- Deploy somewhere cheap
 - Deploy to AppStore
 - Objective-C gRPC stub
-- Leverage FB login (profile, friends, leaderboards)
+- Leverage FB login (friends, leaderboards)
 - Versus mode (using gRPC bidirectional streams)

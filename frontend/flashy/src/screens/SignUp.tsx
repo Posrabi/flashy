@@ -70,12 +70,14 @@ export const SignUp = (): JSX.Element => {
                 style={styles.fields}
                 label="Email"
                 placeholder="Your email."
+                autoCapitalize="none"
                 onChangeText={setEmail}
                 value={email}
             />
             <Input
                 style={styles.fields}
                 label="Username"
+                autoCapitalize="none"
                 placeholder="Your username to sign in."
                 onChangeText={setUsername}
                 value={username}

@@ -1,9 +1,8 @@
 name: Docker Images
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 jobs:
   go-base:

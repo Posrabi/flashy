@@ -7,7 +7,6 @@ import (
 	"time"
 
 	kitjwt "github.com/go-kit/kit/auth/jwt"
-	"github.com/gocql/gocql"
 	"github.com/golang-jwt/jwt/v4"
 	"google.golang.org/grpc/codes"
 
@@ -15,7 +14,7 @@ import (
 )
 
 type IDClaims struct {
-	ID gocql.UUID `json:"id"`
+	ID string `json:"id"`
 	jwt.RegisteredClaims
 }
 
@@ -24,7 +23,7 @@ const (
 	twoWeeks = 14
 )
 
-func GenerateToken(id gocql.UUID) (string, error) {
+func GenerateToken(id string) (string, error) {
 	token := jwt.NewWithClaims(
 		jwt.SigningMethodHS256,
 		NewIDClaims(id),
@@ -32,7 +31,7 @@ func GenerateToken(id gocql.UUID) (string, error) {
 	return token.SignedString([]byte(os.Getenv("ID_TOKEN")))
 }
 
-func NewIDClaims(id gocql.UUID) *IDClaims {
+func NewIDClaims(id string) *IDClaims {
 	return &IDClaims{
 		ID:               id,
 		RegisteredClaims: NewRegisteredClaims(),
@@ -46,7 +45,7 @@ func NewRegisteredClaims() jwt.RegisteredClaims {
 	}
 }
 
-func ValidateUserFromClaims(ctx context.Context, userID gocql.UUID) error {
+func ValidateUserFromClaims(ctx context.Context, userID string) error {
 	claims, ok := ctx.Value(kitjwt.JWTClaimsContextKey).(*IDClaims)
 	if !ok {
 		return gerr.NewError(errors.New("missing claims"), codes.Unauthenticated)

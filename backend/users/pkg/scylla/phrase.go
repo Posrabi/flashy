@@ -40,7 +40,7 @@ func (p *phraseRepo) CreatePhrase(ctx context.Context, phrase *entity.Phrase) er
 	return nil
 }
 
-func (p *phraseRepo) GetPhrases(ctx context.Context, userID gocql.UUID, start, end time.Time) ([]*entity.Phrase, error) {
+func (p *phraseRepo) GetPhrases(ctx context.Context, userID string, start, end time.Time) ([]*entity.Phrase, error) {
 	q := `SELECT %s FROM %s WHERE user_id = ? AND phrase_time > ? and phrase_time < ?`
 
 	args := []interface{}{userID, start.UnixMilli(), end.UnixMilli()}
@@ -63,7 +63,7 @@ func (p *phraseRepo) GetPhrases(ctx context.Context, userID gocql.UUID, start, e
 	return phrases, nil
 }
 
-func (p *phraseRepo) DeletePhrase(ctx context.Context, userID gocql.UUID, phraseTime time.Time) error {
+func (p *phraseRepo) DeletePhrase(ctx context.Context, userID string, phraseTime time.Time) error {
 	q := `DELETE FROM %s WHERE user_id = ? AND phrase_time = ?`
 
 	args := []interface{}{userID, phraseTime.UnixMilli()}
