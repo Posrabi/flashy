@@ -9,7 +9,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	kitlog "github.com/go-kit/log"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -17,16 +16,15 @@ import (
 
 	port "github.com/Posrabi/flashy/backend/common/pkg/ports"
 	"github.com/Posrabi/flashy/backend/common/pkg/utils"
-	"github.com/Posrabi/flashy/backend/users/pkg/api"
-	proto "github.com/Posrabi/flashy/protos/users/proto"
+	proto "github.com/Posrabi/flashy/protos/versus/proto"
 )
 
-var addr = utils.GetNodeIPAddress() + port.USERS
+var addr = utils.GetNodeIPAddress() + port.VERSUS
 
 func newServerCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "server",
-		Short: "users gRPC server",
+		Short: "versus gRPC server",
 		Run:   runServerCmd,
 	}
 	return cmd
@@ -58,34 +56,6 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 }
 
 func grpcServe() error {
-	var logger kitlog.Logger
-	logger = kitlog.NewJSONLogger(kitlog.NewSyncWriter(os.Stderr))
-	logger = kitlog.With(logger, "timestamp", kitlog.DefaultTimestampUTC)
-
-	var svcLogger = kitlog.With(logger, "component", "service")
-
-	var svcUsers api.Service
-
-	dbType := api.DevDB
-	if env := os.Getenv("ENV"); env == "prod" {
-		dbType = api.ProdDB
-	}
-
-	sess, err := api.SetupDB(api.ReadAndWrite, dbType)
-	if err != nil {
-		return fmt.Errorf("failed to set up DB %w", err)
-	}
-	defer sess.Close()
-
-	svcUsers = api.NewService(api.NewMasterRepository(sess), svcLogger)
-	var (
-		epsLogger   = kitlog.With(logger, "component", "endpoint")
-		epsSvcUsers = api.CreateEndpoints(svcUsers, kitlog.With(epsLogger, "service", "users"))
-
-		grpcLogger   = kitlog.With(logger, "component", "grpc")
-		grpcSvcUsers = api.NewGrpcTransport(epsSvcUsers, grpcLogger)
-	)
-
 	listener, err := net.Listen("tcp", "localhost:8080")
 	if err != nil {
 		return fmt.Errorf("failed to listen %w", err)
@@ -98,7 +68,7 @@ func grpcServe() error {
 	}()
 
 	grpcServer := grpc.NewServer()
-	proto.RegisterUsersAPIServer(grpcServer, grpcSvcUsers)
+	proto.RegisterVersusAPIServer(grpcServer, nil)
 
 	reflection.Register(grpcServer)
 
