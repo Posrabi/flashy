@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	kitlog "github.com/go-kit/log"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -16,6 +17,7 @@ import (
 
 	port "github.com/Posrabi/flashy/backend/common/pkg/ports"
 	"github.com/Posrabi/flashy/backend/common/pkg/utils"
+	"github.com/Posrabi/flashy/backend/versus/pkg/api"
 	proto "github.com/Posrabi/flashy/protos/versus/proto"
 )
 
@@ -56,6 +58,14 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 }
 
 func grpcServe() error {
+	var logger kitlog.Logger
+	logger = kitlog.NewJSONLogger(kitlog.NewSyncWriter(os.Stderr))
+	logger = kitlog.With(logger, "timestamp", kitlog.DefaultTimestampUTC)
+
+	var svcLogger = kitlog.With(logger, "componenet", "service")
+
+	var svcVersus = api.NewVersusService(svcLogger)
+
 	listener, err := net.Listen("tcp", "localhost:8080")
 	if err != nil {
 		return fmt.Errorf("failed to listen %w", err)
@@ -68,7 +78,7 @@ func grpcServe() error {
 	}()
 
 	grpcServer := grpc.NewServer()
-	proto.RegisterVersusAPIServer(grpcServer, nil)
+	proto.RegisterVersusAPIServer(grpcServer, svcVersus)
 
 	reflection.Register(grpcServer)
 
