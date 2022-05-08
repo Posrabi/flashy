@@ -18,37 +18,33 @@ const CHAN_BUF_SIZE = 5 // nolint: revive
 // A global map that holds all of the channels. This should be initialized on server startup.
 type queueMap struct {
 	channels map[string]chan *proto.ConnectData // each client will get its own channel as a message queue
-	mu       sync.Mutex
+	mu       *sync.RWMutex
 }
 
 // Returns a new queue map.
-func newQueueMap() *queueMap {
+func NewQueueMap() *queueMap { // nolint: revive
 	return &queueMap{
 		channels: map[string]chan *proto.ConnectData{},
+		mu:       &sync.RWMutex{},
 	}
 }
 
 // Adds a new queue to the map, this is thread-safe.
 func (q *queueMap) AddQueue(userID string) error {
-	if !q.mu.TryLock() {
-		return gerr.NewError(errors.New("unable to lock, this could case race conditions"), codes.Internal)
-	}
+	q.mu.Lock()
 	defer q.mu.Unlock()
 
-	queue := make(chan *proto.ConnectData, CHAN_BUF_SIZE)
 	_, ok := q.channels[userID]
 	if ok {
 		return gerr.NewError(errors.New("channels already exist"), codes.Internal)
 	}
 
-	q.channels[userID] = queue
+	q.channels[userID] = make(chan *proto.ConnectData, CHAN_BUF_SIZE)
 	return nil
 }
 
 func (q *queueMap) GetQueue(userID string) (chan *proto.ConnectData, error) {
-	if !q.mu.TryLock() {
-		return nil, gerr.NewError(errors.New("unable to lock, this could case race conditions"), codes.Internal)
-	}
+	q.mu.Lock()
 	defer q.mu.Unlock()
 
 	val, ok := q.channels[userID]
@@ -60,25 +56,25 @@ func (q *queueMap) GetQueue(userID string) (chan *proto.ConnectData, error) {
 }
 
 // ConnectServer handles all of queueMap related operations.
-type ConnectServer struct {
+type connectServer struct {
 	logger log.Logger
 	qm     *queueMap
 }
 
 // Returns a new ConnectServer.
-func NewConnectServer(logger log.Logger) *ConnectServer {
-	return &ConnectServer{
+func newConnectServer(logger log.Logger, qm *queueMap) *connectServer {
+	return &connectServer{
 		logger: logger,
-		qm:     newQueueMap(),
+		qm:     qm,
 	}
 }
 
 // Join adds a new queue to the queueMap.
-func (c *ConnectServer) Join(ctx context.Context, userID string) error {
+func (c *connectServer) Join(ctx context.Context, userID string) error {
 	return c.qm.AddQueue(userID)
 }
 
-func (c *ConnectServer) Quit(ctx context.Context, userID string) error {
+func (c *connectServer) Quit(ctx context.Context, userID string) error {
 	q, err := c.qm.GetQueue(userID)
 	if err != nil {
 		return err
@@ -88,7 +84,7 @@ func (c *ConnectServer) Quit(ctx context.Context, userID string) error {
 }
 
 // Send takes msgs in the queue and send it to the client.
-func (c *ConnectServer) Send(stream proto.VersusAPI_ConnectServer, userID string) error {
+func (c *connectServer) Send(stream proto.VersusAPI_ConnectServer, userID string) error {
 	channel, err := c.qm.GetQueue(userID)
 	if err != nil {
 		return err
@@ -107,10 +103,10 @@ func (c *ConnectServer) Send(stream proto.VersusAPI_ConnectServer, userID string
 }
 
 // Receive gather msgs sent by the client to the server and sent it to the according channel.
-func (c *ConnectServer) Receive(stream proto.VersusAPI_ConnectServer) error {
+func (c *connectServer) Receive(stream proto.VersusAPI_ConnectServer) error {
 	for {
 		msg, err := stream.Recv()
-		if errors.Is(err, io.EOF) {
+		if errors.Is(err, io.EOF) { // triggered when client calls CloseSend
 			return nil
 		}
 

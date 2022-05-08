@@ -29,7 +29,8 @@ echo "Connected successfully"
 
 bash db_migrations.sh & wait $!
 
-cd $cur_dir/backend/users/pkg/scylla && go test -v
+cd $cur_dir/backend/users/pkg/scylla && go test -race -v
+cd $cur_dir/backend/versus/pkg/api && go test -race -v
 
 end=`date +%s`
 

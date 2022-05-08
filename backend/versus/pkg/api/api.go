@@ -14,13 +14,13 @@ import (
 
 type versusService struct {
 	proto.UnimplementedVersusAPIServer
-	cs     *ConnectServer
+	cs     *connectServer
 	logger log.Logger
 }
 
-func NewVersusService(logger log.Logger) proto.VersusAPIServer {
+func NewVersusService(logger log.Logger, qm *queueMap) proto.VersusAPIServer {
 	return &versusService{
-		cs:     NewConnectServer(logger),
+		cs:     newConnectServer(logger, qm),
 		logger: logger,
 	}
 }

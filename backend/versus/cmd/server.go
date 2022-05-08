@@ -64,7 +64,7 @@ func grpcServe() error {
 
 	var svcLogger = kitlog.With(logger, "componenet", "service")
 
-	var svcVersus = api.NewVersusService(svcLogger)
+	var svcVersus = api.NewVersusService(svcLogger, api.NewQueueMap())
 
 	listener, err := net.Listen("tcp", "localhost:8080")
 	if err != nil {
