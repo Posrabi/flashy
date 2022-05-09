@@ -12,6 +12,7 @@ if [ $# -eq 1 ]; then
     buf generate -o protos --template buf.ts.gen.yaml
     cp protos/users/proto/users.ts frontend/flashy/src/types
     cp protos/users/proto/users.proto frontend/flashy/android/app/src/main/proto
+    cp protos/versus/proto/versus.proto frontend/flashy/android/app/src/main/proto
     echo "[FINISHED] - Generating go and ts types"
   else
     echo "Typescript types not generated."

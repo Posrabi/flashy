@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package versus.proto;
+
+option go_package = "github.com/Posrabi/flashy/protos/versus";
+option java_package = "com.flashy";
+
+service VersusAPI {
+  rpc Join(JoinRequest) returns (JoinResponse) {}
+  rpc Connect(stream ConnectData) returns (stream ConnectData) {}
+  rpc Quit(QuitRequest) returns (QuitResponse) {}
+}
+
+message JoinRequest {
+  string user_id = 1;
+}
+
+message JoinResponse {
+  bool success = 1;
+}
+
+message ConnectData {
+  string user_id = 1;
+  string opponent_id = 2;
+  PlayState state = 3;
+  int32 current_card = 4;
+  int32 total_cards = 5;
+}
+
+message QuitRequest {
+  string user_id = 1;
+}
+
+message QuitResponse {
+  bool success = 1;
+}
+
+enum PlayState {
+  PLAY_STATE_PLAYING = 0;
+  PLAY_STATE_DONE = 1;
+  PLAY_STATE_READY = 2;
+}
