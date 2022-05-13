@@ -6,9 +6,9 @@ Type in your words and sentences into these flashcards, then try to memorize wha
 
 ## UI/UX
 
-**_The app flow is simple and intuitive:_**
+<img src="/images/output/video1.gif" width="50%" height="50%"/>
 
-![Alt Text](flow.gif)
+**_The app flow is simple and intuitive:_**
 
 _*I'm not a designer so somehow the cards look like a floppy disk*_ :blush:
 
