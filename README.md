@@ -17,7 +17,7 @@ _*I'm not a designer so somehow the cards look like a floppy disk*_ :)
 - Sign In.
 - Choose how many words you want to learn.
 - Learn them.
-- Then go back to home to see your new words appears in your history.
+- Go back to home to see new words appear in your history.
 
 ## Features:
 
@@ -31,7 +31,7 @@ _*I'm not a designer so somehow the cards look like a floppy disk*_ :)
 
 - **Versus mode - WIP:**
 
-  Allow players to compete head to head thanks to gRPC's amazing bidirectional streams. Currently the Go server is completed.
+  Allow players to compete head to head thanks to gRPC's amazing bidirectional streams.
 
 - **Rankings - WIP:**
 
@@ -43,7 +43,8 @@ _*I'm not a designer so somehow the cards look like a floppy disk*_ :)
 - App built on TypeScript React Native and Recoil, used React Query for server state caching.
 - Hooked up React Native to gRPC by using Java Native modules.
 - Versus mode possible thanks to gRPC bidirectional streams.
-- friends/rankings using Facebook Log In API.
+- Friends/rankings using Facebook Log In API.
+- Used Android's Shared Preferences/ IOS's Keychain to persist log in.
 
 ### TODOs:
 
