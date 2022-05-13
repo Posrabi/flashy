@@ -1,23 +1,25 @@
 # flashy - WIP
 
-An app to help you learn English better!
+An app to help you learn English (or just about any languages) better!
 
 Type in your words and sentences into these flashcards, then try to memorize what you just wrote. You will be surprised at how efficient this is.
+
+---
 
 ## UI/UX
 
 <img src="flow.gif" width="50%" height="50%"/>
 
-**_The app flow is simple and intuitive:_**
+_*I'm not a designer so somehow the cards look like a floppy disk*_ :)
 
-_*I'm not a designer so somehow the cards look like a floppy disk*_ :blush:
+**_The app flow is simple and intuitive:_**
 
 - Sign In
 - Choose how many words you want to learn
 - Learn them
 - Then go back to home to see your new words appears in your history
 
-**_Features:_**
+## Features:
 
 - **Auto Login:**
 
@@ -26,8 +28,6 @@ Log in once and never have to worry about it ever again!
 - **History:**
 
 Keeps a record of every words you have learned.
-
-To be added: your wrong guess.
 
 - **Versus mode - WIP:**
 
@@ -44,3 +44,4 @@ Knowing how many words your friends have learned to date.
 - Friends, rankings
 - Client versus mode (gRPC bidirectional streams in Java)
 - UI for friends, leaderboards, versus.
+- Keep record of all the wrong guesses.
