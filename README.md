@@ -31,11 +31,11 @@ Keeps a record of every words you have learned.
 
 - **Versus mode - WIP:**
 
-Allow players to compete head to head thanks to gRPC's amazing bidirectional streams. Currently the Go server is completed. Now we only need to add support this in the gRPC Java module.
+Allow players to compete head to head thanks to gRPC's amazing bidirectional streams. Currently the Go server is completed
 
 - **Rankings - WIP:**
 
-Knowing how many words your friends have learned to date.
+Knowing how many words your friends have learned to date. Ability to create a mini competition between friends.
 
 ### TODOs:
 
