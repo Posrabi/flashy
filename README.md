@@ -48,7 +48,7 @@ _*I'm not a designer so somehow the cards look like a floppy disk*_ :)
 
 ### TODOs:
 
-- Deploy somewhere cheap (preferably locally on a Raspberry-Pi).
+- Deploy somewhere cheap (preferably locally on a Raspberry-Pi, cloud is too expensive at this level).
 - Deploy to Playstore.
 - Friends, rankings.
 - Client versus mode (gRPC bidirectional streams in Java).
