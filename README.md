@@ -6,7 +6,7 @@ Type in your words and sentences into these flashcards, then try to memorize wha
 
 ## UI/UX
 
-<img src="/images/output/video1.gif" width="50%" height="50%"/>
+<img src="flow.gif" width="50%" height="50%"/>
 
 **_The app flow is simple and intuitive:_**
 
