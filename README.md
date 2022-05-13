@@ -14,10 +14,10 @@ _*I'm not a designer so somehow the cards look like a floppy disk*_ :)
 
 **_The app flow is simple and intuitive:_**
 
-- Sign In
-- Choose how many words you want to learn
-- Learn them
-- Then go back to home to see your new words appears in your history
+- Sign In.
+- Choose how many words you want to learn.
+- Learn them.
+- Then go back to home to see your new words appears in your history.
 
 ## Features:
 
@@ -31,17 +31,25 @@ _*I'm not a designer so somehow the cards look like a floppy disk*_ :)
 
 - **Versus mode - WIP:**
 
-  Allow players to compete head to head thanks to gRPC's amazing bidirectional streams. Currently the Go server is completed
+  Allow players to compete head to head thanks to gRPC's amazing bidirectional streams. Currently the Go server is completed.
 
 - **Rankings - WIP:**
 
   Knowing how many words your friends have learned to date. Ability to create a mini competition between friends.
 
+## Specs:
+
+- A Go gRPC CRUD server will handle storing all user's info and words record.
+- App built on TypeScript React Native and Recoil, used React Query for server state caching.
+- Hooked up React Native to gRPC by using Java Native modules.
+- Versus mode possible thanks to gRPC bidirectional streams.
+- friends/rankings using Facebook Log In API.
+
 ### TODOs:
 
-- Deploy somewhere cheap (preferably locally on a Raspberry-Pi)
-- Deploy to Playstore
-- Friends, rankings
-- Client versus mode (gRPC bidirectional streams in Java)
+- Deploy somewhere cheap (preferably locally on a Raspberry-Pi).
+- Deploy to Playstore.
+- Friends, rankings.
+- Client versus mode (gRPC bidirectional streams in Java).
 - UI for friends, leaderboards, versus.
 - Keep record of all the wrong guesses.
