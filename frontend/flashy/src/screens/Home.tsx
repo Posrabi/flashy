@@ -46,7 +46,7 @@ export const Home = (): JSX.Element => {
     });
     useGetFriends((err, res) => {
         if (err) {
-            console.error(err);
+            console.log(err);
         } else if (res) {
             console.log(res);
             setFriends(res);

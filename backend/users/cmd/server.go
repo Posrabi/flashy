@@ -23,7 +23,6 @@ import (
 
 var addr = utils.GetNodeIPAddress() + port.USERS
 
-// TODO: break up all of these functions.
 func newServerCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "server",
@@ -87,7 +86,7 @@ func grpcServe() error {
 		grpcSvcUsers = api.NewGrpcTransport(epsSvcUsers, grpcLogger)
 	)
 
-	listener, err := net.Listen("tcp", "localhost:8080")
+	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		return fmt.Errorf("failed to listen %w", err)
 	}

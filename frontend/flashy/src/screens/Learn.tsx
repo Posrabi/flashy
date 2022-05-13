@@ -68,7 +68,7 @@ export const Learn = (): JSX.Element => {
                     useNativeDriver: false,
                 }),
                 onPanResponderRelease: (_, gestureState) => {
-                    if (gestureState.dy < -150 && stringSearcher(sentence, word)) {
+                    if (gestureState.dy < -150 && stringSearcher(sentence, word).length > 0) {
                         setWrong(false);
                         Animated.spring(pan, {
                             toValue: { x: gestureState.dx, y: -550 },
