@@ -23,19 +23,19 @@ _*I'm not a designer so somehow the cards look like a floppy disk*_ :)
 
 - **Auto Login:**
 
-Log in once and never have to worry about it ever again!
+  Log in once and never have to worry about it ever again!
 
 - **History:**
 
-Keeps a record of every words you have learned.
+  Keeps a record of every words you have learned.
 
 - **Versus mode - WIP:**
 
-Allow players to compete head to head thanks to gRPC's amazing bidirectional streams. Currently the Go server is completed
+  Allow players to compete head to head thanks to gRPC's amazing bidirectional streams. Currently the Go server is completed
 
 - **Rankings - WIP:**
 
-Knowing how many words your friends have learned to date. Ability to create a mini competition between friends.
+  Knowing how many words your friends have learned to date. Ability to create a mini competition between friends.
 
 ### TODOs:
 
