@@ -86,7 +86,7 @@ func grpcServe() error {
 		grpcSvcUsers = api.NewGrpcTransport(epsSvcUsers, grpcLogger)
 	)
 
-	listener, err := net.Listen("tcp", "localhost:8080")
+	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		return fmt.Errorf("failed to listen %w", err)
 	}

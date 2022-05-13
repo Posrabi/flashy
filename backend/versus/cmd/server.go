@@ -66,7 +66,7 @@ func grpcServe() error {
 
 	var svcVersus = api.NewVersusService(svcLogger, api.NewQueueMap())
 
-	listener, err := net.Listen("tcp", "localhost:8080")
+	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		return fmt.Errorf("failed to listen %w", err)
 	}

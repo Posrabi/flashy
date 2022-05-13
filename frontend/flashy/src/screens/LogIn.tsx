@@ -91,6 +91,8 @@ export const LogIn = (): JSX.Element => {
             }
             setUser(user);
             storeUser(user.user_id, user.auth_token);
+            setPassword('');
+            setUsername('');
             nav.navigate(SCREENS.HOME);
         } catch (e) {
             setState(false);
@@ -154,6 +156,9 @@ export const LogIn = (): JSX.Element => {
 
     return (
         <SafeAreaView style={styles.layout}>
+            <Text category="h1" style={styles.title}>
+                Flashy
+            </Text>
             <Text style={styles.fieldsText}>Sign in with username and password</Text>
             <Input
                 placeholder="Username"
@@ -254,5 +259,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'center',
+    },
+    title: {
+        fontFamily: 'Pacifico',
+        fontWeight: 'bold',
+        fontSize: 32,
+        margin: 25,
     },
 });
